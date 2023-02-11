@@ -17,11 +17,11 @@ module Mastodon
     end
 
     def flags
-      ''
+      '-theatlsocial'
     end
 
     def suffix
-      ''
+      'v1'
     end
 
     def to_a
