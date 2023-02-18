@@ -21,7 +21,7 @@ module Mastodon
     end
 
     def suffix
-      'v1'
+      'v2'
     end
 
     def to_a

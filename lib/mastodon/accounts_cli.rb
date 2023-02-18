@@ -419,6 +419,67 @@ module Mastodon
       end
     end
 
+
+    ##### BEGIN custom CLI functions
+
+    # begin custom cli follow function: 
+    
+    option :accounts_to_follow , type: :string, aliases: [:a]
+    desc 'follow_from_list [USERNAME]', 'add manual follows to a local account from a list of local accounts'
+    def follow_from_list(username)
+      target_account = Account.find_local(username)
+
+      if target_account.nil?
+        say('No such account', :red)
+        exit(1)
+      end
+
+      # split variable into an array by comma
+      accounts_to_follow_list = options[:accounts_to_follow].split(',')
+
+      accounts_to_follow_list.each do |account|
+        FollowService.new.call(target_account, Account.find_local(account), bypass_limit: true)
+      end
+
+      # how long is the array named accounts_to_follow_list?
+      say("OK, added follows to target from #{accounts_to_follow_list.length} accounts", :green)
+
+      #say("OK, followed target from #{processed} accounts", :green)
+    end
+
+
+
+    # end custom cli follow function
+
+    # begin custom cli unfollow function: 
+
+    option :accounts_to_unfollow , type: :string, aliases: [:a]
+    desc 'unfollow_from_list [USERNAME]', 'add manual follows to a local account from a list of local accounts'
+    def unfollow_from_list(username)
+      target_account = Account.find_local(username)
+
+      if target_account.nil?
+        say('No such account', :red)
+        exit(1)
+      end
+
+      # split variable into an array by comma
+      accounts_to_unfollow_list = options[:accounts_to_unfollow].split(',')
+
+      accounts_to_unfollow_list.each do |account|
+        UnfollowService.new.call(target_account, Account.find_local(account), bypass_limit: true)
+      end
+
+      # how long is the array named accounts_to_unfollow_list?
+      say("OK, removed follows to target from #{accounts_to_unfollow_list.length} accounts", :green)
+
+      #say("OK, followed target from #{processed} accounts", :green)
+    end
+
+    # end custom cli unfollow function
+    ####### END Custom CLI functions
+
+
     option :concurrency, type: :numeric, default: 5, aliases: [:c]
     option :verbose, type: :boolean, aliases: [:v]
     desc 'follow USERNAME', 'Make all local accounts follow account specified by USERNAME'
