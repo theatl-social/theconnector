@@ -650,5 +650,12 @@
   "video.mute": "Mute sound",
   "video.pause": "Pause",
   "video.play": "Play",
-  "video.unmute": "Unmute sound"
+  "video.unmute": "Unmute sound",
+  "account.requested_follow": "{name} has requested to follow you",
+  "compose_form.publish_form": "Publish",
+  "empty_column.followed_tags": "You have not followed any hashtags yet. When you do, they will show up here.",
+  "followed_tags": "Followed hashtags",
+  "footer.status": "Status",
+  "navigation_bar.followed_tags": "Followed hashtags",
+  "status.admin_domain": "Open moderation interface for {domain}"
 }
