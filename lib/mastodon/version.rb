@@ -13,7 +13,7 @@ module Mastodon
     end
 
     def patch
-      3
+      3-theatlsocial-20241007
     end
 
     def default_prerelease
