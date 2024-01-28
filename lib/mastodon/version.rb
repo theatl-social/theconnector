@@ -13,7 +13,7 @@ module Mastodon
     end
 
     def patch
-      '3-theatlsocial-20240114'
+      '4-theatlsocial-20240127'
     end
 
     def default_prerelease
