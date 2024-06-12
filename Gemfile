@@ -61,7 +61,7 @@ gem 'kaminari', '~> 1.2'
 gem 'link_header', '~> 0.0'
 gem 'mime-types', '~> 3.5.0', require: 'mime/types/columnar'
 gem 'nokogiri', '~> 1.15'
-gem 'nsa', github: 'jhawthorn/nsa', ref: 'e020fcc3a54d993ab45b7194d89ab720296c111b'
+gem 'nsa'
 gem 'oj', '~> 3.14'
 gem 'ox', '~> 2.14'
 gem 'parslet'
@@ -110,7 +110,7 @@ group :test do
   gem 'fuubar', '~> 2.5'
 
   # Extra RSpec extenion methods and helpers for sidekiq
-  gem 'rspec-sidekiq', '~> 3.1'
+  gem 'rspec-sidekiq', '~> 4.0'
 
   # Browser integration testing
   gem 'capybara', '~> 3.39'
@@ -204,3 +204,5 @@ gem 'net-http', '~> 0.3.2'
 gem 'rubyzip', '~> 2.3'
 
 gem 'hcaptcha', '~> 7.1'
+
+gem 'mail', '~> 2.8'

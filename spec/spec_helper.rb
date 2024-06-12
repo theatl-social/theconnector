@@ -31,6 +31,12 @@ RSpec.configure do |config|
   config.before :suite do
     Rails.application.load_seed
     Chewy.strategy(:bypass)
+
+    # NOTE: we switched registrations mode to closed by default, but the specs
+    # very heavily rely on having it enabled by default, as it relies on users
+    # being approved by default except in select cases where explicitly testing
+    # other registration modes
+    Setting.registrations_mode = 'open'
   end
 
   config.after :suite do
@@ -127,5 +133,47 @@ class StreamingServerManager
 
     # Wait for the thread to end
     @running_thread.join
+  end
+end
+
+class SearchDataManager
+  def prepare_test_data
+    4.times do |i|
+      username = "search_test_account_#{i}"
+      account = Fabricate.create(:account, username: username, indexable: i.even?, discoverable: i.even?, note: "Lover of #{i}.")
+      2.times do |j|
+        Fabricate.create(:status, account: account, text: "#{username}'s #{j} post", visibility: j.even? ? :public : :private)
+      end
+    end
+
+    3.times do |i|
+      Fabricate.create(:tag, name: "search_test_tag_#{i}")
+    end
+  end
+
+  def indexes
+    [
+      AccountsIndex,
+      PublicStatusesIndex,
+      StatusesIndex,
+      TagsIndex,
+    ]
+  end
+
+  def populate_indexes
+    indexes.each do |index_class|
+      index_class.purge!
+      index_class.import!
+    end
+  end
+
+  def remove_indexes
+    indexes.each(&:delete!)
+  end
+
+  def cleanup_test_data
+    Status.destroy_all
+    Account.destroy_all
+    Tag.destroy_all
   end
 end

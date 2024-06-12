@@ -425,6 +425,10 @@ namespace :mastodon do
       end
 
       prompt.say "\n"
+
+      env['UPDATE_CHECK_URL'] = '' unless prompt.yes?('Do you want Mastodon to periodically check for important updates and notify you? (Recommended)', default: true)
+
+      prompt.say "\n"
       prompt.say 'This configuration will be written to .env.production'
 
       if prompt.yes?('Save configuration?')
@@ -511,6 +515,7 @@ namespace :mastodon do
           owner_role = UserRole.find_by(name: 'Owner')
           user = User.new(email: email, password: password, confirmed_at: Time.now.utc, account_attributes: { username: username }, bypass_invite_request_check: true, role: owner_role)
           user.save(validate: false)
+          user.approve!
 
           Setting.site_contact_username = username
 
