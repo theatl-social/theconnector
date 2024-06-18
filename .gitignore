@@ -63,3 +63,10 @@ yarn-debug.log
 
 # Ignore Docker option files
 docker-compose.override.yml
+
+redis-dev/
+redis-dev
+postgresql-dev/
+postgresql-dev
+
+/Applications
