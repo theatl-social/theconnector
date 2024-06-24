@@ -79,10 +79,9 @@ services:
   #     - ./public/system:/mastodon/public/system
 
   web:
-    build: .
-    image: rubydev-20240617
+    image: rubydev-20240621.1
     restart: always
-    env_file: .env.development
+    env_file: .env.SECRETS
     #command: bash -c "rm -f /mastodon/tmp/pids/server.pid; bundle exec rails s -p 3000"
     command: tail -f /dev/null
     networks:

@@ -70,3 +70,5 @@ postgresql-dev/
 postgresql-dev
 Dockerfile-dev2
 /Applications
+
+.env.SECRETS
