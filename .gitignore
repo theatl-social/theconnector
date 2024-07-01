@@ -72,3 +72,5 @@ Dockerfile-dev2
 /Applications
 
 .env.SECRETS
+
+Dockerfile-beta
