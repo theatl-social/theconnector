@@ -10,10 +10,18 @@ class StatusReachFinder
   end
 
   def inboxes
-    (reached_account_inboxes + followers_inboxes + relay_inboxes).uniq
+    if @status.not_federated_visibility?
+      local_inboxes
+    else
+      (reached_account_inboxes + followers_inboxes + relay_inboxes).uniq
+    end
   end
 
   private
+
+  def local_inboxes
+    @status.account.followers.local.inboxes
+  end
 
   def reached_account_inboxes
     Account.where(id: reached_account_ids).inboxes

@@ -7,14 +7,28 @@ class ActivityPub::DistributionWorker < ActivityPub::RawDistributionWorker
     @status  = Status.find(status_id)
     @account = @status.account
 
-    return if @status.not_federated_visibility?  # Prevent federation for not_federated visibility
+    if @status.not_federated_visibility?
+      distribute_locally!
+    else
+      distribute!
+    end
 
-    distribute!
   rescue ActiveRecord::RecordNotFound
     true
   end
 
   protected
+
+  def distribute_locally!
+    inboxes = local_inboxes
+    inboxes.each do |inbox|
+      send_to_inbox(inbox, payload)
+    end
+  end
+
+  def local_inboxes
+    @local_inboxes ||= StatusReachFinder.new(@status).local_inboxes
+  end
 
   def inboxes
     @inboxes ||= StatusReachFinder.new(@status).inboxes

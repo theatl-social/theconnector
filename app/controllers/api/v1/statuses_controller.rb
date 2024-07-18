@@ -68,14 +68,7 @@ class Api::V1::StatusesController < Api::BaseController
         return :not_federated
       end
       # Print all methods
-      # puts "Methods:"
-      # puts parent_status.methods.sort
 
-      # # Print all instance variables and their values
-      # puts "\nInstance Variables:"
-      # parent_status.instance_variables.each do |var|
-      #   puts "#{var} = #{parent_status.instance_variable_get(var).inspect}"
-      # end
       parent_status = parent_status.in_reply_to_id.present? ? Status.find(parent_status.in_reply_to_id) : nil
       depth += 1
     end
@@ -84,6 +77,8 @@ class Api::V1::StatusesController < Api::BaseController
   end
 
   def create
+    # if status_params has a nil poll value, then convert to an empty array
+    
     status_text = status_params[:status]
     visibility = check_parent_visibility(@thread, status_params[:visibility])
   
@@ -122,10 +117,18 @@ class Api::V1::StatusesController < Api::BaseController
     @status = Status.where(account: current_account).find(params[:id])
     authorize @status, :update?
 
+    status_text = status_params[:status]
+    visibility = check_parent_visibility(@thread, status_params[:visibility])
+  
+    if status_text.include?('!local')
+      status_text = status_text.gsub('!local', '').strip
+      visibility = :not_federated
+    end
+
     UpdateStatusService.new.call(
       @status,
       current_account.id,
-      text: status_params[:status],
+      text: status_text,
       media_ids: status_params[:media_ids],
       media_attributes: status_params[:media_attributes],
       sensitive: status_params[:sensitive],
@@ -192,6 +195,7 @@ class Api::V1::StatusesController < Api::BaseController
       ]
     )
   end
+
 
   def pagination_params(core_params)
     params.slice(:limit).permit(:limit).merge(core_params)
