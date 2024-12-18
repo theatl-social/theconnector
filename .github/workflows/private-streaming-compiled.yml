@@ -73,5 +73,5 @@ jobs:
             "ARG_VAPID_PUBLIC_KEY=${{ secrets.ARG_VAPID_PUBLIC_KEY }}"
             "DOCKER_HUB_ACCESS_TOKEN=${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
             "DOCKER_HUB_USER_NAME=${{ secrets.DOCKER_HUB_USER_NAME }}"
-          context: "./streaming/."
+          context: "{{defaultContext}}:streaming"
           file: Dockerfile
