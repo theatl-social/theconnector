@@ -1,0 +1,75 @@
+name: Build Streaming Compiled Mastodon Container
+run-name: ${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    # create inputs
+    inputs:
+      docker_image_version:
+        description: "Docker image version"
+        required: true
+        default: "latest"
+
+#   push:
+#     branches:
+#         - main
+#         - dev/**
+#         - prod/**
+jobs:
+  Mastodon-Mastoapp-1-Build-Streaming-Container:
+    runs-on: ubuntu-22.04
+    environment: containerbuild
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+    steps:
+      - name: Check secrets availability
+        run: |
+          if [ -z "${{ secrets.DOCKER_HUB_USER_NAME }}" ]; then echo "DOCKER_HUB_USER_NAME is missing"; exit 1; fi
+          if [ -z "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" ]; then echo "DOCKER_HUB_ACCESS_TOKEN is missing"; exit 1; fi
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER_NAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          logout: true
+
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+
+      - run: echo Logging into Docker Hub
+
+      - run: echo "Logged into Docker Hub"
+
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
+
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+
+      - run: ls -la
+    #   - run: ls -la theatl-social-mastodon/1-mastoapp-prod.theatlsocial.vpc
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USER_NAME }}/mastodon-streaming-compiled:${{ github.event.inputs.docker_image_version }}
+          build-args: |
+            "ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=${{ secrets.ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY }}"
+            "ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=${{ secrets.ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT }}"
+            "ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=${{ secrets.ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY }}"
+            "ARG_OTP_SECRET=${{ secrets.ARG_OTP_SECRET }}"
+            "ARG_SECRET_KEY_BASE=${{ secrets.ARG_SECRET_KEY_BASE }}"
+            "ARG_VAPID_PRIVATE_KEY=${{ secrets.ARG_VAPID_PRIVATE_KEY }}"
+            "ARG_VAPID_PUBLIC_KEY=${{ secrets.ARG_VAPID_PUBLIC_KEY }}"
+            "DOCKER_HUB_ACCESS_TOKEN=${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
+            "DOCKER_HUB_USER_NAME=${{ secrets.DOCKER_HUB_USER_NAME }}"
+          context: "{{defaultContext}}/streaming"
+          file: Dockerfile
