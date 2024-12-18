@@ -18,7 +18,7 @@ on:
 jobs:
   Mastodon-Mastoapp-1-Build-Container:
     runs-on: ubuntu-22.04
-    environment: "Private Build Environment"
+    environment: containerbuild
     strategy:
       fail-fast: false
       matrix:
@@ -67,5 +67,5 @@ jobs:
             "ARG_VAPID_PUBLIC_KEY=${{ secrets.ARG_VAPID_PUBLIC_KEY }}"
             "DOCKER_HUB_ACCESS_TOKEN=${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}"
             "DOCKER_HUB_USER_NAME=${{ secrets.DOCKER_HUB_USER_NAME }}"
-          context: "{{defaultContext}}:."
+          context: "{{defaultContext}}"
           file: Dockerfile
