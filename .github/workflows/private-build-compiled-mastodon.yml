@@ -18,6 +18,7 @@ on:
 jobs:
   Mastodon-Mastoapp-1-Build-Container:
     runs-on: ubuntu-22.04
+    environment: "Private Build Environment"
     strategy:
       fail-fast: false
       matrix:
