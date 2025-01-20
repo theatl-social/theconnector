@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.3.3-theconnector-0.1.0] - 2025-01-20
+
+### Changed
+
+- Removed limit preventing uploading multiple videos
+
 ## [4.3.3] - 2025-01-16
 
 ### Security

@@ -4,16 +4,28 @@ module Mastodon
   module Version
     module_function
 
-    def major
+    def upstream_major
       4
     end
 
-    def minor
+    def upstream_minor
       3
     end
 
-    def patch
+    def upstream_patch
       '3-theatlsocial-20250119'
+    end
+
+    def downstream_major
+      0
+    end
+
+    def downstream_minor
+      1
+    end
+
+    def downstream_patch
+      0
     end
 
     def default_prerelease
@@ -29,7 +41,8 @@ module Mastodon
     end
 
     def to_a
-      [major, minor, patch].compact
+      [upstream_major, upstream_minor, upstream_patch, '-theconnector-',
+      downstream_major, downstream_minor, downstream_patch].compact
     end
 
     def to_s
