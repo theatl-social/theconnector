@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.3.3-theconnector-0.2.0] - 2025-01-20
+
+### Changed
+
+- Added optional `MEDIA_ATTACHMENTS_LIMIT` ENV var to allow users to post more than the default 4 videos. This option may not work as changes may need to be made to the UI
+- Added optional `MULTIPLE_VIDEOS` ENV var to remove limit of one video per post. This option may cause issues, as I have not consulted with the upstream maintainers why they added this limit. However it seems to be arbitrary
+
 ## [4.3.3-theconnector-0.1.0] - 2025-01-20
 
 ### Changed

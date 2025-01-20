@@ -13,7 +13,7 @@ module Mastodon
     end
 
     def upstream_patch
-      '3-theatlsocial-20250119'
+      3
     end
 
     def downstream_major
