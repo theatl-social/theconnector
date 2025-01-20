@@ -17,15 +17,15 @@ module Mastodon
     end
 
     def downstream_major
-      0
+      '-theconnector-0'
     end
 
     def downstream_minor
-      1
+      2
     end
 
     def downstream_patch
-      0
+      1
     end
 
     def default_prerelease
@@ -41,7 +41,7 @@ module Mastodon
     end
 
     def to_a
-      [upstream_major, upstream_minor, upstream_patch, '-theconnector-',
+      [upstream_major, upstream_minor, upstream_patch,
       downstream_major, downstream_minor, downstream_patch].compact
     end
 
