@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.3.3-theconnector-0.2.1] - 2025-01-20
+
+### Fixed
+
+- Fix malformed version string error
+
 ## [4.3.3-theconnector-0.2.0] - 2025-01-20
 
 ### Changed

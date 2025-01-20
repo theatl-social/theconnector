@@ -4,28 +4,16 @@ module Mastodon
   module Version
     module_function
 
-    def upstream_major
+    def major
       4
     end
 
-    def upstream_minor
+    def minor
       3
     end
 
-    def upstream_patch
-      3
-    end
-
-    def downstream_major
-      '-theconnector-0'
-    end
-
-    def downstream_minor
-      2
-    end
-
-    def downstream_patch
-      1
+    def patch
+      '3-theconnector-0.2.1'
     end
 
     def default_prerelease
@@ -41,8 +29,7 @@ module Mastodon
     end
 
     def to_a
-      [upstream_major, upstream_minor, upstream_patch,
-      downstream_major, downstream_minor, downstream_patch].compact
+      [major, minor, patch].compact
     end
 
     def to_s
