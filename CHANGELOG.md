@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.3.3-theconnector-0.3.0] - 2025-01-20
+
+### Fixed
+
+- Fix being unable to create new posts with media attachments
+- Fix issues with `MAX_MEDIA_ATTACHMENTS` to actually support the feature
+
+### Changed
+
+- Changed optional `MEDIA_ATTACHMENTS_LIMIT` ENV var to `MAX_MEDIA_ATTACHMENTS`
+
+
 ## [4.3.3-theconnector-0.2.1] - 2025-01-20
 
 ### Fixed

@@ -13,7 +13,7 @@ module Mastodon
     end
 
     def patch
-      '3-theconnector-0.2.1'
+      '3-theconnector-0.3.0'
     end
 
     def default_prerelease
