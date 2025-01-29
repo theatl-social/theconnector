@@ -39,7 +39,7 @@ class Status < ApplicationRecord
   include Status::SnapshotConcern
   include Status::ThreadingConcern
 
-  MEDIA_ATTACHMENTS_LIMIT = (ENV['MAX_MEDIA_ATTACHMENTS'].to_i || 4)
+  MEDIA_ATTACHMENTS_LIMIT = ENV['MAX_MEDIA_ATTACHMENTS'].nil? ? 4 : ENV['MAX_MEDIA_ATTACHMENTS'].to_i
 
   rate_limit by: :account, family: :statuses
 
