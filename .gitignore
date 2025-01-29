@@ -23,9 +23,12 @@
 /public/packs
 /public/packs-test
 .env
+.env.test
+.env.development
 .env.production
 /node_modules/
 /build/
+tags
 
 # Ignore Vagrant files
 .vagrant/
