@@ -101,7 +101,7 @@ class Rack::Attack
   API_DELETE_REBLOG_REGEX = %r{\A/api/v1/statuses/\d+/unreblog\z}
   API_DELETE_STATUS_REGEX = %r{\A/api/v1/statuses/\d+\z}
 
-  throttle('throttle_api_delete', limit: (ENV['THROTTLE_API_DELETE_LIMIT']&.to_i || 30), period: (ENV['THROTTLE_API_DELETE_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
+  throttle('throttle_api_delete', limit: ENV['THROTTLE_API_DELETE_LIMIT']&.to_i || 30, period: (ENV['THROTTLE_API_DELETE_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
     req.authenticated_user_id if (req.post? && req.path.match?(API_DELETE_REBLOG_REGEX)) || (req.delete? && req.path.match?(API_DELETE_STATUS_REGEX))
   end
 
