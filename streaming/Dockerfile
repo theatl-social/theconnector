@@ -7,6 +7,7 @@
 ARG TARGETPLATFORM=${TARGETPLATFORM}
 ARG BUILDPLATFORM=${BUILDPLATFORM}
 ARG PLATFORM=${TARGETPLATFORM}
+ARG TARGETPLATFORM=${TARGETPLATFORM}
 
 # Node version to use in base image, change with [--build-arg NODE_MAJOR_VERSION="20"]
 # renovate: datasource=node-version depName=node
@@ -54,8 +55,6 @@ ENV \
 
 # Set default shell used for running commands
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "errexit", "-c"]
-
-ARG TARGETPLATFORM
 
 RUN echo "Target platform is ${TARGETPLATFORM}"
 
