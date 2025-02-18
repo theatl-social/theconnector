@@ -92,7 +92,7 @@ WORKDIR /opt/mastodon
 COPY package.json yarn.lock .yarnrc.yml /opt/mastodon/
 COPY .yarn /opt/mastodon/.yarn
 # Copy Streaming source code from build system to container
-COPY ./streaming /opt/mastodon/streaming
+COPY . /opt/mastodon/streaming
 
 RUN \
 # Mount local Corepack and Yarn caches from Docker buildx caches
