@@ -56,8 +56,6 @@ ENV \
 # Set default shell used for running commands
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "errexit", "-c"]
 
-RUN echo "Target platform is ${TARGETPLATFORM}"
-
 RUN \
 # Remove automatic apt cache Docker cleanup scripts
   rm -f /etc/apt/apt.conf.d/docker-clean; \
@@ -95,8 +93,8 @@ COPY . /opt/mastodon/streaming
 
 RUN \
 # Mount local Corepack and Yarn caches from Docker buildx caches
---mount=type=cache,id=corepack-cache-${TARGETPLATFORM},target=/usr/local/share/.cache/corepack,sharing=locked \
---mount=type=cache,id=yarn-cache-${TARGETPLATFORM},target=/usr/local/share/.cache/yarn,sharing=locked \
+--mount=type=cache,id=corepack-cache-linux/amd64,target=/usr/local/share/.cache/corepack,sharing=locked \
+--mount=type=cache,id=yarn-cache-linux/amd64,target=/usr/local/share/.cache/yarn,sharing=locked \
   # Configure Corepack
   rm /usr/local/bin/yarn*; \
   corepack enable; \
@@ -104,8 +102,8 @@ RUN \
 
 RUN \
 # Mount Corepack and Yarn caches from Docker buildx caches
---mount=type=cache,id=corepack-cache-${TARGETPLATFORM},target=/usr/local/share/.cache/corepack,sharing=locked \
---mount=type=cache,id=yarn-cache-${TARGETPLATFORM},target=/usr/local/share/.cache/yarn,sharing=locked \
+--mount=type=cache,id=corepack-cache-linux/amd64,target=/usr/local/share/.cache/corepack,sharing=locked \
+--mount=type=cache,id=yarn-cache-linux/amd64,target=/usr/local/share/.cache/yarn,sharing=locked \
 # Install Node packages
   yarn workspaces focus --production @mastodon/streaming;
 
