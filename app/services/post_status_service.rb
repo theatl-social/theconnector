@@ -118,7 +118,7 @@ class PostStatusService < BaseService
   def postprocess_status!
     process_hashtags_service.call(@status)
     Trends.tags.register(@status)
-    Trends.register!(@status) if ENV['EASY_TREND']&.to_bool
+    Trends.register!(@status) if ActiveModel::Type::Boolean.new.cast(ENV.fetch('EASY_TREND', nil))
     LinkCrawlWorker.perform_async(@status.id)
     DistributionWorker.perform_async(@status.id)
     ActivityPub::DistributionWorker.perform_async(@status.id)

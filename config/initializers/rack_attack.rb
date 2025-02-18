@@ -101,31 +101,31 @@ class Rack::Attack
   API_DELETE_REBLOG_REGEX = %r{\A/api/v1/statuses/\d+/unreblog\z}
   API_DELETE_STATUS_REGEX = %r{\A/api/v1/statuses/\d+\z}
 
-  throttle('throttle_api_delete', limit: 30, period: (ENV['THROTTLE_API_DELETE_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
+  throttle('throttle_api_delete', limit: ENV['THROTTLE_API_DELETE_LIMIT']&.to_i || 30, period: (ENV['THROTTLE_API_DELETE_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
     req.authenticated_user_id if (req.post? && req.path.match?(API_DELETE_REBLOG_REGEX)) || (req.delete? && req.path.match?(API_DELETE_STATUS_REGEX))
   end
 
-  throttle('throttle_oauth_application_registrations/ip', limit: ENV['THROTTLE_OAUTH_APPLICATION_REGISTRATIONS_IP_LIMIT']&.to_i || 5, period: (ENV['THROTTLE_OAUTH_APPLICATION_REGISTRATIONS_PERIOD_MINUTES']&.to_i || 10).minutes) do |req|
+  throttle('throttle_oauth_application_registrations/ip', limit: ENV['THROTTLE_OAUTH_APPLICATION_REGISTRATIONS_IP_LIMIT']&.to_i || 5, period: (ENV['THROTTLE_OAUTH_APPLICATION_REGISTRATIONS_IP_PERIOD_MINUTES']&.to_i || 10).minutes) do |req|
     req.throttleable_remote_ip if req.post? && req.path == '/api/v1/apps'
   end
 
-  throttle('throttle_sign_up_attempts/ip', limit: ENV['THROTTLE_SIGN_UP_ATTEMPTS_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_SIGN_UP_ATTEMPTS_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_sign_up_attempts/ip', limit: ENV['THROTTLE_SIGN_UP_ATTEMPTS_IP_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_SIGN_UP_ATTEMPTS_IP_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
     req.throttleable_remote_ip if req.post? && req.path_matches?('/auth')
   end
 
-  throttle('throttle_password_resets/ip', limit: ENV['THROTTLE_PASSWORD_RESETS_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_PASSWORD_RESETS_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_password_resets/ip', limit: ENV['THROTTLE_PASSWORD_RESETS_IP_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_PASSWORD_RESETS_IP_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
     req.throttleable_remote_ip if req.post? && req.path_matches?('/auth/password')
   end
 
-  throttle('throttle_password_resets/email', limit: ENV['THROTTLE_PASSWORD_RESETS_LIMIT']&.to_i || 5, period: (ENV['THROTTLE_PASSWORD_RESETS_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
+  throttle('throttle_password_resets/email', limit: ENV['THROTTLE_PASSWORD_RESETS_EMAIL_LIMIT']&.to_i || 5, period: (ENV['THROTTLE_PASSWORD_RESETS_EMAIL_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
     req.params.dig('user', 'email').presence if req.post? && req.path_matches?('/auth/password')
   end
 
-  throttle('throttle_email_confirmations/ip', limit: ENV['THROTTLE_EMAIL_CONFIRMATIONS_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_EMAIL_CONFIRMATIONS_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_email_confirmations/ip', limit: ENV['THROTTLE_EMAIL_CONFIRMATIONS_IP_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_EMAIL_CONFIRMATIONS_IP_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
     req.throttleable_remote_ip if req.post? && (req.path_matches?('/auth/confirmation') || req.path == '/api/v1/emails/confirmations')
   end
 
-  throttle('throttle_email_confirmations/email', limit: ENV['THROTTLE_EMAIL_CONFIRMATIONS_LIMIT']&.to_i || 5, period: (ENV['THROTTLE_EMAIL_CONFIRMATIONS_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
+  throttle('throttle_email_confirmations/email', limit: ENV['THROTTLE_EMAIL_CONFIRMATIONS_EMAIL_LIMIT']&.to_i || 5, period: (ENV['THROTTLE_EMAIL_CONFIRMATIONS_EMAIL_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
     if req.post? && req.path_matches?('/auth/password')
       req.params.dig('user', 'email').presence
     elsif req.post? && req.path == '/api/v1/emails/confirmations'
@@ -133,15 +133,15 @@ class Rack::Attack
     end
   end
 
-  throttle('throttle_login_attempts/ip', limit: ENV['THROTTLE_LOGIN_ATTEMPTS_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_LOGIN_ATTEMPTS_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_login_attempts/ip', limit: ENV['THROTTLE_LOGIN_ATTEMPTS_IP_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_LOGIN_ATTEMPTS_IP_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
     req.throttleable_remote_ip if req.post? && req.path_matches?('/auth/sign_in')
   end
 
-  throttle('throttle_login_attempts/email', limit: ENV['THROTTLE_LOGIN_ATTEMPTS_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_LOGIN_ATTEMPTS_PERIOD_MINUTES']&.to_i || 60).minutes) do |req|
+  throttle('throttle_login_attempts/email', limit: ENV['THROTTLE_LOGIN_ATTEMPTS_EMAIL_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_LOGIN_ATTEMPTS_EMAIL_PERIOD_MINUTES']&.to_i || 60).minutes) do |req|
     req.session[:attempt_user_id] || req.params.dig('user', 'email').presence if req.post? && req.path_matches?('/auth/sign_in')
   end
 
-  throttle('throttle_password_change/account', limit: ENV['THROTTLE_PASSWORD_CHANGE_LIMIT']&.to_i || 10, period: (ENV['THROTTLE_PASSWORD_CHANGE_PERIOD_MINUTES']&.to_i || 10).minutes) do |req|
+  throttle('throttle_password_change/account', limit: ENV['THROTTLE_PASSWORD_CHANGE_ACCOUNT_LIMIT']&.to_i || 10, period: (ENV['THROTTLE_PASSWORD_CHANGE_ACCOUNT_PERIOD_MINUTES']&.to_i || 10).minutes) do |req|
     req.warden_user_id if (req.put? || req.patch?) && (req.path_matches?('/auth') || req.path_matches?('/auth/password'))
   end
 

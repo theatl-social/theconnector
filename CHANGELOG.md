@@ -2,7 +2,72 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.3.3-theconnector-0.4.0-rc1] - 2025-02-07
+
+### Added
+
+#### Added multiple optional env vars to allow admins finer control of their instance
+
+##### Limits
+- STATUS_LENGTH_CHARS_LIMIT Int to control how many characters are allowed in status
+- NOTE_LENGTH_LIMIT Int to control how long bio length
+
+The following limits are for rack middleware. They control rate limiting. All values are expected to be Ints
+- THROTTLE_AUTHENTICATED_API_LIMIT
+- THROTTLE_AUTHENTICATED_API_PERIOD_MINUTES
+- THROTTLE_PER_TOKEN_API_LIMIT
+- THROTTLE_PER_TOKEN_API_PERIOD_MINUTES
+- THROTTLE_UNAUTHENTICATED_API_LIMIT
+- THROTTLE_UNAUTHENTICATED_API_PERIOD_MINUTES
+- THROTTLE_API_MEDIA_LIMIT
+- THROTTLE_API_MEDIA_PERIOD_MINUTES
+- THROTTLE_MEDIA_PROXY_LIMIT
+- THROTTLE_MEDIA_PROXY_PERIOD_MINUTES
+- THROTTLE_API_SIGN_UP_LIMIT
+- THROTTLE_API_SIGN_UP_PERIOD_MINUTES
+- THROTTLE_AUTHENTICATED_PAGING_LIMIT
+- THROTTLE_AUTHENTICATED_PAGING_PERIOD_MINUTES
+- THROTTLE_UNAUTHENTICATED_PAGING_LIMIT
+- THROTTLE_UNAUTHENTICATED_PAGING_PERIOD_MINUTES
+- THROTTLE_API_DELETE_LIMIT
+- THROTTLE_API_DELETE_PERIOD_MINUTES
+- THROTTLE_OAUTH_APPLICATION_REGISTRATIONS_IP_LIMIT
+- THROTTLE_OAUTH_APPLICATION_REGISTRATIONS_IP_PERIOD_MINUTES
+- THROTTLE_SIGN_UP_ATTEMPTS_IP_LIMIT
+- THROTTLE_SIGN_UP_ATTEMPTS_IP_PERIOD_MINUTES
+- THROTTLE_PASSWORD_RESETS_IP_LIMIT
+- THROTTLE_PASSWORD_RESETS_IP_PERIOD_MINUTES
+- THROTTLE_PASSWORD_RESETS_EMAIL_LIMIT
+- THROTTLE_PASSWORD_RESETS_EMAIL_PERIOD_MINUTES
+- THROTTLE_EMAIL_CONFIRMATIONS_IP_LIMIT
+- THROTTLE_EMAIL_CONFIRMATIONS_IP_PERIOD_MINUTES
+- THROTTLE_EMAIL_CONFIRMATIONS_EMAIL_LIMIT
+- THROTTLE_EMAIL_CONFIRMATIONS_EMAIL_PERIOD_MINUTES
+- THROTTLE_LOGIN_ATTEMPTS_IP_LIMIT
+- THROTTLE_LOGIN_ATTEMPTS_IP_PERIOD_MINUTES
+- THROTTLE_LOGIN_ATTEMPTS_EMAIL_LIMIT
+- THROTTLE_LOGIN_ATTEMPTS_EMAIL_PERIOD_MINUTES
+- THROTTLE_PASSWORD_CHANGE_ACCOUNT_LIMIT
+- THROTTLE_PASSWORD_CHANGE_ACCOUNT_PERIOD_MINUTES
+
+##### Trends
+- TRENDS_STATUSES_THRESHOLD Int to control what level of interaction is required for something to trend
+- TRENDS_STATUSES_REVIEW_THRESHOLD Int to control how many interactions before a trending status is marked for review
+- TRENDS_STATUSES_SCORE_HALFLIFE_DECAY_HOURS Int how long in hours is the halflife of the decay of the trending score for statuses
+- TRENDS_STATUSES_DECAY_THRESHOLD I'll be honest I've only tested this on a very small instance I run and I was unable to get this to do anything
+- EASY_TREND Bool set to true to have statuses register to be a potential trend at create rather than the default at boost. This is great for tiny instances
+
+### Fixed
+
+- Fix linting and spec broken by the fork
+
+### Changed
+
+- gitignore .env.development, tags
+- prettierignore CHANGELOG.md, .github/
+
 ## [4.3.3-theconnector-0.3.0] - 2025-01-20
+
 
 ### Fixed
 
@@ -55,8 +120,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Add `tootctl feeds vacuum` (#33065 by @ClearlyClaire)
-- Add error message when user tries to follow their own account (#31910 by @lenikadali)
+- Add `tootctl feeds vacuum` (#33065 by @ClearlyClaire) - Add error message when user tries to follow their own account (#31910 by @lenikadali)
 - Add client_secret_expires_at to OAuth Applications (#30317 by @ThisIsMissEm)
 
 ### Changed
