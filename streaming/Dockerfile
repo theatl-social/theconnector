@@ -4,9 +4,9 @@
 # the extended buildx capabilities used in this file.
 # Make sure multiarch TARGETPLATFORM is available for interpolation
 # See: https://docs.docker.com/build/building/multi-platform/
-ARG TARGETPLATFORM=${TARGETPLATFORM}
-ARG BUILDPLATFORM=${BUILDPLATFORM}
-ARG PLATFORM=${TARGETPLATFORM}
+# ARG TARGETPLATFORM=${TARGETPLATFORM}
+# ARG BUILDPLATFORM=${BUILDPLATFORM}
+#ARG PLATFORM=${TARGETPLATFORM}
 
 # Node version to use in base image, change with [--build-arg NODE_MAJOR_VERSION="20"]
 # renovate: datasource=node-version depName=node
@@ -14,11 +14,11 @@ ARG NODE_MAJOR_VERSION="20"
 # Debian image to use for base image, change with [--build-arg DEBIAN_VERSION="bookworm"]
 ARG DEBIAN_VERSION="bookworm"
 
-ARG PLATFORM="linux/amd64"
+#ARG PLATFORM="linux/amd64"
 
 # target platform is linux/amd64
 # Node image to use for base image based on combined variables (ex: 20-bookworm-slim)
-FROM --platform="linux/arm64" docker.io/node:${NODE_MAJOR_VERSION}-${DEBIAN_VERSION}-slim AS streaming
+FROM docker.io/node:${NODE_MAJOR_VERSION}-${DEBIAN_VERSION}-slim AS streaming
 
 # Resulting version string is vX.X.X-MASTODON_VERSION_PRERELEASE+MASTODON_VERSION_METADATA
 # Example: v4.3.0-nightly.2023.11.09+pr-123456
@@ -55,9 +55,9 @@ ENV \
 # Set default shell used for running commands
 SHELL ["/bin/bash", "-o", "pipefail", "-o", "errexit", "-c"]
 
-ARG TARGETPLATFORM
+# ARG TARGETPLATFORM
 
-RUN echo "Target platform is ${TARGETPLATFORM}"
+# RUN echo "Target platform is ${TARGETPLATFORM}"
 
 RUN \
 # Remove automatic apt cache Docker cleanup scripts
@@ -73,8 +73,8 @@ RUN \
 # hadolint ignore=DL3008,DL3005
 RUN \
 # Mount Apt cache and lib directories from Docker buildx caches
---mount=type=cache,id=apt-cache-${TARGETPLATFORM},target=/var/cache/apt,sharing=locked \
---mount=type=cache,id=apt-lib-${TARGETPLATFORM},target=/var/lib/apt,sharing=locked \
+--mount=type=cache,id=apt-cache,target=/var/cache/apt,sharing=locked \
+--mount=type=cache,id=apt-lib,target=/var/lib/apt,sharing=locked \
 # Upgrade to check for security updates to Debian image
   apt-get update; \
   apt-get dist-upgrade -yq; \
@@ -96,8 +96,8 @@ COPY ./streaming /opt/mastodon/streaming
 
 RUN \
 # Mount local Corepack and Yarn caches from Docker buildx caches
---mount=type=cache,id=corepack-cache-${TARGETPLATFORM},target=/usr/local/share/.cache/corepack,sharing=locked \
---mount=type=cache,id=yarn-cache-${TARGETPLATFORM},target=/usr/local/share/.cache/yarn,sharing=locked \
+--mount=type=cache,id=corepack-cache,target=/usr/local/share/.cache/corepack,sharing=locked \
+--mount=type=cache,id=yarn-cache,target=/usr/local/share/.cache/yarn,sharing=locked \
   # Configure Corepack
   rm /usr/local/bin/yarn*; \
   corepack enable; \
@@ -105,8 +105,8 @@ RUN \
 
 RUN \
 # Mount Corepack and Yarn caches from Docker buildx caches
---mount=type=cache,id=corepack-cache-${TARGETPLATFORM},target=/usr/local/share/.cache/corepack,sharing=locked \
---mount=type=cache,id=yarn-cache-${TARGETPLATFORM},target=/usr/local/share/.cache/yarn,sharing=locked \
+--mount=type=cache,id=corepack-cache,target=/usr/local/share/.cache/corepack,sharing=locked \
+--mount=type=cache,id=yarn-cache,target=/usr/local/share/.cache/yarn,sharing=locked \
 # Install Node packages
   yarn workspaces focus --production @mastodon/streaming;
 
