@@ -13,7 +13,7 @@ module Mastodon
     end
 
     def patch
-      '4-theconnector-0.4.0'
+      '5-theconnector-0.4.0'
     end
 
     def default_prerelease
