@@ -13,7 +13,7 @@ module Mastodon
     end
 
     def patch
-      '7-theconnector-0.4.1'
+      '9-theatl-theconnector-0.5.0'
     end
 
     def default_prerelease
