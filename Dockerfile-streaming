@@ -18,7 +18,7 @@ ARG PLATFORM="linux/amd64"
 
 # target platform is linux/amd64
 # Node image to use for base image based on combined variables (ex: 20-bookworm-slim)
-FROM --platform="linux/arm64" docker.io/node:${NODE_MAJOR_VERSION}-${DEBIAN_VERSION}-slim AS streaming
+FROM --platform="linux/amd64" docker.io/node:${NODE_MAJOR_VERSION}-${DEBIAN_VERSION}-slim AS streaming
 
 # Resulting version string is vX.X.X-MASTODON_VERSION_PRERELEASE+MASTODON_VERSION_METADATA
 # Example: v4.3.0-nightly.2023.11.09+pr-123456
