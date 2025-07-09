@@ -378,16 +378,39 @@ COPY --from=libvips /usr/local/libvips/lib /usr/local/lib
 COPY --from=ffmpeg /usr/local/ffmpeg/bin /usr/local/bin
 COPY --from=ffmpeg /usr/local/ffmpeg/lib /usr/local/lib
 
+
+
+# editing dockerfile
+
+ARG ARG_VAPID_PRIVATE_KEY
+ARG ARG_VAPID_PUBLIC_KEY
+ARG ARG_OTP_SECRET
+ARG ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+ARG ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+ARG ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+ARG ARG_SECRET_KEY_BASE
+
+ENV \
+  VAPID_PRIVATE_KEY=${ARG_VAPID_PRIVATE_KEY} \
+  VAPID_PUBLIC_KEY=${ARG_VAPID_PUBLIC_KEY} \
+  OTP_SECRET=${ARG_OTP_SECRET} \
+  ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=${ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY} \
+  ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=${ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT} \
+  ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=${ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY} \
+  SECRET_KEY_BASE=${ARG_SECRET_KEY_BASE}
+
+
+# end editing dockerfile
+
 RUN \
   ldconfig; \
   # Smoketest media processors
   vips -v; \
   ffmpeg -version; \
-  ffprobe -version;
-
-RUN \
-  # Precompile bootsnap code for faster Rails startup
+  ffprobe -version; \
   bundle exec bootsnap precompile --gemfile app/ lib/;
+
+RUN  rm -fr /opt/mastodon/tmp;
 
 RUN \
   # Pre-create and chown system volume to Mastodon user
