@@ -121,7 +121,7 @@ class Rack::Attack
     req.params.dig('user', 'email').presence if req.post? && req.path_matches?('/auth/password')
   end
 
-  throttle('throttle_email_confirmations/ip', limit: ENV['THROTTLE_EMAIL_CONFIRMATIONS_IP_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_EMAIL_CONFIRMATIONS_IP_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_email_confirmations/ip', limit: ENV['THROTTLE_EMAIL_CONFIRMATIONS_IP_LIMIT']&.to_i || 25, period: 5.minutes) do |req|
     req.throttleable_remote_ip if (req.post? && (req.path_matches?('/auth/confirmation') || req.path == '/api/v1/emails/confirmations')) || ((req.put? || req.patch?) && req.path_matches?('/auth/setup'))
   end
 
@@ -141,7 +141,7 @@ class Rack::Attack
     req.warden_user_id if (req.put? || req.patch?) && req.path_matches?('/auth/setup')
   end
 
-  throttle('throttle_login_attempts/ip', limit: ENV['THROTTLE_LOGIN_ATTEMPTS_IP_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_LOGIN_ATTEMPTS_IP_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_login_attempts/ip', limit: 25, period: 5.minutes) do |req|
     req.throttleable_remote_ip if req.post? && req.path_matches?('/auth/sign_in')
   end
 
