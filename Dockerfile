@@ -80,7 +80,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-o", "errexit", "-c"]
 
 ARG TARGETPLATFORM
 
+ARG BUILDPLATFORM
+
 RUN echo "Target platform is $TARGETPLATFORM"
+
+RUN echo "Build platform is $BUILDPLATFORM"
 
 RUN \
   # Remove automatic apt cache Docker cleanup scripts
@@ -269,6 +273,8 @@ RUN \
   # Configure bundle to not warn about root user
   bundle config set silence_root_warning "true"; \
   # Download and install required Gems
+  # add the x86_64 to the bundle
+  bundle lock --add-platform x86_64-linux ; \
   bundle install -j"$(nproc)";
 
 # Create temporary assets build layer from build layer
@@ -409,8 +415,6 @@ RUN \
   ffmpeg -version; \
   ffprobe -version; \
   bundle exec bootsnap precompile --gemfile app/ lib/;
-
-RUN  rm -fr /opt/mastodon/tmp;
 
 RUN \
   # Pre-create and chown system volume to Mastodon user
