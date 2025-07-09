@@ -261,20 +261,19 @@ ARG TARGETPLATFORM
 # Copy Gemfile config into working directory
 COPY Gemfile* /opt/mastodon/
 
+# This is the corrected section
 RUN \
   # Mount Ruby Gem caches
   --mount=type=cache,id=gem-cache-${TARGETPLATFORM},target=/usr/local/bundle/cache/,sharing=locked \
-  # Configure bundle to prevent changes to Gemfile and Gemfile.lock
-  bundle config set --global frozen "true"; \
-  # Configure bundle to not cache downloaded Gems
+  # Configure bundler
   bundle config set --global cache_all "false"; \
-  # Configure bundle to only process production Gems
   bundle config set --local without "development test"; \
-  # Configure bundle to not warn about root user
   bundle config set silence_root_warning "true"; \
+  # Add the build platform to Gemfile.lock so that 'bundle install' can proceed
+  bundle lock --add-platform x86_64-linux; \
+  # Configure bundle to prevent changes to the lockfile during install
+  bundle config set --global frozen "true"; \
   # Download and install required Gems
-  # add the x86_64 to the bundle
-  bundle lock --add-platform x86_64-linux ; \
   bundle install -j"$(nproc)";
 
 # Create temporary assets build layer from build layer
