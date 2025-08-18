@@ -269,8 +269,15 @@ RUN \
   bundle config set --global cache_all "false"; \
   bundle config set --local without "development test"; \
   bundle config set silence_root_warning "true"; \
-  # Add the build platform to Gemfile.lock so that 'bundle install' can proceed
-  bundle lock --add-platform x86_64-linux; \
+  # IMPORTANT: Linux platform must be added to Gemfile.lock BEFORE building the Docker image
+  # This should be done in development and committed to the repository.
+  # To add Linux platform support, run this command locally:
+  #   docker run --rm -v $(pwd):/app -w /app ruby:3.4.4-slim-bookworm sh -c \
+  #     "apt-get update && apt-get install -y git && bundle lock --add-platform x86_64-linux"
+  # Then commit the updated Gemfile.lock to your repository.
+  # 
+  # The following line is commented out as it only affects intermediate build stages:
+  # bundle lock --add-platform x86_64-linux; \
   # Configure bundle to prevent changes to the lockfile during install
   bundle config set --global frozen "true"; \
   # Download and install required Gems
