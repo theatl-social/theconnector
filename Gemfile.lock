@@ -162,7 +162,6 @@ GEM
     chunky_png (1.4.0)
     climate_control (1.2.0)
     cocoon (1.2.15)
-    coderay (1.1.3)
     color_diff (0.1)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.3)
@@ -247,7 +246,6 @@ GEM
     fast_blank (1.0.1)
     fastimage (2.4.0)
     ffi (1.17.2)
-    ffi (1.17.2-arm64-darwin)
     ffi-compiler (1.3.2)
       ffi (>= 1.15.5)
       rake
@@ -276,9 +274,6 @@ GEM
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-protobuf (4.31.0)
-      bigdecimal
-      rake (>= 13)
-    google-protobuf (4.31.0-arm64-darwin)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.20.0)
@@ -440,12 +435,12 @@ GEM
       redis (>= 3.0.5)
     matrix (0.4.2)
     memory_profiler (1.1.0)
-    method_source (1.1.0)
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2025.0514)
     mini_mime (1.1.5)
+    mini_portile2 (2.8.9)
     minitest (5.25.5)
     msgpack (1.8.0)
     multi_json (1.15.0)
@@ -463,7 +458,8 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.8-arm64-darwin)
+    nokogiri (1.18.9)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     oj (3.16.11)
       bigdecimal (>= 3.0)
@@ -636,9 +632,6 @@ GEM
       activesupport (>= 7.0.0)
       rack
       railties (>= 7.0.0)
-    pry (0.15.2)
-      coderay (~> 1.1)
-      method_source (~> 1.0)
     psych (5.2.6)
       date
       stringio
@@ -808,7 +801,7 @@ GEM
     ruby-prof (1.7.2)
       base64
     ruby-progressbar (1.13.0)
-    ruby-saml (1.18.0)
+    ruby-saml (1.18.1)
       nokogiri (>= 1.13.10)
       rexml
     ruby-vips (2.2.4)
@@ -876,7 +869,7 @@ GEM
     terrapin (1.1.0)
       climate_control
     test-prof (1.4.4)
-    thor (1.3.2)
+    thor (1.4.0)
     tilt (2.6.0)
     timeout (0.4.3)
     tpm-key_attestation (0.14.1)
@@ -950,7 +943,7 @@ GEM
     zeitwerk (2.7.3)
 
 PLATFORMS
-  arm64-darwin-24
+  ruby
 
 DEPENDENCIES
   active_model_serializers (~> 0.10)
@@ -1054,7 +1047,6 @@ DEPENDENCIES
   premailer-rails
   prometheus_exporter (~> 2.2)
   propshaft
-  pry
   public_suffix (~> 6.0)
   puma (~> 6.3)
   pundit (~> 2.3)
