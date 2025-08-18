@@ -4,7 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Mastodon fork (TheConnector) - a free, open-source social network server based on ActivityPub. The codebase is a full-stack web application with:
+This is a Mastodon fork (TheConnector) - a free, open-source social network server based on ActivityPub. 
+
+**Current Version:** 4.4.3-theatl-theconnector-0.5.3 (based on Mastodon v4.4.3)
+
+The codebase is a full-stack web application with:
 - **Backend**: Ruby on Rails API server
 - **Frontend**: React.js with Redux for dynamic UI
 - **Streaming**: Node.js server for real-time updates via WebSockets
@@ -143,6 +147,29 @@ git commit -m "Add Linux platform for Docker builds"
 ```
 
 Without this, Docker builds will fail with errors like "Could not find [gem_name] in locally installed gems" during the bootsnap precompile step.
+
+### Redis During Asset Precompilation
+The production environment is configured to skip Redis during asset precompilation. This is handled automatically in `config/environments/production.rb` by checking for the `SECRET_KEY_BASE_DUMMY` environment variable that's set during Docker builds.
+
+No action needed - this is already configured.
+
+## Troubleshooting
+
+### Docker Build Failures
+
+#### "Could not find [gem_name] in locally installed gems"
+**Cause:** Missing Linux platform in Gemfile.lock
+**Solution:** Run the platform addition command above and commit the changes
+
+#### "Redis::CannotConnectError" during asset precompilation
+**Cause:** Rails trying to connect to Redis during asset compilation
+**Solution:** Already fixed in `config/environments/production.rb` - uses null_store when `SECRET_KEY_BASE_DUMMY` is set
+
+### After Merging Upstream Mastodon
+When merging new Mastodon versions, watch for:
+1. **Gemfile.lock conflicts** - After resolving, always re-add Linux platform
+2. **New gem dependencies** - May need platform support
+3. **Version number conflicts** - Update to format: `X.X.X-theatl-theconnector-X.X.X`
 
 ## Common Tasks
 
