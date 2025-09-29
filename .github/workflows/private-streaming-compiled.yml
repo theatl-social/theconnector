@@ -9,12 +9,12 @@ on:
         description: "Docker image version"
         required: true
         default: "latest"
-
-#   push:
-#     branches:
-#         - main
-#         - dev/**
-#         - prod/**
+  push:
+    branches:
+      - main
+      - forked-main
+      - dev/**
+      - prod/**
 jobs:
   Mastodon-Mastoapp-1-Build-Streaming-Container:
     runs-on: ubuntu-22.04
