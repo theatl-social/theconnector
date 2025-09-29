@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - Fix WebUI handling of deleted quoted posts (#35909 and #35918 by @ClearlyClaire and @diondiondion)
 - Fix “Edit” and “Delete & Redraft” on a poll not inserting empty option (#35892 by @ClearlyClaire)
 - Fix loading of some compatibility CSS on some configurations (#35876 by @shleeable)
-- Fix HttpLog not being enabled with `RAILS_LOGÈ_LEVEL=debug` (#35833 by @mjankowski)
+- Fix HttpLog not being enabled with `RAILS_LOG_LEVEL=debug` (#35833 by @mjankowski)
 - Fix self-destruct scheduler behavior on some Redis setups (#35823 by @ClearlyClaire)
 - Fix `tootctl admin create` not bypassing reserved username checks (#35779 by @ClearlyClaire)
 - Fix interaction policy changes in implicit updates not being saved (#35751 by @ClearlyClaire)
@@ -611,7 +611,6 @@ The following changelog entries focus on changes visible to users, administrator
   You can now separately filter or drop notifications from people you don't follow, people who don't follow you, accounts created within the past 30 days, as well as unsolicited private mentions, and accounts limited by the moderation.\
   Instead of being outright dropped, notifications that you chose to filter are put in a separate “Filtered notifications” box that you can review separately without it clogging your main notifications.\
   This adds the following REST API endpoints:
-
   - `GET /api/v2/notifications/policy`: https://docs.joinmastodon.org/methods/notifications/#get-policy
   - `PATCH /api/v2/notifications/policy`: https://docs.joinmastodon.org/methods/notifications/#update-the-filtering-policy-for-notifications
   - `GET /api/v1/notifications/requests`: https://docs.joinmastodon.org/methods/notifications/#get-requests
@@ -623,7 +622,6 @@ The following changelog entries focus on changes visible to users, administrator
   - `GET /api/v1/notifications/requests/merged`: https://docs.joinmastodon.org/methods/notifications/#requests-merged
 
   In addition, accepting one or more notification requests generates a new streaming event:
-
   - `notifications_merged`: an event of this type indicates accepted notification requests have finished merging, and the notifications list should be refreshed
 
 - **Add notifications of severed relationships** (#27511, #29665, #29668, #29670, #29700, #29714, #29712, and #29731 by @ClearlyClaire and @Gargron)\

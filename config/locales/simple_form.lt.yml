@@ -60,6 +60,7 @@ lt:
         setting_display_media_default: Slėpti mediją, pažymėtą kaip jautrią
         setting_display_media_hide_all: Visada slėpti mediją
         setting_display_media_show_all: Visada rodyti mediją
+        setting_emoji_style: Kaip rodyti emodžius. „Auto“ bandys naudoti vietinius jaustukus, bet senesnėse naršyklėse grįš prie Tvejaustukų.
         setting_system_scrollbars_ui: Taikoma tik darbalaukio naršyklėms, karkasiniais „Safari“ ir „Chrome“.
         setting_use_blurhash: Gradientai pagrįsti paslėptų vizualizacijų spalvomis, bet užgožia bet kokias detales.
         setting_use_pending_items: Slėpti laiko skalės naujienas po paspaudimo, vietoj automatinio srauto slinkimo.
@@ -159,7 +160,6 @@ lt:
         setting_auto_play_gif: Automatiškai leisti animuotų GIF
         setting_boost_modal: Rodyti patvirtinimo dialogą prieš pakėliant įrašą
         setting_default_language: Skelbimo kalba
-        setting_default_privacy: Skelbimo privatumas
         setting_default_sensitive: Visada žymėti mediją kaip jautrią
         setting_delete_modal: Rodyti patvirtinimo dialogą prieš ištrinant įrašą
         setting_disable_hover_cards: Išjungti profilio peržiūrą užvedus
@@ -167,6 +167,7 @@ lt:
         setting_display_media: Medijos rodymas
         setting_display_media_hide_all: Slėpti viską
         setting_display_media_show_all: Rodyti viską
+        setting_emoji_style: Jaustuko stilius
         setting_expand_spoilers: Visada išplėsti įrašus, pažymėtus turinio įspėjimais
         setting_hide_network: Slėpti savo socialinę diagramą
         setting_missing_alt_text_modal: Rodyti patvirtinimo dialogo langą prieš skelbiant mediją be alternatyvaus teksto.

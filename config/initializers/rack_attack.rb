@@ -66,11 +66,11 @@ class Rack::Attack
     IpBlock.blocked?(req.remote_ip)
   end
 
-  throttle('throttle_authenticated_api', limit: ENV['THROTTLE_AUTHENTICATED_API_LIMIT']&.to_i || 1_500, period: (ENV['THROTTLE_AUTHENTICATED_API_PERIOD_MINUTES']&.to_i || 1).minute) do |req|
+  throttle('throttle_authenticated_api', limit: ENV['THROTTLE_AUTHENTICATED_API_LIMIT']&.to_i || 1_500, period: (ENV['THROTTLE_AUTHENTICATED_API_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
     req.authenticated_user_id if req.api_request?
   end
 
-  throttle('throttle_per_token_api', limit: ENV['THROTTLE_PER_TOKEN_API_LIMIT']&.to_i || 500, period: (ENV['THROTTLE_PER_TOKEN_API_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_per_token_api', limit: ENV['THROTTLE_PER_TOKEN_API_LIMIT']&.to_i || 300, period: (ENV['THROTTLE_PER_TOKEN_API_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
     req.authenticated_token_id if req.api_request?
   end
 
@@ -78,7 +78,7 @@ class Rack::Attack
     req.throttleable_remote_ip if req.api_request? && req.unauthenticated?
   end
 
-  throttle('throttle_api_media', limit: ENV['THROTTLE_API_MEDIA_LIMIT']&.to_i || 30, period: (ENV['THROTTLE_API_MEDIA_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_api_media', limit: ENV['THROTTLE_API_MEDIA_LIMIT']&.to_i || 30, period: (ENV['THROTTLE_API_MEDIA_PERIOD_MINUTES']&.to_i || 30).minutes) do |req|
     req.authenticated_user_id if req.post? && req.path.match?(%r{\A/api/v\d+/media\z}i)
   end
 
@@ -90,7 +90,7 @@ class Rack::Attack
     req.throttleable_remote_ip if req.post? && req.path == '/api/v1/accounts'
   end
 
-  throttle('throttle_authenticated_paging', limit: ENV['THROTTLE_AUTHENTICATED_PAGING_LIMIT']&.to_i || 500, period: (ENV['THROTTLE_AUTHENTICATED_PAGING_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
+  throttle('throttle_authenticated_paging', limit: ENV['THROTTLE_AUTHENTICATED_PAGING_LIMIT']&.to_i || 300, period: (ENV['THROTTLE_AUTHENTICATED_PAGING_PERIOD_MINUTES']&.to_i || 15).minutes) do |req|
     req.authenticated_user_id if req.paging_request?
   end
 
@@ -121,7 +121,7 @@ class Rack::Attack
     req.params.dig('user', 'email').presence if req.post? && req.path_matches?('/auth/password')
   end
 
-  throttle('throttle_email_confirmations/ip', limit: ENV['THROTTLE_EMAIL_CONFIRMATIONS_IP_LIMIT']&.to_i || 25, period: 5.minutes) do |req|
+  throttle('throttle_email_confirmations/ip', limit: ENV['THROTTLE_EMAIL_CONFIRMATIONS_IP_LIMIT']&.to_i || 25, period: (ENV['THROTTLE_EMAIL_CONFIRMATIONS_IP_PERIOD_MINUTES']&.to_i || 5).minutes) do |req|
     req.throttleable_remote_ip if (req.post? && (req.path_matches?('/auth/confirmation') || req.path == '/api/v1/emails/confirmations')) || ((req.put? || req.patch?) && req.path_matches?('/auth/setup'))
   end
 
