@@ -4,11 +4,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Mastodon fork (TheConnector) - a free, open-source social network server based on ActivityPub. 
+This is a Mastodon fork (TheConnector) - a free, open-source social network server based on ActivityPub.
 
 **Current Version:** 4.4.3-theatl-theconnector-0.5.3 (based on Mastodon v4.4.3)
 
 The codebase is a full-stack web application with:
+
 - **Backend**: Ruby on Rails API server
 - **Frontend**: React.js with Redux for dynamic UI
 - **Streaming**: Node.js server for real-time updates via WebSockets
@@ -18,6 +19,7 @@ The codebase is a full-stack web application with:
 ## Key Development Commands
 
 ### Setup & Installation
+
 ```bash
 # Install dependencies
 bundle install              # Ruby gems
@@ -30,6 +32,7 @@ bin/rails db:seed          # Seed data
 ```
 
 ### Development
+
 ```bash
 bin/dev                    # Start all services (Rails, Vite, Streaming)
 yarn dev                   # Start Vite dev server only
@@ -38,6 +41,7 @@ node streaming/index.js    # Streaming server only
 ```
 
 ### Testing
+
 ```bash
 # JavaScript/TypeScript
 yarn test                  # Run all tests (lint, typecheck, unit tests)
@@ -51,6 +55,7 @@ bundle exec rubocop       # Ruby linting
 ```
 
 ### Building
+
 ```bash
 yarn build:production     # Production build with Vite
 yarn build:development    # Development build
@@ -62,6 +67,7 @@ docker buildx build .     # Docker build
 ### Core Directories
 
 **Backend (Rails)**
+
 - `app/controllers/` - HTTP request handlers, split between web UI and API
 - `app/models/` - ActiveRecord models (Account, Status, User, etc.)
 - `app/services/` - Business logic services (post creation, federation, etc.)
@@ -71,6 +77,7 @@ docker buildx build .     # Docker build
 - `app/policies/` - Authorization policies using Pundit
 
 **Frontend (React)**
+
 - `app/javascript/mastodon/` - Main React application
 - `app/javascript/mastodon/components/` - Reusable React components
 - `app/javascript/mastodon/features/` - Feature-specific components (timeline, compose, etc.)
@@ -79,6 +86,7 @@ docker buildx build .     # Docker build
 - `app/javascript/mastodon/locales/` - i18n translations
 
 **Streaming Server**
+
 - `streaming/` - Node.js WebSocket server for real-time updates
 
 ### Key Models & Concepts
@@ -92,12 +100,14 @@ docker buildx build .     # Docker build
 ### API Structure
 
 The application provides two main API surfaces:
+
 1. **REST API** (`app/controllers/api/`) - Mastodon API v1 and v2
 2. **Streaming API** (`streaming/`) - Real-time WebSocket connections
 
 ### Frontend State Management
 
 Uses Redux with the following key stores:
+
 - `compose` - Post composition state
 - `timelines` - Timeline data and pagination
 - `accounts` - Account information cache
@@ -125,7 +135,7 @@ Uses Redux with the following key stores:
 ## Important Configuration Files
 
 - `config/database.yml` - Database configuration
-- `config/redis.yml` - Redis configuration  
+- `config/redis.yml` - Redis configuration
 - `.env.production` - Production environment variables
 - `config/settings.yml` - Application settings
 - `vite.config.mts` - Vite bundler configuration
@@ -134,6 +144,7 @@ Uses Redux with the following key stores:
 ## Docker Build Requirements
 
 ### Platform Support in Gemfile.lock
+
 When updating gems on macOS that have native extensions (like nokogiri, ffi, etc.), you MUST add Linux platform support to Gemfile.lock before Docker builds will work:
 
 ```bash
@@ -149,6 +160,7 @@ git commit -m "Add Linux platform for Docker builds"
 Without this, Docker builds will fail with errors like "Could not find [gem_name] in locally installed gems" during the bootsnap precompile step.
 
 ### Redis During Asset Precompilation
+
 The production environment is configured to skip Redis during asset precompilation. This is handled automatically in `config/environments/production.rb` by checking for the `SECRET_KEY_BASE_DUMMY` environment variable that's set during Docker builds.
 
 No action needed - this is already configured.
@@ -158,15 +170,19 @@ No action needed - this is already configured.
 ### Docker Build Failures
 
 #### "Could not find [gem_name] in locally installed gems"
+
 **Cause:** Missing Linux platform in Gemfile.lock
 **Solution:** Run the platform addition command above and commit the changes
 
 #### "Redis::CannotConnectError" during asset precompilation
+
 **Cause:** Rails trying to connect to Redis during asset compilation
 **Solution:** Already fixed in `config/environments/production.rb` - uses null_store when `SECRET_KEY_BASE_DUMMY` is set
 
 ### After Merging Upstream Mastodon
+
 When merging new Mastodon versions, watch for:
+
 1. **Gemfile.lock conflicts** - After resolving, always re-add Linux platform
 2. **New gem dependencies** - May need platform support
 3. **Version number conflicts** - Update to format: `X.X.X-theatl-theconnector-X.X.X`
@@ -174,18 +190,21 @@ When merging new Mastodon versions, watch for:
 ## Common Tasks
 
 ### Creating a new API endpoint
+
 1. Add route in `config/routes.rb`
 2. Create controller in `app/controllers/api/`
 3. Add serializer in `app/serializers/`
 4. Write tests in `spec/controllers/`
 
 ### Adding a new React component
+
 1. Create component in `app/javascript/mastodon/components/` or `features/`
 2. Add Redux actions/reducers if needed
 3. Connect to API via action creators
 4. Add translations to locale files
 
 ### Modifying the database schema
+
 1. Generate migration: `bin/rails generate migration AddFieldToModel`
 2. Edit migration file in `db/migrate/`
 3. Run migration: `bin/rails db:migrate`
