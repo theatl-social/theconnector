@@ -313,9 +313,25 @@ COPY --from=bundler /opt/mastodon /opt/mastodon/
 COPY --from=bundler /usr/local/bundle/ /usr/local/bundle/
 
 RUN \
+  --mount=type=secret,id=ARG_SECRET_KEY_BASE \
+  --mount=type=secret,id=ARG_OTP_SECRET \
+  --mount=type=secret,id=ARG_VAPID_PRIVATE_KEY \
+  --mount=type=secret,id=ARG_VAPID_PUBLIC_KEY \
+  --mount=type=secret,id=ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY \
+  --mount=type=secret,id=ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT \
+  --mount=type=secret,id=ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY \
   ldconfig; \
+  # Export secrets as environment variables for asset precompilation
+  export SECRET_KEY_BASE=$(cat /run/secrets/ARG_SECRET_KEY_BASE 2>/dev/null || echo ""); \
+  export OTP_SECRET=$(cat /run/secrets/ARG_OTP_SECRET 2>/dev/null || echo ""); \
+  export VAPID_PRIVATE_KEY=$(cat /run/secrets/ARG_VAPID_PRIVATE_KEY 2>/dev/null || echo ""); \
+  export VAPID_PUBLIC_KEY=$(cat /run/secrets/ARG_VAPID_PUBLIC_KEY 2>/dev/null || echo ""); \
+  export ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=$(cat /run/secrets/ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY 2>/dev/null || echo ""); \
+  export ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=$(cat /run/secrets/ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT 2>/dev/null || echo ""); \
+  export ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=$(cat /run/secrets/ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY 2>/dev/null || echo ""); \
+  # Use dummy key if no secrets provided (for local builds without secrets)
+  if [ -z "$SECRET_KEY_BASE" ]; then export SECRET_KEY_BASE_DUMMY=1; fi; \
   # Use Ruby on Rails to create Mastodon assets
-  SECRET_KEY_BASE_DUMMY=1 \
   bundle exec rails assets:precompile; \
   # Cleanup temporary files
   rm -fr /opt/mastodon/tmp;
@@ -389,27 +405,7 @@ COPY --from=ffmpeg /usr/local/ffmpeg/lib /usr/local/lib
 
 
 
-# editing dockerfile
-
-ARG ARG_VAPID_PRIVATE_KEY
-ARG ARG_VAPID_PUBLIC_KEY
-ARG ARG_OTP_SECRET
-ARG ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
-ARG ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
-ARG ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
-ARG ARG_SECRET_KEY_BASE
-
-ENV \
-  VAPID_PRIVATE_KEY=${ARG_VAPID_PRIVATE_KEY} \
-  VAPID_PUBLIC_KEY=${ARG_VAPID_PUBLIC_KEY} \
-  OTP_SECRET=${ARG_OTP_SECRET} \
-  ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=${ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY} \
-  ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=${ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT} \
-  ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=${ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY} \
-  SECRET_KEY_BASE=${ARG_SECRET_KEY_BASE}
-
-
-# end editing dockerfile
+# Secrets are provided at runtime via environment variables, not baked into the image
 
 RUN \
   ldconfig; \
