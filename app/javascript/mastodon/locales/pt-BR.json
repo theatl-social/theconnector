@@ -246,8 +246,6 @@
   "confirmations.remove_from_followers.message": "{name} vai parar de te seguir. Tem certeza de que deseja continuar?",
   "confirmations.remove_from_followers.title": "Remover seguidor?",
   "confirmations.unfollow.confirm": "Deixar de seguir",
-  "confirmations.unfollow.message": "Você tem certeza de que deseja deixar de seguir {name}?",
-  "confirmations.unfollow.title": "Deixar de seguir o usuário?",
   "content_warning.hide": "Ocultar post",
   "content_warning.show": "Mostrar mesmo assim",
   "content_warning.show_more": "Mostrar mais",

@@ -246,8 +246,6 @@
   "confirmations.remove_from_followers.message": "{name} cessera de vous suivre. Êtes-vous sûr de vouloir continuer ?",
   "confirmations.remove_from_followers.title": "Supprimer l'abonné·e ?",
   "confirmations.unfollow.confirm": "Ne plus suivre",
-  "confirmations.unfollow.message": "Voulez-vous vraiment arrêter de suivre {name}?",
-  "confirmations.unfollow.title": "Se désabonner de l'utilisateur·rice ?",
   "content_warning.hide": "Masquer le message",
   "content_warning.show": "Montrer quand même",
   "content_warning.show_more": "Montrer plus",

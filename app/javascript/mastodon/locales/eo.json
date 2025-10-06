@@ -243,8 +243,6 @@
   "confirmations.remove_from_followers.message": "{name} ne plu sekvos vin. Ĉu vi certas ke vi volas daŭri?",
   "confirmations.remove_from_followers.title": "Forigi sekvanton?",
   "confirmations.unfollow.confirm": "Ne plu sekvi",
-  "confirmations.unfollow.message": "Ĉu vi certas, ke vi volas ĉesi sekvi {name}?",
-  "confirmations.unfollow.title": "Ĉu ĉesi sekvi uzanton?",
   "content_warning.hide": "Kaŝi afiŝon",
   "content_warning.show": "Montri ĉiukaze",
   "content_warning.show_more": "Montri pli",

@@ -246,8 +246,6 @@
   "confirmations.remove_from_followers.message": "{name} przestanie Cię obserwować. Czy na pewno chcesz kontynuować?",
   "confirmations.remove_from_followers.title": "Usunąć obserwującego?",
   "confirmations.unfollow.confirm": "Nie obserwuj",
-  "confirmations.unfollow.message": "Czy na pewno nie chcesz obserwować {name}?",
-  "confirmations.unfollow.title": "Cofnąć obserwację?",
   "content_warning.hide": "Ukryj wpis",
   "content_warning.show": "Pokaż mimo to",
   "content_warning.show_more": "Pokaż więcej",
