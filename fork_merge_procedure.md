@@ -39,6 +39,7 @@ git merge upstream/main --no-edit
 If conflicts occur:
 
 #### Auto-resolve locale files (if needed)
+
 ```bash
 # Take ours for locale files
 git checkout --ours config/locales/*.yml
@@ -46,14 +47,18 @@ git add config/locales/*.yml
 ```
 
 #### Manually review critical files
+
 Pay special attention to:
+
 - **ENV var customizations**: Preserve `ENV['STATUS_LENGTH_CHARS_LIMIT']`, `ENV['NOTE_LENGTH_LIMIT']`, and throttle settings
 - **config/initializers/rack_attack.rb**: Keep ENV var patterns for rate limiting
 - **app/validators/status_length_validator.rb**: Keep ENV var for character limits
 - **app/models/account.rb**: Keep ENV var for bio length
 
 #### Check for duplicate code from merge
+
 Common issues:
+
 - Duplicate method definitions
 - Duplicate RSpec describe/context blocks
 - Duplicate constants
@@ -99,20 +104,24 @@ Monitor the PR and fix any CI/CD failures:
 #### Common Issues
 
 **RuboCop failures:**
+
 ```bash
 bundle exec rubocop --auto-correct  # Auto-fix safe issues
 bundle exec rubocop                  # Check remaining issues
 ```
 
 **Duplicate code:**
+
 - Check for duplicate methods, constants, or RSpec blocks
 - Remove duplicates introduced by merge conflicts
 
 **Missing translations:**
+
 - Add missing translation keys (e.g., `notification_mailer.quote`)
 - Check `config/locales/en.yml`
 
 **TypeScript/ESLint errors:**
+
 ```bash
 yarn lint:js --fix
 yarn typecheck
@@ -155,17 +164,20 @@ Two private workflows build Docker images on push to `forked-main`:
 ### Automatic Tagging
 
 Images are automatically tagged with `YYYYMMDD-{short-hash}` format:
+
 - Example: `20250930-abc1234`
 - Manual workflow_dispatch allows custom version tags
 
 ### Secrets for Asset Precompilation
 
 The main Dockerfile uses BuildKit secret mounts for asset precompilation:
+
 - Secrets passed via workflow to precompiler stage only
 - Secrets do NOT persist in final image layers
 - Uses real secrets (not dummy) for proper asset compilation
 
 **Required secrets:**
+
 - `ARG_SECRET_KEY_BASE`
 - `ARG_OTP_SECRET`
 - `ARG_VAPID_PRIVATE_KEY`
@@ -179,16 +191,19 @@ The main Dockerfile uses BuildKit secret mounts for asset precompilation:
 ## Testing Locally Before Pushing
 
 ### Run RuboCop
+
 ```bash
 bundle exec rubocop <changed-files>
 ```
 
 ### Run RSpec Tests
+
 ```bash
 bundle exec rspec spec/
 ```
 
 ### Run JavaScript Tests
+
 ```bash
 yarn test:js
 yarn lint
@@ -200,6 +215,7 @@ yarn typecheck
 ### Docker Build Failures
 
 **Missing Linux platform in Gemfile.lock:**
+
 ```bash
 docker run --rm -v $(pwd):/app -w /app ruby:3.4.6-slim-bookworm sh -c \
   "apt-get update && apt-get install -y git && bundle lock --add-platform x86_64-linux"
@@ -208,6 +224,7 @@ git commit -m "Add Linux platform for Docker builds"
 ```
 
 **SecretsUsedInArgOrEnv warnings:**
+
 - Ensure secrets use BuildKit secret mounts (`--mount=type=secret`)
 - Do NOT use ARG/ENV for secrets in Dockerfile
 - Secrets should only be in precompiler stage RUN command
@@ -215,11 +232,13 @@ git commit -m "Add Linux platform for Docker builds"
 ### Merge Conflicts
 
 **Preserve TheConnector customizations:**
+
 1. Check git diff for ENV var usage
 2. Manually merge to keep ENV patterns
 3. Test that customizations still work
 
 **Common conflict files:**
+
 - `config/initializers/rack_attack.rb`
 - `app/validators/status_length_validator.rb`
 - `app/models/account.rb`
@@ -228,29 +247,37 @@ git commit -m "Add Linux platform for Docker builds"
 ## Key Customizations to Preserve
 
 ### Character Limits (ENV-based)
+
 - `STATUS_LENGTH_CHARS_LIMIT` - Post character limit
 - `NOTE_LENGTH_LIMIT` - Bio character limit
 
 ### Rate Limiting (ENV-based)
+
 All throttle limits in `rack_attack.rb`:
+
 - `THROTTLE_AUTHENTICATED_API_LIMIT`
 - `THROTTLE_AUTHENTICATED_API_PERIOD_MINUTES`
 - And others...
 
 ### Version Format
+
 Always use: `X.X.X-theatlsocial-nightly-YYYYMMDD`
 
 ## Workflow Files
 
 ### Main Workflows (from upstream)
+
 Synchronized with upstream Mastodon:
+
 - `.github/workflows/test-ruby.yml`
 - `.github/workflows/test-js.yml`
 - `.github/workflows/lint-*.yml`
 - etc.
 
 ### Private Workflows (TheConnector-specific)
+
 **DO NOT sync with upstream:**
+
 - `.github/workflows/private-build-compiled-mastodon.yml`
 - `.github/workflows/private-streaming-compiled.yml`
 
