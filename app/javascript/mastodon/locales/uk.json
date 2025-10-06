@@ -228,8 +228,6 @@
   "confirmations.redraft.message": "Ви впевнені, що хочете видалити цей допис та переписати його? Додавання у вибране та поширення буде втрачено, а відповіді на оригінальний допис залишаться без першоджерела.",
   "confirmations.redraft.title": "Видалити та переробити допис?",
   "confirmations.unfollow.confirm": "Відписатися",
-  "confirmations.unfollow.message": "Ви впевнені, що хочете відписатися від {name}?",
-  "confirmations.unfollow.title": "Відписатися від користувача?",
   "content_warning.hide": "Сховати допис",
   "content_warning.show": "Усе одно показати",
   "content_warning.show_more": "Показати більше",

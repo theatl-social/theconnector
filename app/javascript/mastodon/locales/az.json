@@ -246,8 +246,6 @@
   "confirmations.remove_from_followers.message": "{name} sizi izləməyəcək. Davam etmək istədiyinizə əminsiniz?",
   "confirmations.remove_from_followers.title": "İzləyici çıxarılsın?",
   "confirmations.unfollow.confirm": "İzləmədən çıxar",
-  "confirmations.unfollow.message": "{name} izləmədən çıxmaq istədiyinizə əminsiniz?",
-  "confirmations.unfollow.title": "İstifadəçi izləmədən çıxarılsın?",
   "content_warning.hide": "Paylaşımı gizlət",
   "content_warning.show": "Yenə də göstər",
   "content_warning.show_more": "Daha çox göstər",

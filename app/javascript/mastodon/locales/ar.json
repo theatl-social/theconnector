@@ -246,8 +246,6 @@
   "confirmations.remove_from_followers.message": "سيتوقف {name} عن متابعتك. هل بالتأكيد تريد المتابعة؟",
   "confirmations.remove_from_followers.title": "إزالة المتابع؟",
   "confirmations.unfollow.confirm": "إلغاء المتابعة",
-  "confirmations.unfollow.message": "متأكد من أنك تريد إلغاء متابعة {name} ؟",
-  "confirmations.unfollow.title": "إلغاء متابعة المستخدم؟",
   "content_warning.hide": "إخفاء المنشور",
   "content_warning.show": "إظهار على أي حال",
   "content_warning.show_more": "إظهار المزيد",
