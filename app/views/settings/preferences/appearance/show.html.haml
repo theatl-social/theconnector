@@ -31,16 +31,15 @@
                  label: I18n.t('simple_form.labels.defaults.setting_theme'),
                  wrapper: :with_label
 
-  - if Mastodon::Feature.modern_emojis_enabled?
-    .fields-group
-      = f.simple_fields_for :settings, current_user.settings do |ff|
-        = ff.input :'web.emoji_style',
-                   collection: %w(auto twemoji native),
-                   include_blank: false,
-                   hint: I18n.t('simple_form.hints.defaults.setting_emoji_style'),
-                   label: I18n.t('simple_form.labels.defaults.setting_emoji_style'),
-                   label_method: ->(emoji_style) { I18n.t("emoji_styles.#{emoji_style}", default: emoji_style) },
-                   wrapper: :with_label
+  .fields-group
+    = f.simple_fields_for :settings, current_user.settings do |ff|
+      = ff.input :'web.emoji_style',
+                 collection: %w(auto twemoji native),
+                 include_blank: false,
+                 hint: I18n.t('simple_form.hints.defaults.setting_emoji_style'),
+                 label: I18n.t('simple_form.labels.defaults.setting_emoji_style'),
+                 label_method: ->(emoji_style) { I18n.t("emoji_styles.#{emoji_style}", default: emoji_style) },
+                 wrapper: :with_label
 
   - unless I18n.locale == :en
     .flash-message.translation-prompt
@@ -72,6 +71,8 @@
 
     .fields-group
       = ff.input :'web.reblog_modal', wrapper: :with_label, hint: I18n.t('simple_form.hints.defaults.setting_boost_modal'), label: I18n.t('simple_form.labels.defaults.setting_boost_modal')
+    .fields-group
+      = ff.input :'web.quick_boosting', wrapper: :with_label, hint: t('simple_form.hints.defaults.setting_quick_boosting_html', boost_icon: material_symbol('repeat'), options_icon: material_symbol('more_horiz')), label: I18n.t('simple_form.labels.defaults.setting_quick_boosting')
     .flash-message.hidden-on-touch-devices= t('appearance.boosting_preferences_info_html', icon: material_symbol('repeat'))
 
     %h4= t 'appearance.sensitive_content'
