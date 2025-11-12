@@ -39,9 +39,14 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   }
   const outDir = path.resolve('public', outDirName);
 
+  // Use CDN_HOST for production builds if configured
+  const cdnHost = process.env.CDN_HOST;
+  const base =
+    isProdBuild && cdnHost ? `${cdnHost}/${outDirName}/` : `/${outDirName}/`;
+
   return {
     root: jsRoot,
-    base: `/${outDirName}/`,
+    base,
     envDir: __dirname,
     resolve: {
       alias: {
