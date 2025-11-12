@@ -21,10 +21,7 @@ export const LinkFooter: React.FC<{
       <p>
         <strong>{domain}</strong>:{' '}
         <Link to='/about' target={multiColumn ? '_blank' : undefined}>
-          <FormattedMessage
-            id='footer.about_this_server'
-            defaultMessage='About'
-          />
+          <FormattedMessage id='footer.about' defaultMessage='About' />
         </Link>
         {statusPageUrl && (
           <>

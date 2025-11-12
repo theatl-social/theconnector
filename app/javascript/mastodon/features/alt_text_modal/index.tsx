@@ -101,9 +101,8 @@ const Preview: React.FC<{
   position: FocalPoint;
   onPositionChange: (arg0: FocalPoint) => void;
 }> = ({ mediaId, position, onPositionChange }) => {
+  const draggingRef = useRef<boolean>(false);
   const nodeRef = useRef<HTMLImageElement | HTMLVideoElement | null>(null);
-
-  const [dragging, setDragging] = useState<'started' | 'moving' | null>(null);
 
   const [x, y] = position;
   const style = useSpring({
@@ -111,7 +110,7 @@ const Preview: React.FC<{
       left: `${x * 100}%`,
       top: `${y * 100}%`,
     },
-    immediate: dragging === 'moving',
+    immediate: draggingRef.current,
   });
   const media = useAppSelector((state) =>
     (
@@ -123,6 +122,8 @@ const Preview: React.FC<{
   const account = useAppSelector((state) =>
     me ? state.accounts.get(me) : undefined,
   );
+
+  const [dragging, setDragging] = useState(false);
 
   const setRef = useCallback(
     (e: HTMLImageElement | HTMLVideoElement | null) => {
@@ -139,20 +140,20 @@ const Preview: React.FC<{
 
       const handleMouseMove = (e: MouseEvent) => {
         const { x, y } = getPointerPosition(nodeRef.current, e);
-
-        setDragging('moving'); // This will disable the animation for quicker feedback, only do this if the mouse actually moves
+        draggingRef.current = true; // This will disable the animation for quicker feedback, only do this if the mouse actually moves
         onPositionChange([x, y]);
       };
 
       const handleMouseUp = () => {
-        setDragging(null);
+        setDragging(false);
+        draggingRef.current = false;
         document.removeEventListener('mouseup', handleMouseUp);
         document.removeEventListener('mousemove', handleMouseMove);
       };
 
       const { x, y } = getPointerPosition(nodeRef.current, e.nativeEvent);
 
-      setDragging('started');
+      setDragging(true);
       onPositionChange([x, y]);
 
       document.addEventListener('mouseup', handleMouseUp);
@@ -488,7 +489,6 @@ export const AltTextModal = forwardRef<ModalRef, Props & Partial<RestoreProps>>(
                   className='link-button'
                   onClick={handleDetectClick}
                   disabled={type !== 'image' || isDetecting}
-                  type='button'
                 >
                   <FormattedMessage
                     id='alt_text_modal.add_text_from_image'

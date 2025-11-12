@@ -37,7 +37,6 @@ export const DomainPill: React.FC<{
         onClick={handleClick}
         aria-expanded={open}
         aria-controls={accessibilityId}
-        type='button'
       >
         {domain}
       </button>
@@ -155,7 +154,6 @@ export const DomainPill: React.FC<{
                       <button
                         onClick={handleExpandClick}
                         className='link-button'
-                        type='button'
                       >
                         {x}
                       </button>
@@ -171,7 +169,6 @@ export const DomainPill: React.FC<{
                       <button
                         onClick={handleExpandClick}
                         className='link-button'
-                        type='button'
                       >
                         {x}
                       </button>

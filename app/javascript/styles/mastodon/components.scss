@@ -1389,7 +1389,7 @@
   }
 }
 
-.announcements__content {
+.announcements__item__content {
   overflow-wrap: break-word;
   overflow-y: auto;
 
@@ -2712,7 +2712,6 @@ a.account__display-name {
     outline-offset: -1px;
     border-radius: 8px;
     touch-action: none;
-    user-select: none;
   }
 
   &--zoomed-in {
@@ -3018,7 +3017,6 @@ a.account__display-name {
     height: 100%;
     min-height: 100vh;
     min-height: 100dvh;
-    padding-inline: 10px;
     padding-bottom: env(safe-area-inset-bottom);
 
     &__pane {
@@ -3181,21 +3179,20 @@ a.account__display-name {
 }
 
 .column__alert {
-  --alert-height: 54px;
-
   position: sticky;
   bottom: 0;
   z-index: 10;
   box-sizing: border-box;
   display: grid;
-  grid-template-rows: minmax(var(--alert-height), max-content);
-  align-items: end;
   width: 100%;
   max-width: 360px;
   padding: 1rem;
   margin: auto auto 0;
   overflow: clip;
-  pointer-events: none;
+
+  &:empty {
+    padding: 0;
+  }
 
   @media (max-width: #{$mobile-menu-breakpoint - 1}) {
     // Compensate for mobile menubar
@@ -3206,7 +3203,6 @@ a.account__display-name {
     // Make all nested alerts occupy the same space
     // rather than stack
     grid-area: 1 / 1;
-    pointer-events: initial;
   }
 }
 
@@ -3360,7 +3356,6 @@ a.account__display-name {
     min-height: 100vh;
     min-height: 100dvh;
     gap: 0;
-    padding-inline: 0;
   }
 
   .columns-area__panels__pane--navigational {
@@ -4486,19 +4481,13 @@ a.status-card {
   box-sizing: border-box;
   text-decoration: none;
 
-  &--large {
-    padding-block: 32px;
+  &:hover {
+    background: var(--on-surface-color);
   }
 
-  &:is(button) {
-    &:hover {
-      background: var(--on-surface-color);
-    }
-
-    &:focus-visible {
-      outline: 2px solid $ui-button-focus-outline-color;
-      outline-offset: -2px;
-    }
+  &:focus-visible {
+    outline: 2px solid $ui-button-focus-outline-color;
+    outline-offset: -2px;
   }
 
   .icon {
@@ -6162,7 +6151,6 @@ a.status-card {
   width: 100%;
   height: 100%;
   position: relative;
-  touch-action: pan-y;
 
   &__buttons {
     position: absolute;
@@ -6198,19 +6186,11 @@ a.status-card {
 }
 
 .media-modal__closer {
-  display: flex;
   position: absolute;
   top: 0;
   inset-inline-start: 0;
   inset-inline-end: 0;
   bottom: 0;
-  align-items: center;
-  justify-content: space-around; // If set to center, the fullscreen image overlay is misaligned.
-
-  > div {
-    flex-shrink: 0;
-    overflow: auto;
-  }
 }
 
 .media-modal__navigation {
@@ -9006,25 +8986,10 @@ noscript {
 }
 
 .announcements {
-  width: calc(100% - 124px);
-  flex: 0 0 auto;
-  position: relative;
-  overflow: hidden;
-
-  .layout-multiple-columns & {
-    width: 100%;
-  }
-
-  @media screen and (max-width: (124px + 300px)) {
-    width: 100%;
-  }
-
-  &__root {
-    background: lighten($ui-base-color, 8%);
-    font-size: 13px;
-    display: flex;
-    align-items: flex-end;
-  }
+  background: lighten($ui-base-color, 8%);
+  font-size: 13px;
+  display: flex;
+  align-items: flex-end;
 
   &__mastodon {
     width: 124px;
@@ -9035,16 +9000,19 @@ noscript {
     }
   }
 
-  &__slides {
-    display: flex;
-    flex-wrap: nowrap;
-    align-items: start;
+  &__container {
+    width: calc(100% - 124px);
+    flex: 0 0 auto;
+    position: relative;
+
+    @media screen and (max-width: (124px + 300px)) {
+      width: 100%;
+    }
   }
 
-  &__slide {
+  &__item {
     box-sizing: border-box;
     width: 100%;
-    flex: 0 0 100%;
     padding: 15px;
     position: relative;
     font-size: 15px;
@@ -9053,25 +9021,26 @@ noscript {
     font-weight: 400;
     max-height: 50vh;
     overflow: hidden;
+    display: flex;
     flex-direction: column;
-  }
 
-  &__range {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 10px;
-    padding-inline-end: 18px;
-  }
+    &__range {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 10px;
+      padding-inline-end: 18px;
+    }
 
-  &__unread {
-    position: absolute;
-    top: 19px;
-    inset-inline-end: 19px;
-    display: block;
-    background: $highlight-text-color;
-    border-radius: 50%;
-    width: 0.625rem;
-    height: 0.625rem;
+    &__unread {
+      position: absolute;
+      top: 19px;
+      inset-inline-end: 19px;
+      display: block;
+      background: $highlight-text-color;
+      border-radius: 50%;
+      width: 0.625rem;
+      height: 0.625rem;
+    }
   }
 
   &__pagination {
@@ -9082,7 +9051,6 @@ noscript {
     inset-inline-end: 0;
     display: flex;
     align-items: center;
-    z-index: 1;
   }
 }
 
@@ -11673,11 +11641,5 @@ noscript {
       width: 16px;
       height: 16px;
     }
-  }
-
-  &__pagination {
-    display: flex;
-    align-items: center;
-    gap: 4px;
   }
 }

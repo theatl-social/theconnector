@@ -42,10 +42,16 @@ import { IconButton } from './icon_button';
 
 let id = 0;
 
+export interface RenderItemFnHandlers {
+  onClick: React.MouseEventHandler;
+  onKeyUp: React.KeyboardEventHandler;
+}
+
 export type RenderItemFn<Item = MenuItem> = (
   item: Item,
   index: number,
-  onClick: React.MouseEventHandler,
+  handlers: RenderItemFnHandlers,
+  focusRefCallback?: (c: HTMLAnchorElement | HTMLButtonElement | null) => void,
 ) => React.ReactNode;
 
 type ItemClickFn<Item = MenuItem> = (item: Item, index: number) => void;
@@ -95,6 +101,7 @@ export const DropdownMenu = <Item = MenuItem,>({
   onItemClick,
 }: DropdownMenuProps<Item>) => {
   const nodeRef = useRef<HTMLDivElement>(null);
+  const focusedItemRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
@@ -156,11 +163,8 @@ export const DropdownMenu = <Item = MenuItem,>({
     document.addEventListener('click', handleDocumentClick, { capture: true });
     document.addEventListener('keydown', handleKeyDown, { capture: true });
 
-    if (openedViaKeyboard) {
-      const firstMenuItem = nodeRef.current?.querySelector<
-        HTMLAnchorElement | HTMLButtonElement
-      >('li:first-child > :is(a, button)');
-      firstMenuItem?.focus({ preventScroll: true });
+    if (focusedItemRef.current && openedViaKeyboard) {
+      focusedItemRef.current.focus({ preventScroll: true });
     }
 
     return () => {
@@ -170,6 +174,13 @@ export const DropdownMenu = <Item = MenuItem,>({
       document.removeEventListener('keydown', handleKeyDown, { capture: true });
     };
   }, [onClose, openedViaKeyboard]);
+
+  const handleFocusedItemRef = useCallback(
+    (c: HTMLAnchorElement | HTMLButtonElement | null) => {
+      focusedItemRef.current = c as HTMLElement;
+    },
+    [],
+  );
 
   const handleItemClick = useCallback(
     (e: React.MouseEvent | React.KeyboardEvent) => {
@@ -196,6 +207,15 @@ export const DropdownMenu = <Item = MenuItem,>({
     [onClose, onItemClick, items],
   );
 
+  const handleItemKeyUp = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        handleItemClick(e);
+      }
+    },
+    [handleItemClick],
+  );
+
   const nativeRenderItem = (option: Item, i: number) => {
     if (!isMenuItem(option)) {
       return null;
@@ -212,10 +232,11 @@ export const DropdownMenu = <Item = MenuItem,>({
     if (isActionItem(option)) {
       element = (
         <button
+          ref={i === 0 ? handleFocusedItemRef : undefined}
           onClick={handleItemClick}
+          onKeyUp={handleItemKeyUp}
           data-index={i}
           aria-disabled={disabled}
-          type='button'
         >
           <DropdownMenuItemContent item={option} />
         </button>
@@ -227,7 +248,9 @@ export const DropdownMenu = <Item = MenuItem,>({
           target={option.target ?? '_target'}
           data-method={option.method}
           rel='noopener'
+          ref={i === 0 ? handleFocusedItemRef : undefined}
           onClick={handleItemClick}
+          onKeyUp={handleItemKeyUp}
           data-index={i}
         >
           <DropdownMenuItemContent item={option} />
@@ -235,7 +258,13 @@ export const DropdownMenu = <Item = MenuItem,>({
       );
     } else {
       element = (
-        <Link to={option.to} onClick={handleItemClick} data-index={i}>
+        <Link
+          to={option.to}
+          ref={i === 0 ? handleFocusedItemRef : undefined}
+          onClick={handleItemClick}
+          onKeyUp={handleItemKeyUp}
+          data-index={i}
+        >
           <DropdownMenuItemContent item={option} />
         </Link>
       );
@@ -278,7 +307,15 @@ export const DropdownMenu = <Item = MenuItem,>({
           })}
         >
           {items.map((option, i) =>
-            renderItemMethod(option, i, handleItemClick),
+            renderItemMethod(
+              option,
+              i,
+              {
+                onClick: handleItemClick,
+                onKeyUp: handleItemKeyUp,
+              },
+              i === 0 ? handleFocusedItemRef : undefined,
+            ),
           )}
         </ul>
       )}
@@ -362,7 +399,7 @@ export const Dropdown = <Item extends object | null = MenuItem>({
   }, [dispatch, currentId]);
 
   const handleItemClick = useCallback(
-    (e: React.MouseEvent) => {
+    (e: React.MouseEvent | React.KeyboardEvent) => {
       const i = Number(e.currentTarget.getAttribute('data-index'));
       const item = items?.[i];
 
@@ -383,20 +420,10 @@ export const Dropdown = <Item extends object | null = MenuItem>({
     [handleClose, onItemClick, items],
   );
 
-  const isKeypressRef = useRef(false);
-
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === ' ' || e.key === 'Enter') {
-      isKeypressRef.current = true;
-    }
-  }, []);
-
-  const unsetIsKeypress = useCallback(() => {
-    isKeypressRef.current = false;
-  }, []);
-
   const toggleDropdown = useCallback(
-    (e: React.MouseEvent) => {
+    (e: React.MouseEvent | React.KeyboardEvent) => {
+      const { type } = e;
+
       if (open) {
         handleClose();
       } else {
@@ -423,11 +450,10 @@ export const Dropdown = <Item extends object | null = MenuItem>({
           dispatch(
             openDropdownMenu({
               id: currentId,
-              keyboard: isKeypressRef.current,
+              keyboard: type !== 'click',
               scrollKey,
             }),
           );
-          isKeypressRef.current = false;
         }
       }
     },
@@ -458,9 +484,6 @@ export const Dropdown = <Item extends object | null = MenuItem>({
   const buttonProps = {
     disabled,
     onClick: toggleDropdown,
-    onKeyDown: handleKeyDown,
-    onKeyUp: unsetIsKeypress,
-    onBlur: unsetIsKeypress,
     'aria-expanded': open,
     'aria-controls': menuId,
     ref: buttonRef,

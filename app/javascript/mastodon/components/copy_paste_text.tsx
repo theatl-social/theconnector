@@ -74,7 +74,7 @@ export const CopyPasteText: React.FC<{ value: string }> = ({ value }) => {
         onBlur={handleBlur}
       />
 
-      <button className='button' onClick={handleButtonClick} type='button'>
+      <button className='button' onClick={handleButtonClick}>
         <Icon id='copy' icon={ContentCopyIcon} />{' '}
         {copied ? (
           <FormattedMessage id='copypaste.copied' defaultMessage='Copied' />

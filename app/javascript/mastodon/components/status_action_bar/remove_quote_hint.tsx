@@ -44,7 +44,6 @@ export const RemoveQuoteHint: React.FC<{
 
     if (!firstHintId) {
       firstHintId = uniqueId;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsOnlyHint(true);
     }
 
@@ -65,8 +64,8 @@ export const RemoveQuoteHint: React.FC<{
           flip
           offset={[12, 10]}
           placement='bottom-end'
-          target={anchorRef}
-          container={anchorRef}
+          target={anchorRef.current}
+          container={anchorRef.current}
         >
           {({ props, placement }) => (
             <div

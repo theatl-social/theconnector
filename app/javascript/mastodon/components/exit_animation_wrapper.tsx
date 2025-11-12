@@ -27,23 +27,22 @@ export const ExitAnimationWrapper: React.FC<{
    */
   children: (delayedIsActive: boolean) => React.ReactNode;
 }> = ({ isActive = false, delayMs = 500, withEntryDelay, children }) => {
-  const [delayedIsActive, setDelayedIsActive] = useState(
-    isActive && !withEntryDelay,
-  );
+  const [delayedIsActive, setDelayedIsActive] = useState(false);
 
   useEffect(() => {
-    const withDelay = !isActive || withEntryDelay;
+    if (isActive && !withEntryDelay) {
+      setDelayedIsActive(true);
 
-    const timeout = setTimeout(
-      () => {
+      return () => '';
+    } else {
+      const timeout = setTimeout(() => {
         setDelayedIsActive(isActive);
-      },
-      withDelay ? delayMs : 0,
-    );
+      }, delayMs);
 
-    return () => {
-      clearTimeout(timeout);
-    };
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
   }, [isActive, delayMs, withEntryDelay]);
 
   if (!isActive && !delayedIsActive) {

@@ -9,15 +9,15 @@ module Mastodon
     end
 
     def minor
-      6
+      5
     end
 
     def patch
-      '0-theatlsocial-nightly-20251111'
+      0
     end
 
     def default_prerelease
-      'alpha.1'
+      'theatlsocial-20251112'
     end
 
     def prerelease

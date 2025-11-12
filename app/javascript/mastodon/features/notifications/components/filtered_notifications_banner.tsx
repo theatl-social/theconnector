@@ -45,7 +45,6 @@ export const FilteredNotificationsIconButton: React.FC<{
       title={intl.formatMessage(messages.filteredNotifications)}
       onClick={handleClick}
       className={className}
-      type='button'
     >
       <Icon id='filtered-notifications' icon={InventoryIcon} />
     </button>

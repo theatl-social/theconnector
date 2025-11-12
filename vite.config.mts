@@ -15,6 +15,7 @@ import {
 } from 'vite';
 import manifestSRI from 'vite-plugin-manifest-sri';
 import { VitePWA } from 'vite-plugin-pwa';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -39,14 +40,9 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   }
   const outDir = path.resolve('public', outDirName);
 
-  // Use CDN_HOST for production builds if configured
-  const cdnHost = process.env.CDN_HOST;
-  const base =
-    isProdBuild && cdnHost ? `${cdnHost}/${outDirName}/` : `/${outDirName}/`;
-
   return {
     root: jsRoot,
-    base,
+    base: `/${outDirName}/`,
     envDir: __dirname,
     resolve: {
       alias: {
@@ -171,6 +167,21 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
       }),
       MastodonThemes(),
       MastodonAssetsManifest(),
+      viteStaticCopy({
+        targets: [
+          {
+            src: path.resolve(
+              __dirname,
+              'node_modules/emojibase-data/**/compact.json',
+            ),
+            dest: 'emoji',
+            rename(_name, ext, dir) {
+              const locale = path.basename(path.dirname(dir));
+              return `${locale}.${ext}`;
+            },
+          },
+        ],
+      }),
       MastodonServiceWorkerLocales(),
       MastodonEmojiCompressed(),
       legacy({
