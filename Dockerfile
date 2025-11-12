@@ -403,8 +403,11 @@ RUN \
 COPY . /opt/mastodon/
 
 # Copy compiled assets to layer
-COPY --from=precompiler /opt/mastodon/public/packs /opt/mastodon/public/packs
-COPY --from=precompiler /opt/mastodon/public/assets /opt/mastodon/public/assets
+# COPY --from=precompiler /opt/mastodon/public/packs /opt/mastodon/public/packs
+# COPY --from=precompiler /opt/mastodon/public/assets /opt/mastodon/public/assets
+COPY --from=precompiler /opt/mastodon/public /opt/mastodon/public
+
+
 # Copy bundler components to layer
 COPY --from=bundler /usr/local/bundle/ /usr/local/bundle/
 # Copy libvips components to layer
