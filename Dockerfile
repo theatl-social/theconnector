@@ -32,9 +32,6 @@ ARG MASTODON_VERSION_PRERELEASE=""
 ARG MASTODON_VERSION_METADATA=""
 # Will be available as Mastodon::Version.source_commit
 ARG SOURCE_COMMIT=""
-# CDN host URL for Vite asset compilation (no trailing slash)
-# Example: https://mastodon-static.theatl.social
-ARG CDN_HOST=""
 
 # Allow Ruby on Rails to serve static files
 # See: https://docs.joinmastodon.org/admin/config/#rails_serve_static_files
@@ -287,7 +284,6 @@ RUN \
 FROM build AS precompiler
 
 ARG TARGETPLATFORM
-ARG CDN_HOST
 
 # Copy Mastodon sources into layer
 COPY . /opt/mastodon/
@@ -335,8 +331,6 @@ RUN \
   export ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=$(cat /run/secrets/ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY 2>/dev/null || echo ""); \
   # Use dummy key if no secrets provided (for local builds without secrets)
   if [ -z "$SECRET_KEY_BASE" ]; then export SECRET_KEY_BASE_DUMMY=1; fi; \
-  # Export CDN_HOST for Vite asset compilation (if provided)
-  if [ -n "$CDN_HOST" ]; then export CDN_HOST="$CDN_HOST"; fi; \
   # Use Ruby on Rails to create Mastodon assets
   bundle exec rails assets:precompile; \
   # Cleanup temporary files
@@ -398,10 +392,8 @@ RUN \
 COPY . /opt/mastodon/
 
 # Copy compiled assets to layer
-# COPY --from=precompiler /opt/mastodon/public/packs /opt/mastodon/public/packs
-# COPY --from=precompiler /opt/mastodon/public/assets /opt/mastodon/public/assets
-COPY --from=precompiler /opt/mastodon/public /opt/mastodon/public
-
+COPY --from=precompiler /opt/mastodon/public/packs /opt/mastodon/public/packs
+COPY --from=precompiler /opt/mastodon/public/assets /opt/mastodon/public/assets
 # Copy bundler components to layer
 COPY --from=bundler /usr/local/bundle/ /usr/local/bundle/
 # Copy libvips components to layer
