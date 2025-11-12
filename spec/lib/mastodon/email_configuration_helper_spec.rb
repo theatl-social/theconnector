@@ -21,9 +21,8 @@ RSpec.describe Mastodon::EmailConfigurationHelper do
         base_configuration.merge({ enable_starttls: 'always' })
       end
 
-      it 'converts this to `:always`' do
-        expect(converted_settings[:enable_starttls]).to eq :always
-        expect(converted_settings[:enable_starttls_auto]).to be_nil
+      it 'converts this to `true`' do
+        expect(converted_settings[:enable_starttls]).to be true
       end
     end
 
@@ -34,7 +33,6 @@ RSpec.describe Mastodon::EmailConfigurationHelper do
 
       it 'converts this to `false`' do
         expect(converted_settings[:enable_starttls]).to be false
-        expect(converted_settings[:enable_starttls_auto]).to be_nil
       end
     end
 
@@ -43,43 +41,28 @@ RSpec.describe Mastodon::EmailConfigurationHelper do
         base_configuration.merge({ enable_starttls: 'auto' })
       end
 
-      it 'sets `enable_starttls` to `:auto`' do
-        expect(converted_settings[:enable_starttls]).to eq :auto
-        expect(converted_settings[:enable_starttls_auto]).to be_nil
+      it 'sets `enable_starttls_auto` instead' do
+        expect(converted_settings[:enable_starttls]).to be_nil
+        expect(converted_settings[:enable_starttls_auto]).to be true
       end
     end
 
     context 'when `enable_starttls` is unset' do
-      context 'when `enable_starttls_auto` is true' do
-        let(:configuration) do
-          base_configuration.merge({ enable_starttls_auto: true })
-        end
+      context 'when `enable_starttls_auto` is unset' do
+        let(:configuration) { base_configuration }
 
-        it 'sets `enable_starttls` to `:auto`' do
-          expect(converted_settings[:enable_starttls]).to eq :auto
-          expect(converted_settings[:enable_starttls_auto]).to be_nil
+        it 'sets `enable_starttls_auto` to `true`' do
+          expect(converted_settings[:enable_starttls_auto]).to be true
         end
       end
 
-      context 'when `tls` is set to true' do
+      context 'when `enable_starttls_auto` is set to "false"' do
         let(:configuration) do
-          base_configuration.merge({ tls: true })
+          base_configuration.merge({ enable_starttls_auto: 'false' })
         end
 
-        it 'sets `enable_starttls` to `nil`' do
-          expect(converted_settings[:enable_starttls]).to be_nil
-          expect(converted_settings[:enable_starttls_auto]).to be_nil
-        end
-      end
-
-      context 'when `enable_starttls_auto` is set to false' do
-        let(:configuration) do
-          base_configuration.merge({ enable_starttls_auto: false })
-        end
-
-        it 'sets `enable_starttls` to `false`' do
-          expect(converted_settings[:enable_starttls]).to be false
-          expect(converted_settings[:enable_starttls_auto]).to be_nil
+        it 'sets `enable_starttls_auto` to `false`' do
+          expect(converted_settings[:enable_starttls_auto]).to be false
         end
       end
     end

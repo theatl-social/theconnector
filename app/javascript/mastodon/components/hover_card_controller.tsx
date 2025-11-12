@@ -27,6 +27,7 @@ export const HoverCardController: React.FC = () => {
   const [setLeaveTimeout, cancelLeaveTimeout] = useTimeout();
   const [setEnterTimeout, cancelEnterTimeout, delayEnterTimeout] = useTimeout();
   const [setScrollTimeout] = useTimeout();
+  const location = useLocation();
 
   const handleClose = useCallback(() => {
     cancelEnterTimeout();
@@ -35,12 +36,9 @@ export const HoverCardController: React.FC = () => {
     setAnchor(null);
   }, [cancelEnterTimeout, cancelLeaveTimeout, setOpen, setAnchor]);
 
-  const location = useLocation();
-  const [previousLocation, setPreviousLocation] = useState(location);
-  if (location !== previousLocation) {
-    setPreviousLocation(location);
+  useEffect(() => {
     handleClose();
-  }
+  }, [handleClose, location]);
 
   useEffect(() => {
     let isScrolling = false;

@@ -32,38 +32,16 @@ interface Rule extends BaseRule {
   translations?: Record<string, BaseRule>;
 }
 
-function getDefaultSelectedLocale(
-  currentUiLocale: string,
-  localeOptions: SelectItem[],
-) {
-  const preciseMatch = localeOptions.find(
-    (option) => option.value === currentUiLocale,
-  );
-  if (preciseMatch) {
-    return preciseMatch.value;
-  }
-
-  const partialLocale = currentUiLocale.split('-')[0];
-  const partialMatch = localeOptions.find(
-    (option) => option.value.split('-')[0] === partialLocale,
-  );
-
-  return partialMatch?.value ?? 'default';
-}
-
 export const RulesSection: FC<RulesSectionProps> = ({ isLoading = false }) => {
   const intl = useIntl();
+  const [locale, setLocale] = useState(intl.locale);
+  const rules = useAppSelector((state) => rulesSelector(state, locale));
   const localeOptions = useAppSelector((state) =>
     localeOptionsSelector(state, intl),
   );
-  const [selectedLocale, setSelectedLocale] = useState(() =>
-    getDefaultSelectedLocale(intl.locale, localeOptions),
-  );
-  const rules = useAppSelector((state) => rulesSelector(state, selectedLocale));
-
   const handleLocaleChange: ChangeEventHandler<HTMLSelectElement> = useCallback(
     (e) => {
-      setSelectedLocale(e.currentTarget.value);
+      setLocale(e.currentTarget.value);
     },
     [],
   );
@@ -96,27 +74,25 @@ export const RulesSection: FC<RulesSectionProps> = ({ isLoading = false }) => {
         ))}
       </ol>
 
-      {localeOptions.length > 1 && (
-        <div className='rules-languages'>
-          <label htmlFor='language-select'>
-            <FormattedMessage
-              id='about.language_label'
-              defaultMessage='Language'
-            />
-          </label>
-          <select onChange={handleLocaleChange} id='language-select'>
-            {localeOptions.map((option) => (
-              <option
-                key={option.value}
-                value={option.value}
-                selected={option.value === selectedLocale}
-              >
-                {option.text}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      <div className='rules-languages'>
+        <label htmlFor='language-select'>
+          <FormattedMessage
+            id='about.language_label'
+            defaultMessage='Language'
+          />
+        </label>
+        <select onChange={handleLocaleChange} id='language-select'>
+          {localeOptions.map((option) => (
+            <option
+              key={option.value}
+              value={option.value}
+              selected={option.value === locale}
+            >
+              {option.text}
+            </option>
+          ))}
+        </select>
+      </div>
     </Section>
   );
 };

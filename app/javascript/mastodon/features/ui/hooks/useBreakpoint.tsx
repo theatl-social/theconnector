@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { useState, useEffect } from 'react';
 
 const breakpoints = {
   narrow: 479, // Device width under which horizontal space is constrained
@@ -9,20 +9,25 @@ const breakpoints = {
 type Breakpoint = keyof typeof breakpoints;
 
 export const useBreakpoint = (breakpoint: Breakpoint) => {
-  const query = `(max-width: ${breakpoints[breakpoint]}px)`;
+  const [isMatching, setIsMatching] = useState(false);
 
-  const isMatching = useSyncExternalStore(
-    (callback) => {
-      const mediaWatcher = window.matchMedia(query);
+  useEffect(() => {
+    const mediaWatcher = window.matchMedia(
+      `(max-width: ${breakpoints[breakpoint]}px)`,
+    );
 
-      mediaWatcher.addEventListener('change', callback);
+    setIsMatching(mediaWatcher.matches);
 
-      return () => {
-        mediaWatcher.removeEventListener('change', callback);
-      };
-    },
-    () => window.matchMedia(query).matches,
-  );
+    const handleChange = (e: MediaQueryListEvent) => {
+      setIsMatching(e.matches);
+    };
+
+    mediaWatcher.addEventListener('change', handleChange);
+
+    return () => {
+      mediaWatcher.removeEventListener('change', handleChange);
+    };
+  }, [breakpoint, setIsMatching]);
 
   return isMatching;
 };

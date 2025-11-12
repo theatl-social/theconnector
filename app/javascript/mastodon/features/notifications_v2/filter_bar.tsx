@@ -50,7 +50,6 @@ const BarButton: React.FC<
       className={selectedFilter === type ? 'active' : ''}
       onClick={onClick}
       title={title}
-      type='button'
     >
       {children}
     </button>

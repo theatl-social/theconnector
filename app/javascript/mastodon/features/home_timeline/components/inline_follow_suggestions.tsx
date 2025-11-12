@@ -270,7 +270,7 @@ export const InlineFollowSuggestions: React.FC<{ hidden?: boolean }> = ({
         </h3>
 
         <div className='inline-follow-suggestions__header__actions'>
-          <button className='link-button' onClick={handleDismiss} type='button'>
+          <button className='link-button' onClick={handleDismiss}>
             <FormattedMessage
               id='follow_suggestions.dismiss'
               defaultMessage="Don't show again"
@@ -309,7 +309,6 @@ export const InlineFollowSuggestions: React.FC<{ hidden?: boolean }> = ({
             className='inline-follow-suggestions__body__scroll-button left'
             onClick={handleLeftNav}
             aria-label={intl.formatMessage(messages.previous)}
-            type='button'
           >
             <div className='inline-follow-suggestions__body__scroll-button__icon'>
               <Icon id='' icon={ChevronLeftIcon} />
@@ -322,7 +321,6 @@ export const InlineFollowSuggestions: React.FC<{ hidden?: boolean }> = ({
             className='inline-follow-suggestions__body__scroll-button right'
             onClick={handleRightNav}
             aria-label={intl.formatMessage(messages.next)}
-            type='button'
           >
             <div className='inline-follow-suggestions__body__scroll-button__icon'>
               <Icon id='' icon={ChevronRightIcon} />

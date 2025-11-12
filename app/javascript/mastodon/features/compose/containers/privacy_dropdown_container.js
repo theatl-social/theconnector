@@ -1,7 +1,8 @@
 import { connect } from 'react-redux';
 
-import { changeComposeVisibility } from '@/mastodon/actions/compose_typed';
-
+import { changeComposeVisibility } from '../../../actions/compose';
+import { openModal, closeModal } from '../../../actions/modal';
+import { isUserTouching } from '../../../is_mobile';
 import PrivacyDropdown from '../components/privacy_dropdown';
 
 const mapStateToProps = state => ({

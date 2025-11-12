@@ -5,10 +5,8 @@ import { defineMessages, useIntl } from 'react-intl';
 
 import classNames from 'classnames';
 
-import {
-  changeComposeVisibility,
-  setComposeQuotePolicy,
-} from '@/mastodon/actions/compose_typed';
+import { changeComposeVisibility } from '@/mastodon/actions/compose';
+import { setComposeQuotePolicy } from '@/mastodon/actions/compose_typed';
 import { openModal } from '@/mastodon/actions/modal';
 import type { ApiQuotePolicy } from '@/mastodon/api_types/quotes';
 import type { StatusVisibility } from '@/mastodon/api_types/statuses';

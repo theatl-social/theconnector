@@ -31,7 +31,6 @@ export const Section: FC<SectionProps> = ({
         className='about__section__title'
         tabIndex={0}
         onClick={handleClick}
-        type='button'
       >
         <Icon
           id={collapsed ? 'chevron-right' : 'chevron-down'}

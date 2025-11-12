@@ -381,7 +381,6 @@ const LoginForm: React.FC<{
                 className={classNames('search__popout__menu__item', {
                   selected: selectedOption === i,
                 })}
-                type='button'
               >
                 {option
                   .split(domainRegExp)
@@ -452,7 +451,7 @@ const InteractionModal: React.FC<{
     );
   } else {
     signupButton = (
-      <button className='link-button' onClick={handleSignupClick} type='button'>
+      <button className='link-button' onClick={handleSignupClick}>
         <FormattedMessage
           id='sign_in_banner.create_account'
           defaultMessage='Create account'

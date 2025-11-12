@@ -113,7 +113,7 @@ export const BoostModal: React.FC<{
 
           <div className='spacer' />
 
-          <button onClick={handleCancel} className='link-button' type='button'>
+          <button onClick={handleCancel} className='link-button'>
             <FormattedMessage
               id='confirmation_modal.cancel'
               defaultMessage='Cancel'

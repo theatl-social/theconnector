@@ -25,12 +25,7 @@ export const ActionsModal: React.FC<{
 
         if (isActionItem(option)) {
           element = (
-            <button
-              onClick={onClick}
-              data-index={i}
-              disabled={disabled}
-              type='button'
-            >
+            <button onClick={onClick} data-index={i} disabled={disabled}>
               <DropdownMenuItemContent item={option} />
             </button>
           );
