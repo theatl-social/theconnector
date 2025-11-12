@@ -13,11 +13,11 @@ module Mastodon
     end
 
     def patch
-      '0-theatlsocial-nightly-20251029'
+      0
     end
 
     def default_prerelease
-      'rc.1'
+      'theatlsocial-20251112'
     end
 
     def prerelease
