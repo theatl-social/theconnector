@@ -59,6 +59,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ secrets.DOCKER_HUB_USER_NAME }}/mastodon-compiled:${{ steps.version.outputs.tag }}
+          build-args: |
+            CDN_HOST=${{ vars.CDN_HOST }}
           secrets: |
             "ARG_SECRET_KEY_BASE=${{ secrets.ARG_SECRET_KEY_BASE }}"
             "ARG_OTP_SECRET=${{ secrets.ARG_OTP_SECRET }}"
