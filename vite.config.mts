@@ -39,9 +39,16 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   }
   const outDir = path.resolve('public', outDirName);
 
+  // Support CDN_HOST for production builds
+  // This allows all Vite-generated asset URLs to use a CDN
+  const cdnHost = process.env.CDN_HOST;
+  const base = isProdBuild && cdnHost
+    ? `${cdnHost}/${outDirName}/`
+    : `/${outDirName}/`;
+
   return {
     root: jsRoot,
-    base: `/${outDirName}/`,
+    base,
     envDir: __dirname,
     resolve: {
       alias: {

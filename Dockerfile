@@ -36,6 +36,10 @@ ARG SOURCE_COMMIT=""
 # Allow Ruby on Rails to serve static files
 # See: https://docs.joinmastodon.org/admin/config/#rails_serve_static_files
 ARG RAILS_SERVE_STATIC_FILES="true"
+# CDN host for serving static assets (optional)
+# When set, all Vite-generated asset URLs will use this CDN host
+# Example: [--build-arg CDN_HOST=https://cdn.example.com]
+ARG CDN_HOST=""
 # Allow to use YJIT compiler
 # See: https://github.com/ruby/ruby/blob/v3_2_4/doc/yjit/yjit.md
 ARG RUBY_YJIT_ENABLE="1"
@@ -272,6 +276,7 @@ RUN \
 FROM build AS precompiler
 
 ARG TARGETPLATFORM
+ARG CDN_HOST
 
 # Copy Mastodon sources into layer
 COPY . /opt/mastodon/
@@ -304,6 +309,7 @@ RUN \
   ldconfig; \
   # Use Ruby on Rails to create Mastodon assets
   SECRET_KEY_BASE_DUMMY=1 \
+  CDN_HOST="${CDN_HOST}" \
   bundle exec rails assets:precompile; \
   # Cleanup temporary files
   rm -fr /opt/mastodon/tmp;
