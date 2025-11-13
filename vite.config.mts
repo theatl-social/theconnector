@@ -42,9 +42,22 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   // Support CDN_HOST for production builds
   // This allows all Vite-generated asset URLs to use a CDN
   const cdnHost = process.env.CDN_HOST;
+
+  // Debug logging
+  console.log('=== VITE CONFIG DEBUG ===');
+  console.log('mode:', mode);
+  console.log('command:', command);
+  console.log('isProdBuild:', isProdBuild);
+  console.log('process.env.CDN_HOST:', process.env.CDN_HOST);
+  console.log('cdnHost:', cdnHost);
+  console.log('outDirName:', outDirName);
+
   const base = isProdBuild && cdnHost
     ? `${cdnHost}/${outDirName}/`
     : `/${outDirName}/`;
+
+  console.log('base:', base);
+  console.log('=========================');
 
   return {
     root: jsRoot,
