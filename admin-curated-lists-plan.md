@@ -1,9 +1,11 @@
 # Admin-Curated Lists Implementation Plan
 
 ## Overview
+
 Extend Mastodon's existing list functionality to allow administrators to create and curate lists on behalf of users, while maintaining full backwards compatibility with the Mastodon API and third-party clients.
 
 ## Core Design Principles
+
 - **100% backwards compatible** - No breaking changes to existing APIs
 - **Transparent to clients** - Third-party apps see no difference
 - **Mixed content support** - Lists can contain both followed accounts and individually curated statuses
@@ -12,8 +14,9 @@ Extend Mastodon's existing list functionality to allow administrators to create 
 ## Database Schema Changes
 
 ### 1. Modify `lists` table
+
 ```sql
-ALTER TABLE lists 
+ALTER TABLE lists
 ADD COLUMN curated_by_id bigint DEFAULT NULL,
 ADD COLUMN editable_by_owner boolean DEFAULT true,
 ADD COLUMN user_deleted_at timestamp DEFAULT NULL,  -- Soft delete by user
@@ -27,6 +30,7 @@ ADD FOREIGN KEY (curated_by_id) REFERENCES accounts(id);
 ```
 
 ### 2. Create `curated_list_statuses` table
+
 ```sql
 CREATE TABLE curated_list_statuses (
   id bigserial PRIMARY KEY,
@@ -47,27 +51,28 @@ CREATE INDEX idx_curated_list_statuses_status_id ON curated_list_statuses(status
 ### 1. Model Changes
 
 #### app/models/list.rb
+
 ```ruby
 class List < ApplicationRecord
   # Existing associations
   belongs_to :account
   has_many :list_accounts, inverse_of: :list, dependent: :destroy
   has_many :accounts, through: :list_accounts
-  
+
   # New associations
   belongs_to :curator, class_name: 'Account', foreign_key: 'curated_by_id', optional: true
   has_many :curated_list_statuses, dependent: :destroy
   has_many :curated_statuses, through: :curated_list_statuses, source: :status
-  
+
   # New scopes
   scope :curated, -> { where.not(curated_by_id: nil) }
   scope :user_created, -> { where(curated_by_id: nil) }
-  
+
   # New methods
   def curated?
     curated_by_id.present?
   end
-  
+
   def editable_by?(account)
     return false if account.nil?
     return true if account.id == account_id && editable_by_owner
@@ -78,23 +83,24 @@ end
 ```
 
 #### app/models/curated_list_status.rb (new)
+
 ```ruby
 class CuratedListStatus < ApplicationRecord
   belongs_to :list
   belongs_to :status
   belongs_to :added_by, class_name: 'Account'
-  
+
   validates :status_id, uniqueness: { scope: :list_id }
-  
+
   after_create :add_to_feed
   after_destroy :remove_from_feed
-  
+
   private
-  
+
   def add_to_feed
     FeedManager.instance.push_to_list(list, status)
   end
-  
+
   def remove_from_feed
     FeedManager.instance.unpush_from_list(list, status)
   end
@@ -104,6 +110,7 @@ end
 ### 2. FeedManager Modifications
 
 #### app/lib/feed_manager.rb
+
 ```ruby
 class FeedManager
   # New method for pushing curated statuses
@@ -113,11 +120,11 @@ class FeedManager
     PushUpdateWorker.perform_async(list.account_id, status.id, "timeline:list:#{list.id}")
     true
   end
-  
+
   # Modified merge_into_list to include curated statuses
   def merge_into_list(from_account, list)
     # Existing account-based merge logic...
-    
+
     # Add curated statuses if any
     if list.curated?
       list.curated_statuses.find_each do |status|
@@ -131,61 +138,62 @@ end
 ### 3. Admin Controllers
 
 #### app/controllers/admin/curated_lists_controller.rb (new)
+
 ```ruby
 class Admin::CuratedListsController < Admin::BaseController
   before_action :set_account, only: [:new, :create]
   before_action :set_list, except: [:index, :new, :create]
-  
+
   def index
     @lists = List.curated.includes(:account, :curator).page(params[:page])
   end
-  
+
   def new
     @list = @account.lists.build
   end
-  
+
   def create
     @list = @account.lists.build(list_params)
     @list.curated_by = current_account
-    
+
     if @list.save
       redirect_to admin_curated_list_path(@list), notice: 'List created successfully'
     else
       render :new
     end
   end
-  
+
   def add_status
     @status = Status.find(params[:status_id])
-    
+
     @curated_status = @list.curated_list_statuses.build(
       status: @status,
       added_by: current_account
     )
-    
+
     if @curated_status.save
       render json: { success: true }
     else
       render json: { error: @curated_status.errors.full_messages }, status: 422
     end
   end
-  
+
   def remove_status
     @curated_status = @list.curated_list_statuses.find_by!(status_id: params[:status_id])
     @curated_status.destroy
     render json: { success: true }
   end
-  
+
   private
-  
+
   def set_account
     @account = Account.find(params[:account_id])
   end
-  
+
   def set_list
     @list = List.find(params[:id])
   end
-  
+
   def list_params
     params.require(:list).permit(:title, :replies_policy, :editable_by_owner)
   end
@@ -195,6 +203,7 @@ end
 ### 4. API Endpoints (Admin only)
 
 #### config/routes/admin.rb
+
 ```ruby
 namespace :admin do
   resources :curated_lists do
@@ -209,6 +218,7 @@ end
 ### 5. User-facing Modifications
 
 #### app/controllers/api/v1/lists_controller.rb
+
 ```ruby
 class Api::V1::ListsController < Api::BaseController
   # Modified index to exclude soft-deleted curated lists
@@ -218,7 +228,7 @@ class Api::V1::ListsController < Api::BaseController
                  .all
     render json: @lists, each_serializer: REST::ListSerializer
   end
-  
+
   # Modified update action to respect curation
   def update
     if @list.curated? && !@list.editable_by_owner
@@ -230,7 +240,7 @@ class Api::V1::ListsController < Api::BaseController
       render json: @list, serializer: REST::ListSerializer
     end
   end
-  
+
   # Modified destroy - soft delete for curated lists
   def destroy
     if @list.curated?

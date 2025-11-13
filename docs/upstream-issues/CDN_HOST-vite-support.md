@@ -34,6 +34,7 @@ After the migration from Webpack to Vite in v4.4.0 (PR #34450), the `CDN_HOST` e
 **With Webpack (v4.3.x and earlier):**
 
 All assets should be loaded from the CDN:
+
 - ✅ `https://cdn.example.com/packs/application-abc123.js`
 - ✅ `https://cdn.example.com/packs/features_ui-xyz789.js` (code-split chunks)
 - ✅ `https://cdn.example.com/packs/emoji/en.json`
@@ -44,6 +45,7 @@ All assets should be loaded from the CDN:
 **With Vite (v4.4.0+):**
 
 Only initial HTML-embedded assets use CDN, dynamic assets do not:
+
 - ✅ `https://cdn.example.com/packs/application-abc123.js` (works - via vite_javascript_tag)
 - ❌ `https://mastodon.example.com/packs/features_ui-xyz789.js` (broken - dynamic import)
 - ❌ `https://mastodon.example.com/packs/emoji/en.json` (broken - fetch in loader.ts)
@@ -52,6 +54,7 @@ Only initial HTML-embedded assets use CDN, dynamic assets do not:
 ## Impact
 
 This issue causes:
+
 - **Increased load on application servers** - defeats the purpose of using a CDN
 - **Potential CORS errors** if headers not configured
 - **Performance degradation** for users far from application server
@@ -59,6 +62,7 @@ This issue causes:
 - **Subresource Integrity failures** in some cases
 
 This affects **any** Mastodon instance using:
+
 - CDN for asset delivery (CloudFront, Cloudflare, Fastly, etc.)
 - Multi-server deployments with separate asset server
 - Geographically distributed deployments
@@ -85,10 +89,11 @@ Vite's `base` configuration option is build-time only:
 // vite.config.mts
 export default {
   base: '/packs/', // This is BAKED IN at build time
-}
+};
 ```
 
 When Vite processes:
+
 - `import('./features/ui')` → generates `/packs/features_ui-hash.js`
 - `import.meta.glob('./*.json')` → generates object with `/packs/` paths
 - Code splitting → manifest entries have `/packs/` paths
@@ -105,6 +110,7 @@ While Rails' `config.asset_host` works for vite_rails helper tags:
 ```
 
 It does NOT affect:
+
 - JavaScript `import()` statements
 - `import.meta.glob()` results
 - Vite's internal manifest URLs
@@ -122,17 +128,17 @@ It does NOT affect:
 // vite.config.mts
 const cdnHost = process.env.CDN_HOST;
 const isProdBuild = mode === 'production' && command === 'build';
-const base = isProdBuild && cdnHost
-  ? `${cdnHost}/${outDirName}/`
-  : `/${outDirName}/`;
+const base =
+  isProdBuild && cdnHost ? `${cdnHost}/${outDirName}/` : `/${outDirName}/`;
 
 export default {
   base,
   // ... rest of config
-}
+};
 ```
 
 **Dockerfile change:**
+
 ```dockerfile
 ARG CDN_HOST=""
 ENV CDN_HOST=${CDN_HOST}
@@ -140,6 +146,7 @@ RUN bundle exec rails assets:precompile
 ```
 
 **Pros:**
+
 - ✅ Simple, 5-line change to vite.config.mts
 - ✅ Works with ALL assets (100% coverage)
 - ✅ No runtime overhead
@@ -148,6 +155,7 @@ RUN bundle exec rails assets:precompile
 - ✅ Standard practice in Vite ecosystem
 
 **Cons:**
+
 - ❌ Requires CDN_HOST at build time
 - ❌ Docker image "locked" to specific CDN
 - ❌ Can't change CDN without rebuild
@@ -159,17 +167,20 @@ RUN bundle exec rails assets:precompile
 **Change:** Use Vite plugin for runtime public path configuration.
 
 **Implementation:**
+
 1. Add `vite-plugin-dynamic-publicpath` dependency
 2. Configure plugin in vite.config.mts
 3. Inject runtime handler reading `<meta name="cdn-host">` tag
 4. Fix manual URL construction in loader.ts
 
 **Pros:**
+
 - ✅ Single Docker image for any CDN
 - ✅ Change CDN without rebuild
 - ✅ Most flexible for forks/instances
 
 **Cons:**
+
 - ⚠️ Adds dependency
 - ⚠️ More complex implementation
 - ⚠️ Small runtime overhead
@@ -185,10 +196,12 @@ RUN bundle exec rails assets:precompile
 - Fall back to runtime detection if not set (Option 2)
 
 **Pros:**
+
 - ✅ Works for both scenarios
 - ✅ Backwards compatible
 
 **Cons:**
+
 - ⚠️ Most complex
 - ⚠️ Hardest to maintain
 
@@ -224,6 +237,7 @@ The build-time approach aligns with how Docker images work - they're immutable a
 ### Example Usage
 
 **Docker build:**
+
 ```bash
 # Without CDN (default)
 docker build -t mastodon:latest .
@@ -233,6 +247,7 @@ docker build --build-arg CDN_HOST=https://cdn.example.com -t mastodon:latest .
 ```
 
 **docker-compose:**
+
 ```yaml
 services:
   web:
@@ -242,6 +257,7 @@ services:
 ```
 
 **GitHub Actions:**
+
 ```yaml
 - uses: docker/build-push-action@v6
   with:
@@ -254,6 +270,7 @@ services:
 Comprehensive test coverage included in implementation:
 
 ### Stage 1: Static Manifest Analysis (Fast - 2 min)
+
 - Build with test CDN_HOST
 - Parse manifest.json
 - Verify all entries use CDN_HOST
@@ -261,6 +278,7 @@ Comprehensive test coverage included in implementation:
 - Scan for hardcoded paths
 
 ### Stage 2: Integration Tests (Medium - 10 min)
+
 - Start Rails server with CDN_HOST
 - Fetch rendered HTML
 - Parse all asset tags
@@ -284,11 +302,13 @@ The proposed change is **fully backward compatible**:
 For instances currently using workarounds:
 
 **Before:** Build custom image with modified vite.config.mts
+
 ```bash
 # Manual fork with changes
 ```
 
 **After:** Use official image with build arg
+
 ```bash
 docker build --build-arg CDN_HOST=https://cdn.example.com -t mastodon .
 ```
@@ -320,6 +340,7 @@ Other Rails + Vite projects handle CDN configuration similarly:
 ## Offer to Implement
 
 I'm happy to:
+
 - 📝 Submit a PR implementing Option 1 (Build-Time CDN_HOST)
 - 🧪 Write comprehensive tests (both stages)
 - 📖 Update documentation (Docker guide, deployment guide)
@@ -327,6 +348,7 @@ I'm happy to:
 - 🐛 Fix any issues that arise
 
 **Implementation status:** Already tested in fork with positive results. Can provide:
+
 - Network traces showing CDN usage
 - Performance comparisons (before/after)
 - Working branch for review
@@ -335,16 +357,19 @@ I'm happy to:
 ## Example Results
 
 **Before (v4.5.0 without fix):**
+
 ```
 GET https://mastodon.example.com/packs/features_ui-abc123.js
 ```
 
 **After (with CDN_HOST fix):**
+
 ```
 GET https://cdn.example.com/packs/features_ui-abc123.js
 ```
 
 **Manifest comparison:**
+
 ```json
 // Before
 {
@@ -372,6 +397,7 @@ This issue affects a significant portion of production Mastodon instances:
 - **Cost-conscious admins** use CDN to reduce bandwidth costs
 
 Fixing this would:
+
 - ✅ Restore functionality that existed with Webpack
 - ✅ Improve deployment flexibility
 - ✅ Enable better performance optimization

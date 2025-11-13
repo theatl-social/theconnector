@@ -7,6 +7,7 @@ This document describes the complete process for merging new commits from upstre
 TheConnector is a fork of Mastodon with customizations. We regularly merge upstream changes to stay current with Mastodon development while preserving our custom features.
 
 **Branch Strategy:**
+
 - `main` - Tracks upstream Mastodon (do not use for our changes)
 - `forked-main` - TheConnector's main branch with customizations
 - `merge-v4.x.x-YYYYMMDD` - Temporary branches for merging upstream changes
@@ -15,6 +16,7 @@ TheConnector is a fork of Mastodon with customizations. We regularly merge upstr
 ## Prerequisites
 
 ### Required Tools
+
 - Git configured with upstream remote
 - Ruby 3.4.6+ (via Homebrew, rbenv, or ruby-install/chruby)
 - Node.js 24+
@@ -23,6 +25,7 @@ TheConnector is a fork of Mastodon with customizations. We regularly merge upstr
 - Bundle and Yarn
 
 ### Upstream Remote Setup
+
 ```bash
 # Add upstream remote if not already configured
 git remote add upstream https://github.com/mastodon/mastodon.git
@@ -52,6 +55,7 @@ gh api repos/mastodon/mastodon/commits/COMMIT_SHA/check-runs \
 **Success criteria:** All checks show `{"conclusion":"success","count":30}` (or similar high count with no failures)
 
 **Good merge points:**
+
 - Version tag commits (e.g., v4.5.0-rc.1, v4.6.0-alpha.1)
 - Commits with all green checks
 - After major feature merges
@@ -68,6 +72,7 @@ git checkout -b merge-v4.x.x-YYYYMMDD forked-main
 ```
 
 **Branch naming convention:** `merge-v4.x.x-YYYYMMDD`
+
 - Use the Mastodon version being merged (e.g., v4.6.x)
 - Use the date you're creating the branch
 - Example: `merge-v4.6.x-20251111`
@@ -120,6 +125,7 @@ git status --short | grep "^UU"
 ```
 
 If other files have conflicts, review them carefully to preserve TheConnector customizations:
+
 - ENV var patterns (STATUS_LENGTH_CHARS_LIMIT, NOTE_LENGTH_LIMIT, throttle settings)
 - Custom features
 - Configuration overrides
@@ -242,22 +248,26 @@ Watch for failures: `https://github.com/theatl-social/theconnector/pull/PR_NUMBE
 **Common CI failures:**
 
 #### yarn.lock mismatch
+
 - **Symptom:** `yarn install --immutable` fails
 - **Fix:** Regenerate yarn.lock in Docker (see step 7)
 
 #### RuboCop violations
+
 ```bash
 bundle exec rubocop --auto-correct
 bundle exec rubocop  # Check remaining
 ```
 
 #### TypeScript/ESLint errors
+
 ```bash
 yarn lint:js --fix
 yarn typecheck
 ```
 
 #### Test failures
+
 - Check if tests fail on upstream too
 - Look for TheConnector-specific customizations that need updating
 - Review breaking changes in the commits being merged
@@ -305,10 +315,12 @@ This triggers private Docker build workflows on `forked-main` that build and tag
 ### Docker Build Failures
 
 **"Could not find gem_name in locally installed gems"**
+
 - Missing Linux platform in Gemfile.lock
 - Run platform addition command (step 6)
 
 **"SecretsUsedInArgOrEnv warnings"**
+
 - Check Dockerfile uses BuildKit secret mounts
 - Secrets should only appear in precompiler stage
 - Already configured correctly in our Dockerfile
@@ -326,15 +338,18 @@ This triggers private Docker build workflows on `forked-main` that build and tag
 ### CI/CD Transient Failures
 
 Some tests occasionally fail due to infrastructure issues:
+
 - **End-to-End tests** - Database initialization timing
 - **ElasticSearch tests** - Service startup timing
 
 **Symptoms:**
+
 - Only one Ruby version fails
 - Error mentions "role 'root' does not exist" or connection refused
 - Other similar tests pass
 
 **Solution:** Re-run failed jobs via GitHub UI or:
+
 ```bash
 gh run rerun RUN_ID --failed
 ```
@@ -351,12 +366,14 @@ After merging to `forked-main`, these workflows automatically build Docker image
 ### Automatic Image Tagging
 
 Images are tagged as: `YYYYMMDD-{short-hash}`
+
 - Example: `20251111-abc1234`
 - Manual workflow_dispatch available for custom tags
 
 ### Build Secrets
 
 Main Dockerfile uses BuildKit secret mounts (streaming doesn't need secrets):
+
 - Secrets passed to precompiler stage only
 - Never persist in final image layers
 - Uses real secrets for proper asset compilation
@@ -386,6 +403,7 @@ def default_prerelease; ''; end  # Empty for nightly, or keep upstream alpha/rc
 ## Testing Before Production
 
 ### Local Testing
+
 ```bash
 # Run RuboCop
 bundle exec rubocop
@@ -400,6 +418,7 @@ yarn typecheck
 ```
 
 ### Development Instance Testing
+
 - Deploy to development environment
 - Test key TheConnector features
 - Verify customizations still work
@@ -408,11 +427,13 @@ yarn typecheck
 ## Best Practices
 
 ### Merge Frequency
+
 - **Recommended:** Weekly or bi-weekly
 - **Minimum:** Monthly to avoid large, difficult merges
 - **After major releases:** Merge soon after upstream releases rc or stable versions
 
 ### Commit Selection
+
 - ✅ **Good:** Version tag commits (v4.X.0-rc.1)
 - ✅ **Good:** After feature freeze before release
 - ✅ **Good:** All checks passing
@@ -421,6 +442,7 @@ yarn typecheck
 - ❌ **Avoid:** During active upstream refactoring
 
 ### Documentation
+
 - Keep this file updated with new patterns
 - Document any new TheConnector customizations
 - Note breaking changes from upstream
@@ -429,6 +451,7 @@ yarn typecheck
 ## Getting Help
 
 ### Resources
+
 - **Upstream Mastodon:** https://github.com/mastodon/mastodon
 - **TheConnector Issues:** https://github.com/theatl-social/theconnector/issues
 - **Mastodon Docs:** https://docs.joinmastodon.org/dev/

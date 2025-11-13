@@ -52,9 +52,8 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   console.log('cdnHost:', cdnHost);
   console.log('outDirName:', outDirName);
 
-  const base = isProdBuild && cdnHost
-    ? `${cdnHost}/${outDirName}/`
-    : `/${outDirName}/`;
+  const base =
+    isProdBuild && cdnHost ? `${cdnHost}/${outDirName}/` : `/${outDirName}/`;
 
   console.log('base:', base);
   console.log('=========================');

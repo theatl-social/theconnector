@@ -117,7 +117,10 @@ View page source and verify `<script>` and `<link>` tags use CDN:
 
 ```html
 <script src="https://cdn.example.com/packs/application-abc123.js"></script>
-<link href="https://cdn.example.com/packs/application-xyz789.css" rel="stylesheet">
+<link
+  href="https://cdn.example.com/packs/application-xyz789.css"
+  rel="stylesheet"
+/>
 ```
 
 ### 2. Check Browser Network Tab
@@ -163,6 +166,7 @@ Navigate through your Mastodon instance (different timelines, settings, etc.) an
 ### CORS Errors
 
 **Error in console:**
+
 ```
 Access to script at 'https://cdn.example.com/packs/...' from origin 'https://mastodon.example.com' has been blocked by CORS
 ```
@@ -170,6 +174,7 @@ Access to script at 'https://cdn.example.com/packs/...' from origin 'https://mas
 **Solutions:**
 
 1. **Configure CDN to send CORS headers:**
+
    ```
    Access-Control-Allow-Origin: https://mastodon.example.com
    Access-Control-Allow-Methods: GET, HEAD
@@ -182,15 +187,18 @@ Access to script at 'https://cdn.example.com/packs/...' from origin 'https://mas
 ### Subresource Integrity Failures
 
 **Error in console:**
+
 ```
 Failed to find a valid digest in the 'integrity' attribute
 ```
 
 **Causes:**
+
 - CDN modifying files (compression, minification)
 - CDN not serving exact same content as origin
 
 **Solutions:**
+
 1. Disable CDN auto-minification/optimization
 2. Let Vite handle all compression/optimization
 3. Configure CDN for passthrough mode
@@ -203,9 +211,9 @@ If service worker fails to register, check that it's being served from main doma
 
 ```javascript
 // Should be same-origin
-navigator.serviceWorker.register('/sw.js')  // ✅ Correct
+navigator.serviceWorker.register('/sw.js'); // ✅ Correct
 // NOT from CDN:
-navigator.serviceWorker.register('https://cdn.example.com/sw.js')  // ❌ Wrong
+navigator.serviceWorker.register('https://cdn.example.com/sw.js'); // ❌ Wrong
 ```
 
 ## Performance Testing
@@ -213,16 +221,19 @@ navigator.serviceWorker.register('https://cdn.example.com/sw.js')  // ❌ Wrong
 ### Before and After Comparison
 
 **Before CDN (all from origin):**
+
 ```bash
 curl -w "@curl-format.txt" -o /dev/null -s https://mastodon.example.com/packs/application-xyz.js
 ```
 
 **After CDN:**
+
 ```bash
 curl -w "@curl-format.txt" -o /dev/null -s https://cdn.example.com/packs/application-xyz.js
 ```
 
 Check:
+
 - `time_total` (should be lower with CDN)
 - `X-Cache` header (should be HIT after first request)
 - `speed_download` (should be higher)
@@ -246,6 +257,7 @@ Expect 20-50% improvement depending on user location vs server location.
 ### 1. HTTPS Only
 
 Always use HTTPS for CDN_HOST:
+
 ```bash
 # ✅ Correct
 CDN_HOST=https://cdn.example.com
@@ -275,6 +287,7 @@ Cache-Control: public, max-age=31536000, immutable
 ### Enable Compression
 
 Configure CDN to compress assets (if not already compressed):
+
 - Enable Brotli compression
 - Enable Gzip as fallback
 - Assets are compressible (JS, CSS, JSON)
@@ -282,6 +295,7 @@ Configure CDN to compress assets (if not already compressed):
 ### Monitor CDN Usage
 
 Track:
+
 - Bandwidth usage (should move from origin to CDN)
 - Cache hit rate (should be >95%)
 - Origin requests (should drop significantly)

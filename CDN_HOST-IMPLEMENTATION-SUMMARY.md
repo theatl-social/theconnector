@@ -14,27 +14,31 @@ A comprehensive CDN support system that allows all Vite-generated assets to be s
 ### Core Implementation
 
 1. **vite.config.mts** (Lines 42-47)
+
    ```typescript
    const cdnHost = process.env.CDN_HOST;
-   const base = isProdBuild && cdnHost
-     ? `${cdnHost}/${outDirName}/`
-     : `/${outDirName}/`;
+   const base =
+     isProdBuild && cdnHost ? `${cdnHost}/${outDirName}/` : `/${outDirName}/`;
    ```
+
    - Reads CDN_HOST from environment during build
    - Uses it for Vite's base path configuration
    - Falls back to relative paths if not set
 
 2. **Dockerfile** (Lines 39-42, 279, 312)
+
    ```dockerfile
    ARG CDN_HOST=""  # Line 42 - Declare build arg
    ARG CDN_HOST     # Line 279 - Pass to precompiler stage
    CDN_HOST="${CDN_HOST}" \  # Line 312 - Export during asset build
    ```
+
    - Accepts CDN_HOST as Docker build argument
    - Passes it through to asset precompilation stage
    - Well-documented with comments
 
 3. **GitHub Actions** (.github/workflows/build-container-image.yml)
+
    ```yaml
    inputs:
      cdn_host:
@@ -45,6 +49,7 @@ A comprehensive CDN support system that allows all Vite-generated assets to be s
    build-args: |
      CDN_HOST=${{ inputs.cdn_host }}
    ```
+
    - Added cdn_host workflow input
    - Passes to Docker build process
    - Enables CI/CD CDN configuration
@@ -56,6 +61,7 @@ A comprehensive CDN support system that allows all Vite-generated assets to be s
 **File:** `.github/workflows/test-cdn-assets.yml`
 
 **What it tests:**
+
 - ✅ Builds assets with test CDN_HOST
 - ✅ Parses Vite's manifest.json
 - ✅ Verifies all entries use CDN_HOST prefix
@@ -66,10 +72,12 @@ A comprehensive CDN support system that allows all Vite-generated assets to be s
 - ✅ Tests backward compatibility (build without CDN_HOST)
 
 **Triggers:**
+
 - Every PR that touches asset files
 - Push to main/forked-main
 
 **Sample output:**
+
 ```
 📦 Checking Vite manifest for CDN_HOST usage...
 📊 Results:
@@ -84,6 +92,7 @@ A comprehensive CDN support system that allows all Vite-generated assets to be s
 **File:** `spec/system/cdn_assets_spec.rb`
 
 **What it tests:**
+
 - ✅ Login page script tags use CDN
 - ✅ Login page stylesheet tags use CDN
 - ✅ Module preload tags use CDN
@@ -95,6 +104,7 @@ A comprehensive CDN support system that allows all Vite-generated assets to be s
 - ✅ Relative paths used when CDN not configured
 
 **How to run:**
+
 ```bash
 bundle exec rspec spec/system/cdn_assets_spec.rb
 ```
@@ -106,6 +116,7 @@ bundle exec rspec spec/system/cdn_assets_spec.rb
 **File:** `CDN_HOST-SETUP.md`
 
 **Contents:**
+
 - Overview and benefits
 - Configuration methods (Docker, docker-compose, GitHub Actions)
 - CDN provider setup (CloudFront, Cloudflare, Fastly)
@@ -128,6 +139,7 @@ bundle exec rspec spec/system/cdn_assets_spec.rb
 **File:** `docs/upstream-issues/CDN_HOST-vite-support.md`
 
 **Contents:**
+
 - Problem description with examples
 - Root cause analysis (Vite vs Webpack differences)
 - Impact assessment
@@ -150,6 +162,7 @@ bundle exec rspec spec/system/cdn_assets_spec.rb
 **File:** `CDN_HOST-INVESTIGATION.md` (from earlier work)
 
 **Contents:**
+
 - Problem statement
 - Root cause technical analysis
 - Solution options evaluated
@@ -169,6 +182,7 @@ bundle exec rspec spec/system/cdn_assets_spec.rb
 ### For TheConnector Production
 
 **Option 1: Docker Build Command**
+
 ```bash
 docker build \
   --build-arg CDN_HOST=https://mastodon-static.theatl.social \
@@ -177,6 +191,7 @@ docker build \
 ```
 
 **Option 2: docker-compose**
+
 ```yaml
 # docker-compose.yml
 services:
@@ -195,10 +210,12 @@ CDN_HOST=https://mastodon-static.theatl.social
 **Option 3: GitHub Actions**
 
 Add repository variable:
+
 - Name: `CDN_HOST`
 - Value: `https://mastodon-static.theatl.social`
 
 Then in workflow:
+
 ```yaml
 with:
   cdn_host: ${{ vars.CDN_HOST }}
@@ -207,6 +224,7 @@ with:
 ### Verification After Deployment
 
 **1. Check page source:**
+
 ```bash
 curl -s https://mastodon.theatl.social | grep -o 'src="[^"]*packs[^"]*"' | head -5
 ```
@@ -214,11 +232,13 @@ curl -s https://mastodon.theatl.social | grep -o 'src="[^"]*packs[^"]*"' | head 
 Expected: All URLs should start with `https://mastodon-static.theatl.social`
 
 **2. Check browser network tab:**
+
 - Open DevTools → Network
 - Filter by "JS" or "CSS"
 - Verify Domain column shows `mastodon-static.theatl.social`
 
 **3. Check manifest:**
+
 ```bash
 docker exec <container> cat public/packs/.vite/manifest.json | grep -o 'https://[^"]*' | head -5
 ```
@@ -226,6 +246,7 @@ docker exec <container> cat public/packs/.vite/manifest.json | grep -o 'https://
 Expected: All URLs start with `https://mastodon-static.theatl.social`
 
 **4. Test dynamic imports:**
+
 - Navigate through app (timelines, settings, etc.)
 - Check Network tab for dynamically loaded chunks
 - All should come from CDN
@@ -238,25 +259,25 @@ Expected: All URLs start with `https://mastodon-static.theatl.social`
 
 With this implementation, the following asset types will be served from CDN:
 
-| Asset Type | Example | CDN Support |
-|------------|---------|-------------|
-| JavaScript bundles | `application-abc123.js` | ✅ |
-| CSS files | `application-xyz789.css` | ✅ |
-| Code-split chunks | `features_ui-def456.js` | ✅ |
-| Emoji JSON | `emoji/en.json` | ✅ |
-| Locale JSON | `locales/en-ghi789.json` | ✅ |
-| Fonts | `fonts/roboto-jkl012.woff2` | ✅ |
-| Images in CSS | `icons/logo-mno345.svg` | ✅ |
-| Vite manifest | `.vite/manifest.json` | ✅ |
+| Asset Type         | Example                     | CDN Support |
+| ------------------ | --------------------------- | ----------- |
+| JavaScript bundles | `application-abc123.js`     | ✅          |
+| CSS files          | `application-xyz789.css`    | ✅          |
+| Code-split chunks  | `features_ui-def456.js`     | ✅          |
+| Emoji JSON         | `emoji/en.json`             | ✅          |
+| Locale JSON        | `locales/en-ghi789.json`    | ✅          |
+| Fonts              | `fonts/roboto-jkl012.woff2` | ✅          |
+| Images in CSS      | `icons/logo-mno345.svg`     | ✅          |
+| Vite manifest      | `.vite/manifest.json`       | ✅          |
 
 ### What Assets DON'T Use CDN (Correctly)
 
-| Asset Type | Reason | Notes |
-|------------|--------|-------|
-| Service Worker (`/sw.js`) | Must be same-origin | Security requirement |
-| User uploads (S3) | Configured separately | Uses `S3_CLOUDFRONT_HOST` |
-| API endpoints | Backend only | Never from CDN |
-| WebSocket | Backend only | Never from CDN |
+| Asset Type                | Reason                | Notes                     |
+| ------------------------- | --------------------- | ------------------------- |
+| Service Worker (`/sw.js`) | Must be same-origin   | Security requirement      |
+| User uploads (S3)         | Configured separately | Uses `S3_CLOUDFRONT_HOST` |
+| API endpoints             | Backend only          | Never from CDN            |
+| WebSocket                 | Backend only          | Never from CDN            |
 
 ### Build Process Flow
 
@@ -353,6 +374,7 @@ With this implementation, the following asset types will be served from CDN:
 ### Immediate (Before Merge)
 
 1. **Test Locally**
+
    ```bash
    # Build with CDN_HOST
    docker build --build-arg CDN_HOST=https://cdn-test.example.com -t test .
@@ -365,6 +387,7 @@ With this implementation, the following asset types will be served from CDN:
    ```
 
 2. **Run Tests**
+
    ```bash
    # Stage 1 tests will run automatically when you push
    git push origin 20251113/cdn-host-support
@@ -425,12 +448,14 @@ If issues arise after deployment:
 ### Quick Rollback (10 minutes)
 
 1. **Revert to previous image:**
+
    ```bash
    docker pull theconnector:previous-version
    docker-compose up -d
    ```
 
 2. **Or rebuild without CDN:**
+
    ```bash
    docker build -t theconnector:latest .  # No --build-arg
    docker-compose up -d
@@ -444,6 +469,7 @@ If issues arise after deployment:
 ### Investigation
 
 If rollback needed, investigate:
+
 - CDN configuration issues
 - CORS headers
 - Cache settings
@@ -455,6 +481,7 @@ If rollback needed, investigate:
 ## Success Criteria
 
 ✅ **Implementation Complete When:**
+
 - [x] vite.config.mts reads CDN_HOST
 - [x] Dockerfile accepts CDN_HOST build arg
 - [x] GitHub workflow supports cdn_host input
@@ -465,6 +492,7 @@ If rollback needed, investigate:
 - [x] Code committed to branch
 
 ✅ **Deployment Successful When:**
+
 - [ ] CI tests pass on branch
 - [ ] Local Docker build works with CDN_HOST
 - [ ] Assets load from CDN in browser
@@ -475,6 +503,7 @@ If rollback needed, investigate:
 - [ ] Performance metrics improved
 
 ✅ **Production Healthy When:**
+
 - [ ] CDN cache hit rate >95%
 - [ ] Origin traffic reduced by >80%
 - [ ] Page load time improved by >20%
@@ -487,16 +516,19 @@ If rollback needed, investigate:
 ## Contact & Support
 
 **For TheConnector:**
+
 - Review code in branch: `20251113/cdn-host-support`
 - Check CI results when pushed
 - Test deployment guide: `CDN_HOST-SETUP.md`
 
 **For Upstream Contribution:**
+
 - Draft issue: `docs/upstream-issues/CDN_HOST-vite-support.md`
 - Ready to file with Mastodon repository
 - Offer to submit PR included
 
 **For Debugging:**
+
 - Investigation notes: `CDN_HOST-INVESTIGATION.md`
 - Test specifications: `.github/workflows/test-cdn-assets.yml`
 - Integration tests: `spec/system/cdn_assets_spec.rb`
