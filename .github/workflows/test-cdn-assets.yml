@@ -1,0 +1,216 @@
+name: Test CDN Assets Configuration
+
+on:
+  pull_request:
+    paths:
+      - 'vite.config.mts'
+      - 'Dockerfile'
+      - 'app/javascript/**'
+      - '.github/workflows/test-cdn-assets.yml'
+  push:
+    branches:
+      - main
+      - forked-main
+    paths:
+      - 'vite.config.mts'
+      - 'Dockerfile'
+      - 'app/javascript/**'
+
+jobs:
+  test-cdn-manifest:
+    name: Validate CDN Asset Manifest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install Node.js dependencies
+        run: yarn install --immutable
+
+      - name: Build assets with test CDN_HOST
+        env:
+          CDN_HOST: https://cdn-test.example.com
+          RAILS_ENV: production
+          NODE_ENV: production
+          SECRET_KEY_BASE_DUMMY: '1'
+        run: |
+          # Build assets with CDN_HOST set
+          yarn build:production
+
+      - name: Verify Vite manifest uses CDN_HOST
+        run: |
+          node -e "
+          const fs = require('fs');
+          const path = require('path');
+
+          const MANIFEST_PATH = 'public/packs/.vite/manifest.json';
+          const CDN_HOST = 'https://cdn-test.example.com';
+
+          console.log('📦 Checking Vite manifest for CDN_HOST usage...\n');
+
+          // Check if manifest exists
+          if (!fs.existsSync(MANIFEST_PATH)) {
+            console.error('❌ Manifest file not found at:', MANIFEST_PATH);
+            process.exit(1);
+          }
+
+          const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
+          let errors = 0;
+          let warnings = 0;
+          let checkedAssets = 0;
+
+          // Check each manifest entry
+          for (const [key, entry] of Object.entries(manifest)) {
+            // Check main file
+            if (entry.file) {
+              checkedAssets++;
+              if (!entry.file.startsWith(CDN_HOST)) {
+                console.error(\`❌ \${key}: file '\${entry.file}' doesn't use CDN_HOST\`);
+                console.error(\`   Expected to start with: \${CDN_HOST}\`);
+                errors++;
+              }
+            }
+
+            // Check CSS files
+            if (entry.css && Array.isArray(entry.css)) {
+              entry.css.forEach(css => {
+                checkedAssets++;
+                if (!css.startsWith(CDN_HOST)) {
+                  console.error(\`❌ \${key}: CSS '\${css}' doesn't use CDN_HOST\`);
+                  console.error(\`   Expected to start with: \${CDN_HOST}\`);
+                  errors++;
+                }
+              });
+            }
+
+            // Check assets
+            if (entry.assets && Array.isArray(entry.assets)) {
+              entry.assets.forEach(asset => {
+                checkedAssets++;
+                if (!asset.startsWith(CDN_HOST)) {
+                  console.error(\`❌ \${key}: Asset '\${asset}' doesn't use CDN_HOST\`);
+                  console.error(\`   Expected to start with: \${CDN_HOST}\`);
+                  errors++;
+                }
+              });
+            }
+          }
+
+          console.log(\`\n📊 Results:\`);
+          console.log(\`   Assets checked: \${checkedAssets}\`);
+          console.log(\`   Errors: \${errors}\`);
+          console.log(\`   Warnings: \${warnings}\n\`);
+
+          if (errors > 0) {
+            console.error(\`❌ Found \${errors} assets not using CDN_HOST\`);
+            console.error(\`\n💡 Tip: Check vite.config.mts base configuration\`);
+            process.exit(1);
+          }
+
+          console.log('✅ All manifest assets correctly use CDN_HOST');
+          "
+
+      - name: Verify emoji files exist
+        run: |
+          echo "🔍 Checking for emoji data files..."
+
+          if [ ! -d "public/packs/emoji" ]; then
+            echo "❌ Emoji directory not found at public/packs/emoji"
+            exit 1
+          fi
+
+          if [ ! -f "public/packs/emoji/en.json" ]; then
+            echo "❌ English emoji file not found"
+            exit 1
+          fi
+
+          # Count emoji files
+          emoji_count=$(find public/packs/emoji -name "*.json" | wc -l)
+          echo "✅ Found $emoji_count emoji locale files"
+
+      - name: Check for hardcoded /packs/ paths in TypeScript
+        run: |
+          echo "🔍 Scanning for hardcoded /packs/ paths in JavaScript/TypeScript..."
+
+          # Look for hardcoded paths (excluding legitimate cases)
+          # Exclude:
+          # - import.meta.env.DEV checks (used for dev vs prod paths)
+          # - Comments
+          # - Test files
+
+          if grep -r "'/packs/" app/javascript \
+             --include="*.ts" \
+             --include="*.tsx" \
+             --include="*.js" \
+             --include="*.jsx" \
+             --exclude-dir="__tests__" \
+             --exclude-dir="__mocks__" \
+             | grep -v "import.meta.env.DEV" \
+             | grep -v "packs-dev" \
+             | grep -v "packs-test" \
+             | grep -v "\/\/" \
+             | grep -v "\/\*"; then
+            echo "❌ Found hardcoded /packs/ paths"
+            echo "💡 These should use CDN-aware URL construction"
+            exit 1
+          fi
+
+          echo "✅ No hardcoded /packs/ paths found"
+
+      - name: Verify build without CDN_HOST still works
+        run: |
+          echo "🔍 Testing build without CDN_HOST (backward compatibility)..."
+
+          # Clean previous build
+          rm -rf public/packs
+
+          # Build without CDN_HOST
+          SECRET_KEY_BASE_DUMMY=1 \
+          RAILS_ENV=production \
+          NODE_ENV=production \
+          yarn build:production
+
+          # Verify manifest exists and has relative paths
+          node -e "
+          const fs = require('fs');
+          const manifest = JSON.parse(fs.readFileSync('public/packs/.vite/manifest.json', 'utf8'));
+
+          let hasRelativePaths = false;
+          for (const [key, entry] of Object.entries(manifest)) {
+            if (entry.file && entry.file.startsWith('/packs/')) {
+              hasRelativePaths = true;
+              break;
+            }
+          }
+
+          if (!hasRelativePaths) {
+            console.error('❌ Build without CDN_HOST should produce relative paths starting with /packs/');
+            process.exit(1);
+          }
+
+          console.log('✅ Build without CDN_HOST works correctly (backward compatible)');
+          "
+
+      - name: Summary
+        if: success()
+        run: |
+          echo "
+          ✅ All CDN asset tests passed!
+
+          Tests completed:
+          - ✅ Vite manifest uses CDN_HOST correctly
+          - ✅ CSS files in manifest use CDN_HOST
+          - ✅ Emoji data files present
+          - ✅ No hardcoded /packs/ paths in TypeScript
+          - ✅ Backward compatibility maintained
+          "
