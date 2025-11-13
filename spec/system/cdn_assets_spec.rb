@@ -14,9 +14,9 @@ RSpec.describe 'CDN Asset URLs' do
     before { visit new_user_session_path }
 
     it 'uses CDN for JavaScript bundles' do
-      page.all('script[src]').each do |script|
+      page.all('script[src]').to_a.each do |script|
         src = script['src']
-        next if src.nil? || src.empty?
+        next if src.blank?
         next if src.start_with?('data:') # Skip inline/data URIs
         next unless src.include?('/packs/') # Only check Vite assets
 
@@ -26,9 +26,9 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses CDN for stylesheets' do
-      page.all('link[rel="stylesheet"]').each do |link|
+      page.all('link[rel="stylesheet"]').to_a.each do |link|
         href = link['href']
-        next if href.nil? || href.empty?
+        next if href.blank?
         next unless href.include?('/packs/') # Only check Vite assets
 
         expect(href).to start_with(cdn_host),
@@ -37,9 +37,9 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses CDN for module preloads' do
-      page.all('link[rel~="preload"], link[rel~="modulepreload"]').each do |link|
+      page.all('link[rel~="preload"], link[rel~="modulepreload"]').to_a.each do |link|
         href = link['href']
-        next if href.nil? || href.empty?
+        next if href.blank?
         next unless href.include?('/packs/') # Only check Vite assets
 
         expect(href).to start_with(cdn_host),
@@ -53,7 +53,7 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'has crossorigin attribute on CDN assets' do
-      page.all('script[src], link[rel="stylesheet"]').each do |tag|
+      page.all('script[src], link[rel="stylesheet"]').to_a.each do |tag|
         url = tag['src'] || tag['href']
         next unless url&.start_with?(cdn_host)
 
@@ -69,9 +69,9 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses CDN for all script tags' do
-      page.all('script[src]').each do |script|
+      page.all('script[src]').to_a.each do |script|
         src = script['src']
-        next if src.nil? || src.empty?
+        next if src.blank?
         next if src.start_with?('data:')
         next unless src.include?('/packs/')
 
@@ -81,9 +81,9 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses CDN for all stylesheets' do
-      page.all('link[rel="stylesheet"]').each do |link|
+      page.all('link[rel="stylesheet"]').to_a.each do |link|
         href = link['href']
-        next if href.nil? || href.empty?
+        next if href.blank?
         next unless href.include?('/packs/')
 
         expect(href).to start_with(cdn_host),
@@ -137,9 +137,9 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses relative paths for JavaScript bundles' do
-      page.all('script[src]').each do |script|
+      page.all('script[src]').to_a.each do |script|
         src = script['src']
-        next if src.nil? || src.empty?
+        next if src.blank?
         next if src.start_with?('data:')
         next unless src.include?('/packs/')
 
