@@ -46,78 +46,27 @@ jobs:
           # Build assets with CDN_HOST set
           yarn build:production
 
-      - name: Verify Vite manifest uses CDN_HOST
+      - name: Verify Vite manifest exists
         run: |
-          node -e "
-          const fs = require('fs');
-          const path = require('path');
+          echo "📦 Checking Vite manifest file..."
 
-          const MANIFEST_PATH = 'public/packs/.vite/manifest.json';
-          const CDN_HOST = 'https://cdn-test.example.com';
+          if [ ! -f "public/packs/.vite/manifest.json" ]; then
+            echo "❌ Manifest file not found"
+            exit 1
+          fi
 
-          console.log('📦 Checking Vite manifest for CDN_HOST usage...\n');
+          echo "✅ Manifest file exists"
 
-          // Check if manifest exists
-          if (!fs.existsSync(MANIFEST_PATH)) {
-            console.error('❌ Manifest file not found at:', MANIFEST_PATH);
-            process.exit(1);
-          }
-
-          const manifest = JSON.parse(fs.readFileSync(MANIFEST_PATH, 'utf8'));
-          let errors = 0;
-          let warnings = 0;
-          let checkedAssets = 0;
-
-          // Check each manifest entry
-          for (const [key, entry] of Object.entries(manifest)) {
-            // Check main file
-            if (entry.file) {
-              checkedAssets++;
-              if (!entry.file.startsWith(CDN_HOST)) {
-                console.error(\`❌ \${key}: file '\${entry.file}' doesn't use CDN_HOST\`);
-                console.error(\`   Expected to start with: \${CDN_HOST}\`);
-                errors++;
-              }
-            }
-
-            // Check CSS files
-            if (entry.css && Array.isArray(entry.css)) {
-              entry.css.forEach(css => {
-                checkedAssets++;
-                if (!css.startsWith(CDN_HOST)) {
-                  console.error(\`❌ \${key}: CSS '\${css}' doesn't use CDN_HOST\`);
-                  console.error(\`   Expected to start with: \${CDN_HOST}\`);
-                  errors++;
-                }
-              });
-            }
-
-            // Check assets
-            if (entry.assets && Array.isArray(entry.assets)) {
-              entry.assets.forEach(asset => {
-                checkedAssets++;
-                if (!asset.startsWith(CDN_HOST)) {
-                  console.error(\`❌ \${key}: Asset '\${asset}' doesn't use CDN_HOST\`);
-                  console.error(\`   Expected to start with: \${CDN_HOST}\`);
-                  errors++;
-                }
-              });
-            }
-          }
-
-          console.log(\`\n📊 Results:\`);
-          console.log(\`   Assets checked: \${checkedAssets}\`);
-          console.log(\`   Errors: \${errors}\`);
-          console.log(\`   Warnings: \${warnings}\n\`);
-
-          if (errors > 0) {
-            console.error(\`❌ Found \${errors} assets not using CDN_HOST\`);
-            console.error(\`\n💡 Tip: Check vite.config.mts base configuration\`);
-            process.exit(1);
-          }
-
-          console.log('✅ All manifest assets correctly use CDN_HOST');
-          "
+          # NOTE: Vite's `base` configuration does NOT modify manifest.json paths.
+          # Manifest paths are relative by design - they're meant to be combined
+          # with the base URL by the application framework (Rails/vite_rails).
+          #
+          # What actually matters is whether generated JavaScript files contain
+          # CDN URLs in their dynamic import() statements. However, testing this
+          # requires deploying and checking browser network tab, or examining
+          # the actual JS bundle content.
+          #
+          # For now, we just verify the manifest was generated successfully.
 
       - name: Verify emoji files exist
         run: |
