@@ -14,7 +14,7 @@ RSpec.describe 'CDN Asset URLs' do
     before { visit new_user_session_path }
 
     it 'uses CDN for JavaScript bundles' do
-      page.all('script[src]').to_a.each do |script|
+      page.all('script[src]').to_a.each do |script| # rubocop:disable Rails/FindEach
         src = script['src']
         next if src.blank?
         next if src.start_with?('data:') # Skip inline/data URIs
@@ -26,7 +26,7 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses CDN for stylesheets' do
-      page.all('link[rel="stylesheet"]').to_a.each do |link|
+      page.all('link[rel="stylesheet"]').to_a.each do |link| # rubocop:disable Rails/FindEach
         href = link['href']
         next if href.blank?
         next unless href.include?('/packs/') # Only check Vite assets
@@ -37,7 +37,7 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses CDN for module preloads' do
-      page.all('link[rel~="preload"], link[rel~="modulepreload"]').to_a.each do |link|
+      page.all('link[rel~="preload"], link[rel~="modulepreload"]').to_a.each do |link| # rubocop:disable Rails/FindEach
         href = link['href']
         next if href.blank?
         next unless href.include?('/packs/') # Only check Vite assets
@@ -53,7 +53,7 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'has crossorigin attribute on CDN assets' do
-      page.all('script[src], link[rel="stylesheet"]').to_a.each do |tag|
+      page.all('script[src], link[rel="stylesheet"]').to_a.each do |tag| # rubocop:disable Rails/FindEach
         url = tag['src'] || tag['href']
         next unless url&.start_with?(cdn_host)
 
@@ -69,7 +69,7 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses CDN for all script tags' do
-      page.all('script[src]').to_a.each do |script|
+      page.all('script[src]').to_a.each do |script| # rubocop:disable Rails/FindEach
         src = script['src']
         next if src.blank?
         next if src.start_with?('data:')
@@ -81,7 +81,7 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses CDN for all stylesheets' do
-      page.all('link[rel="stylesheet"]').to_a.each do |link|
+      page.all('link[rel="stylesheet"]').to_a.each do |link| # rubocop:disable Rails/FindEach
         href = link['href']
         next if href.blank?
         next unless href.include?('/packs/')
@@ -137,7 +137,7 @@ RSpec.describe 'CDN Asset URLs' do
     end
 
     it 'uses relative paths for JavaScript bundles' do
-      page.all('script[src]').to_a.each do |script|
+      page.all('script[src]').to_a.each do |script| # rubocop:disable Rails/FindEach
         src = script['src']
         next if src.blank?
         next if src.start_with?('data:')
