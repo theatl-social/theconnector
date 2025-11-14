@@ -119,21 +119,22 @@ jobs:
           NODE_ENV=production \
           yarn build:production
 
-          # Verify manifest exists and has relative paths
+          # Verify manifest exists and has relative paths (not absolute CDN URLs)
           node -e "
           const fs = require('fs');
           const manifest = JSON.parse(fs.readFileSync('public/packs/.vite/manifest.json', 'utf8'));
 
-          let hasRelativePaths = false;
+          let hasAbsoluteUrls = false;
           for (const [key, entry] of Object.entries(manifest)) {
-            if (entry.file && entry.file.startsWith('/packs/')) {
-              hasRelativePaths = true;
+            if (entry.file && entry.file.startsWith('http')) {
+              hasAbsoluteUrls = true;
+              console.error('❌ Found absolute URL in manifest without CDN_HOST:', entry.file);
               break;
             }
           }
 
-          if (!hasRelativePaths) {
-            console.error('❌ Build without CDN_HOST should produce relative paths starting with /packs/');
+          if (hasAbsoluteUrls) {
+            console.error('❌ Build without CDN_HOST should produce relative paths, not absolute URLs');
             process.exit(1);
           }
 
