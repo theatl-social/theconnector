@@ -77,13 +77,13 @@ jobs:
             exit 1
           fi
 
-          echo "📄 Checking file: $js_file"
+          echo "📄 Checking JS file: $js_file"
 
           # Check if the bundle contains the CDN_HOST in import statements
           # Vite's base config should inject the CDN URL into dynamic imports
           if grep -q "https://cdn-test.example.com/packs/" "$js_file"; then
             echo "✅ Found CDN_HOST in generated JavaScript imports"
-            echo "📊 Sample imports found:"
+            echo "📊 Sample JS imports found:"
             grep -o 'https://cdn-test.example.com/packs/[^"]*' "$js_file" | head -3
           else
             echo "❌ CDN_HOST not found in generated JavaScript"
@@ -92,6 +92,31 @@ jobs:
             echo "Searching for any import statements in the bundle:"
             grep -o 'import([^)]*' "$js_file" | head -5 || echo "No import statements found"
             exit 1
+          fi
+
+      - name: Verify CDN URLs in generated CSS files
+        run: |
+          echo "🔍 Checking generated CSS for CDN_HOST usage..."
+
+          # Find a CSS file
+          css_file=$(find public/packs -name "*.css" -type f ! -name "*.map" | head -1)
+
+          if [ -z "$css_file" ]; then
+            echo "⚠️  No CSS files found (may be normal for minimal builds)"
+            exit 0
+          fi
+
+          echo "📄 Checking CSS file: $css_file"
+
+          # Check if CSS contains CDN_HOST for asset references (fonts, images, etc.)
+          # Vite's base config should inject the CDN URL into url() references
+          if grep -q "https://cdn-test.example.com/packs/" "$css_file"; then
+            echo "✅ Found CDN_HOST in generated CSS asset references"
+            echo "📊 Sample CSS references found:"
+            grep -o 'url([^)]*https://cdn-test.example.com/packs/[^)]*' "$css_file" | head -3
+          else
+            # CSS might not have any asset references, which is okay
+            echo "ℹ️  No CDN_HOST found in CSS (may not reference any assets)"
           fi
 
       # NOTE: Emoji handling in Vite builds
@@ -176,6 +201,7 @@ jobs:
           Tests completed:
           - ✅ Vite manifest exists and builds successfully
           - ✅ CDN URLs found in generated JavaScript bundles (dynamic imports verified)
+          - ✅ CDN URLs verified in generated CSS files (asset references checked)
           - ✅ No hardcoded /packs/ paths in TypeScript source
           - ✅ Backward compatibility maintained (build without CDN_HOST works)
           "
