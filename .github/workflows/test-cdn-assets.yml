@@ -145,37 +145,58 @@ jobs:
           echo "✅ Dynamic import analysis complete"
           echo "   Relative paths are correct and will work with CDN via browser resolution"
 
-      - name: Analyze CSS asset references
+      - name: Verify CSS contains absolute CDN URLs
         run: |
-          echo "🔍 Checking CSS asset references..."
+          echo "🔍 Verifying CSS files contain absolute CDN URLs..."
+          echo ""
 
-          # Find a CSS file
-          css_file=$(find public/packs -name "*.css" -type f ! -name "*.map" | head -1)
+          # Find CSS files (excluding source maps)
+          css_files=$(find public/packs -name "*.css" -type f ! -name "*.map")
 
-          if [ -z "$css_file" ]; then
+          if [ -z "$css_files" ]; then
             echo "ℹ️  No CSS files found (normal for minimal builds)"
             exit 0
           fi
 
-          echo "📄 Found CSS file: $css_file"
+          echo "📄 Found CSS files:"
+          echo "$css_files" | head -3
           echo ""
 
-          # Look for any url() references
-          url_refs=$(grep -o 'url([^)]*' "$css_file" | head -5 || echo "")
+          # Check the first CSS file for CDN URLs
+          css_file=$(echo "$css_files" | head -1)
 
-          if [ -z "$url_refs" ]; then
-            echo "ℹ️  No url() references found in CSS"
-            echo "   (CSS has no external asset dependencies)"
-          else
-            echo "📊 Sample url() references found:"
-            echo "$url_refs"
+          echo "📊 Checking for absolute CDN URLs in: $css_file"
+          echo ""
+
+          # CRITICAL TEST: CSS should contain ABSOLUTE CDN URLs (not relative paths)
+          # This is different from JavaScript which uses relative imports
+          cdn_urls=$(grep -o 'url(https://cdn-test.example.com/packs/[^)]*' "$css_file" 2>/dev/null || echo "")
+
+          if [ -z "$cdn_urls" ]; then
+            echo "❌ FAILED: CSS does not contain absolute CDN URLs!"
             echo ""
-            echo "   Like JavaScript imports, CSS url() paths are relative."
-            echo "   Browser resolves them relative to the CSS file's location on the CDN."
+            echo "Expected to find URLs like:"
+            echo "   url(https://cdn-test.example.com/packs/assets/roboto-bold.woff2)"
+            echo ""
+            echo "Sample of what was actually found:"
+            grep -o 'url([^)]*' "$css_file" | head -5 || echo "   (no url() references found)"
+            echo ""
+            echo "This indicates CDN_HOST is not being used by Vite to inject absolute URLs into CSS."
+            exit 1
           fi
 
+          echo "✅ SUCCESS: Found absolute CDN URLs in CSS!"
           echo ""
-          echo "✅ CSS analysis complete"
+          echo "📊 Sample CDN URLs found (first 5):"
+          echo "$cdn_urls" | head -5
+          echo ""
+          echo "ℹ️  How CSS CDN works (different from JavaScript):"
+          echo "   - Vite's 'base' config injects ABSOLUTE CDN URLs into CSS at build-time"
+          echo "   - Fonts/images referenced in CSS load directly from CDN"
+          echo "   - No runtime resolution needed - URLs are hardcoded in CSS"
+          echo "   - JavaScript uses RELATIVE paths (browser resolves at runtime)"
+          echo ""
+          echo "✅ CSS CDN verification complete"
 
       # NOTE: Emoji handling in Vite builds
       # Emoji source files (SVGs) live in public/emoji/ and are served statically.
@@ -259,14 +280,22 @@ jobs:
           Tests completed:
           - ✅ Vite manifest exists with relative paths (ready for Rails CDN resolution)
           - ✅ Dynamic imports use relative paths (browser will resolve from CDN)
-          - ✅ CSS asset references analyzed (relative paths work with CDN)
+          - ✅ CSS contains ABSOLUTE CDN URLs for fonts/images (critical verification!)
           - ✅ No hardcoded /packs/ paths in TypeScript source
           - ✅ Backward compatibility maintained (build without CDN_HOST works)
 
-          How CDN works:
-          1. Build-time: Vite generates relative paths in manifest and bundles
-          2. Runtime: Rails combines manifest paths with config.asset_host (CDN_HOST)
-          3. Browser: Loads main bundle from CDN URL
-          4. Browser: Resolves relative imports/urls relative to CDN location
-          5. Result: All assets load from CDN automatically ✨
+          How CDN works (Two-Mechanism Approach):
+
+          Mechanism 1 - CSS Assets (Build-Time):
+          - Vite's 'base' config injects ABSOLUTE CDN URLs into CSS files
+          - Example: url(https://cdn.example.com/packs/assets/roboto.woff2)
+          - Fonts/images load directly from CDN - no runtime resolution needed
+
+          Mechanism 2 - JavaScript & Manifest (Runtime):
+          - Manifest contains relative paths (e.g., 'assets/application.js')
+          - Rails combines with config.asset_host to generate CDN URLs
+          - JavaScript bundles contain relative imports (e.g., import('../chunk.js'))
+          - Browser resolves relative imports from the script's CDN location
+
+          Result: All assets load from CDN automatically ✨
           "
