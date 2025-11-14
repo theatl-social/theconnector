@@ -63,6 +63,8 @@ Mastodon is a **free, open-source social network server** based on [ActivityPub]
 
 This repository includes deployment configurations for **Docker and docker-compose**, as well as for other environments like Heroku and Scalingo. For Helm charts, reference the [mastodon/chart repository](https://github.com/mastodon/chart). A [**standalone** installation guide](https://docs.joinmastodon.org/admin/install/) is available in the main documentation.
 
+For CDN setup and configuration, see [docs/CDN_SETUP.md](docs/CDN_SETUP.md).
+
 ## Contributing
 
 Mastodon is **free, open-source software** licensed under **AGPLv3**. We welcome contributions and help from anyone who wants to improve the project.
