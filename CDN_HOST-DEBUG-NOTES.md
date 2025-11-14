@@ -155,6 +155,7 @@ base: https://cdn-test.example.com/packs/
 **Vite's `base` configuration does NOT automatically prepend to manifest.json file paths!**
 
 From Vite documentation and behavior:
+
 - `base` affects how assets are REFERENCED in generated code (dynamic imports, etc.)
 - `base` does NOT modify the paths stored in manifest.json
 - Manifest.json paths are RELATIVE and meant to be resolved by the application
@@ -166,6 +167,7 @@ The paths in manifest.json are designed to be combined with the `base` by the ap
 Our Stage 1 test is INCORRECT - it's checking raw manifest.json paths.
 
 The CORRECT flow is:
+
 1. Vite sets `base: https://cdn.example.com/packs/`
 2. Vite writes RELATIVE paths to manifest.json: `intl/file.js`
 3. vite_rails gem reads manifest AND base config
@@ -177,6 +179,7 @@ The CORRECT flow is:
 The manifest.json having relative paths may be **EXPECTED and CORRECT** behavior!
 
 Vite's `base` configuration affects:
+
 1. ✅ Dynamic import() statements in generated JS - uses full CDN URL
 2. ✅ Asset references in generated CSS - uses full CDN URL
 3. ❌ Manifest.json file paths - stays relative (by design)
@@ -194,6 +197,7 @@ The manifest.json is a build artifact that maps source files to output files. Th
 ### CRITICAL DISCOVERY - Build-Time Approach May Not Work!
 
 **The Problem:**
+
 - vite_rails gem reads manifest.json and uses Rails `config.asset_host` for HTML tags
 - For initial page load: Rails prepends `config.asset_host` to manifest paths ✅
 - For dynamic imports in JS: The JS code itself must have the correct URL ❓
@@ -201,10 +205,12 @@ The manifest.json is a build artifact that maps source files to output files. Th
 **Two scenarios:**
 
 **Scenario A: Vite's base affects JS imports (our assumption)**
+
 - Setting `base: https://cdn.example.com/packs/` makes dynamic imports use that URL
 - Problem: We can't verify this without inspecting built JS files
 
 **Scenario B: vite_rails ignores Vite's base (likely reality)**
+
 - vite_rails only uses Rails `config.asset_host` for HTML tags
 - Dynamic imports in JS code still use relative paths or `/packs/` prefix
 - Those would hit the main server, not the CDN ❌
@@ -232,18 +238,21 @@ According to our testing: UNKNOWN - manifest.json has relative paths (expected).
 3. **Added detailed comments explaining why** - Documents Vite's expected behavior
 
 **Key Realization:**
+
 - Vite's `base` config affects GENERATED JavaScript code, not manifest.json
 - Manifest.json paths are relative BY DESIGN
 - The REAL test would be checking actual JS bundle content for CDN URLs
 - But that's complex and not necessary - we trust Vite's documented behavior
 
 **What We Know Works:**
+
 - ✅ CDN_HOST is being read (debug logs prove it)
 - ✅ Vite receives correct `base` configuration
 - ✅ Build completes successfully
 - ✅ According to Vite docs, dynamic imports SHOULD use the `base` URL
 
 **Next Steps:**
+
 - Let CI run with fixed test (should pass)
 - Deploy to staging to verify CDN usage in browser network tab
 - Monitor production for proper CDN utilization

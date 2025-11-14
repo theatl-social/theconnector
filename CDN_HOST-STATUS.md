@@ -9,21 +9,25 @@
 ### What Was Fixed
 
 #### 1. Rubocop Linting Errors ✅
+
 **Problem:** Rails/FindEach cop was incorrectly flagging Capybara collections
 **Solution:** Added `# rubocop:disable Rails/FindEach` comments to all Capybara `.to_a.each` usage
 **Commit:** dce1aacd1
 
 #### 2. CDN Asset Manifest Test Failure ✅
+
 **Problem:** Test was checking manifest.json for absolute CDN URLs
 **Root Cause:** Misunderstanding of how Vite's `base` configuration works
 
 **Critical Discovery:**
+
 - Vite's `base` configuration does NOT modify manifest.json paths
 - Manifest.json paths are RELATIVE by design (this is correct behavior)
 - The `base` config affects GENERATED JavaScript code (dynamic imports)
 - Rails/vite_rails combines manifest paths with config.asset_host at runtime
 
 **Solution:**
+
 - Removed the incorrect manifest.json path checking
 - Simplified to just verify manifest file exists
 - Added detailed comments explaining Vite's expected behavior
@@ -34,6 +38,7 @@
 ### Debug Logging Added
 
 Added comprehensive debug output in [vite.config.mts](vite.config.mts:47-60) showing:
+
 - mode (production)
 - command (build)
 - isProdBuild (true)
@@ -41,6 +46,7 @@ Added comprehensive debug output in [vite.config.mts](vite.config.mts:47-60) sho
 - Computed base URL
 
 **Result from CI:** All values were CORRECT ✅
+
 ```
 === VITE CONFIG DEBUG ===
 mode: production
@@ -54,6 +60,7 @@ base: https://cdn-test.example.com/packs/
 ```
 
 This proves that:
+
 1. ✅ Environment variable is being read
 2. ✅ Vite is receiving correct configuration
 3. ✅ Base URL is set correctly
@@ -91,10 +98,12 @@ Since our debug logs prove Vite is receiving the correct `base` configuration, w
 
 **Status:** ⚠️ SSH key authentication issues prevent push
 **Commits ready:**
+
 - 4b2eb7a2b Fix CDN Asset Manifest test - manifest.json paths are relative by design
 - dce1aacd1 Add Rubocop disable comments for Rails/FindEach in Capybara tests
 
 **User can push with:**
+
 ```bash
 git push origin 20251113/cdn-host-support-v4.5.0
 ```
@@ -102,6 +111,7 @@ git push origin 20251113/cdn-host-support-v4.5.0
 ### Expected CI Results After Push
 
 ✅ **Should Pass:**
+
 - Lint checks (Rubocop errors fixed)
 - Prettier formatting (already fixed in commit 81a10487f)
 - CDN Asset Manifest test (now tests correct thing)
@@ -110,6 +120,7 @@ git push origin 20251113/cdn-host-support-v4.5.0
 ### Next Steps for User
 
 1. **Push the commits:**
+
    ```bash
    git push origin 20251113/cdn-host-support-v4.5.0
    ```
@@ -167,6 +178,7 @@ This means our approach IS correct, we just had the wrong test expectations!
 ### Contact
 
 For issues or questions:
+
 - Check [CDN_HOST-DEBUG-NOTES.md](CDN_HOST-DEBUG-NOTES.md) for troubleshooting
 - Review [CDN_HOST-SETUP.md](CDN_HOST-SETUP.md) for configuration guidance
 - See PR #17 for CI test results
