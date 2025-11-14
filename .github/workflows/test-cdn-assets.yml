@@ -68,23 +68,14 @@ jobs:
           #
           # For now, we just verify the manifest was generated successfully.
 
-      - name: Verify emoji files exist
-        run: |
-          echo "🔍 Checking for emoji data files..."
-
-          if [ ! -d "public/packs/emoji" ]; then
-            echo "❌ Emoji directory not found at public/packs/emoji"
-            exit 1
-          fi
-
-          if [ ! -f "public/packs/emoji/en.json" ]; then
-            echo "❌ English emoji file not found"
-            exit 1
-          fi
-
-          # Count emoji files
-          emoji_count=$(find public/packs/emoji -name "*.json" | wc -l)
-          echo "✅ Found $emoji_count emoji locale files"
+      # NOTE: Emoji handling in Vite builds
+      # Emoji source files (SVGs) live in public/emoji/ and are served statically.
+      # Emoji data (emoji_map.json, emoji_data.json) lives in app/javascript/mastodon/features/emoji/
+      # and is embedded directly into JavaScript bundles via the MastodonEmojiCompressed Vite plugin.
+      #
+      # No emoji JSON files are output to public/packs/emoji/ - this directory doesn't exist
+      # in Vite builds. The workflow previously tested for public/packs/emoji/*.json which was
+      # incorrect. Emoji data is bundled into JS, not output as separate JSON files.
 
       - name: Check for hardcoded /packs/ paths in TypeScript
         run: |
@@ -156,9 +147,7 @@ jobs:
           ✅ All CDN asset tests passed!
 
           Tests completed:
-          - ✅ Vite manifest uses CDN_HOST correctly
-          - ✅ CSS files in manifest use CDN_HOST
-          - ✅ Emoji data files present
+          - ✅ Vite manifest exists and builds successfully
           - ✅ No hardcoded /packs/ paths in TypeScript
-          - ✅ Backward compatibility maintained
+          - ✅ Backward compatibility maintained (build without CDN_HOST works)
           "
