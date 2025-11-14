@@ -62,11 +62,37 @@ jobs:
           # with the base URL by the application framework (Rails/vite_rails).
           #
           # What actually matters is whether generated JavaScript files contain
-          # CDN URLs in their dynamic import() statements. However, testing this
-          # requires deploying and checking browser network tab, or examining
-          # the actual JS bundle content.
-          #
-          # For now, we just verify the manifest was generated successfully.
+          # CDN URLs in their dynamic import() statements. Testing this is done
+          # in the next step.
+
+      - name: Verify CDN URLs in generated JavaScript bundles
+        run: |
+          echo "🔍 Checking generated JavaScript for CDN_HOST usage..."
+
+          # Find a main application bundle (not a chunk or locale file)
+          js_file=$(find public/packs -name "application-*.js" -type f ! -name "*.map" | head -1)
+
+          if [ -z "$js_file" ]; then
+            echo "❌ No application bundle found"
+            exit 1
+          fi
+
+          echo "📄 Checking file: $js_file"
+
+          # Check if the bundle contains the CDN_HOST in import statements
+          # Vite's base config should inject the CDN URL into dynamic imports
+          if grep -q "https://cdn-test.example.com/packs/" "$js_file"; then
+            echo "✅ Found CDN_HOST in generated JavaScript imports"
+            echo "📊 Sample imports found:"
+            grep -o 'https://cdn-test.example.com/packs/[^"]*' "$js_file" | head -3
+          else
+            echo "❌ CDN_HOST not found in generated JavaScript"
+            echo "⚠️  This means dynamic imports may not use the CDN!"
+            echo ""
+            echo "Searching for any import statements in the bundle:"
+            grep -o 'import([^)]*' "$js_file" | head -5 || echo "No import statements found"
+            exit 1
+          fi
 
       # NOTE: Emoji handling in Vite builds
       # Emoji source files (SVGs) live in public/emoji/ and are served statically.
@@ -149,6 +175,7 @@ jobs:
 
           Tests completed:
           - ✅ Vite manifest exists and builds successfully
-          - ✅ No hardcoded /packs/ paths in TypeScript
+          - ✅ CDN URLs found in generated JavaScript bundles (dynamic imports verified)
+          - ✅ No hardcoded /packs/ paths in TypeScript source
           - ✅ Backward compatibility maintained (build without CDN_HOST works)
           "
