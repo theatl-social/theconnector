@@ -6,6 +6,47 @@ This document explains the implementation details and testing approach for CDN s
 
 CDN support was added in v4.5.0 to enable serving all Vite-generated assets from a Content Delivery Network.
 
+## v4.5.1 Upstream Merge (Nov 17, 2025)
+
+Merged upstream Mastodon v4.5.1 (commit `caffb0fd633913e5c4c67c0b804aff0966c4d89b`) which included critical CDN-related fixes:
+
+### Critical Fixes from Upstream
+
+1. **Emoji Worker Path Resolution (#36897)**
+   - **Problem**: Original emoji loader used hardcoded `/packs/emoji/${locale}.json` paths
+   - **Solution**: Now uses `import.meta.glob` with `query: '?url'` parameter
+   - **Impact**: Emoji locale data (emojibase) now uses CDN-aware URLs automatically
+   - **Files Changed**: `app/javascript/mastodon/features/emoji/loader.ts`, `index.ts`, `worker.ts`
+
+2. **CSS Module CORS Handling (#36890)**
+   - **Problem**: Missing `crossorigin` attribute on stylesheet tags
+   - **Solution**: Added `crossorigin: crossorigin` to `stylesheet_link_tag` call
+   - **Impact**: Fixes CORS issues when loading CSS from CDN
+   - **Files Changed**: `lib/vite_ruby/sri_extensions.rb`
+
+3. **Vite Deprecation Fix (#36849)**
+   - **Problem**: Old `as: 'url'` syntax deprecated in Vite
+   - **Solution**: Updated to `query: '?url', import: 'default'`
+   - **Impact**: Removes deprecation warnings, future-proofs build
+
+### Additional Improvements in This Merge
+
+4. **Makefile Docker Integration**
+   - Added `bundle-install` and `bundle-platform` targets
+   - All Makefile Docker commands now use `--platform linux/amd64`
+   - Ensures consistent builds across macOS/Linux architectures
+   - No local Ruby/Node installation needed for any development task
+
+5. **Expanded CI Test Coverage**
+   - Added emoji locale data CDN verification
+   - Added Vite-processed image asset tests
+   - Added public directory asset limitation documentation
+   - Comprehensive testing of ALL asset types
+
+6. **Version Update**
+   - Updated from `4.5.0-theatlsocial-20251112` to `4.5.1-theatlsocial-20251117`
+   - Follows upstream v4.5.1 patch release
+
 ### Key Implementation Details
 
 #### 1. Vite Configuration (`vite.config.mts`)
@@ -324,6 +365,108 @@ All precompiled asset types work with CDN:
   - "Fix CDN test to understand how Vite+Rails CDN actually works"
   - "Add CSS file verification to CDN URL tests"
   - "Add critical test: Verify CDN URLs in generated JavaScript bundles"
+
+## Known Limitations
+
+The current CDN implementation covers **Vite-generated assets only** (`public/packs/`). The following assets serve from the origin server, not CDN:
+
+### Public Directory Static Files (Origin-Only)
+
+**Service Worker Icons:**
+- `/badge.png` - Web push notification badge
+- `/android-chrome-192x192.png` - Android notification icon
+- `/web-push-icon_expand.png` - "Show more" notification action
+- `/web-push-icon_reblog.png` - Reblog notification action
+- `/web-push-icon_favourite.png` - Favorite notification action
+
+**Error & Loading Images:**
+- `/oops.png`, `/oops.gif` - Error page images
+- `/loading.png`, `/loading.gif` - Home feed regeneration indicators
+
+**Emoji SVG Files:**
+- `/emoji/*.svg` - 3,972 emoji SVG files
+
+### Why These Don't Use CDN
+
+1. **Infrastructure Design:**
+   - These are static files committed to git, not build artifacts
+   - Nginx serves them directly before requests reach Rails
+   - `config.asset_host` only affects Rails helper-generated URLs
+   - No build-time processing occurs for `public/` root files
+
+2. **Hardcoded References:**
+   - Referenced with hardcoded paths in JavaScript: `badge: '/badge.png'`
+   - Browser requests go directly to origin at those exact paths
+   - Service workers cannot use ES module imports or follow redirects
+
+3. **Serving Mechanism:**
+   ```
+   Vite assets:    Build → CDN URLs baked into JS → Browser requests CDN ✅
+   Public/ assets: Static files → Hardcoded paths → Browser requests origin ❌
+   ```
+
+### Impact Assessment
+
+**✅ What Uses CDN (99% of bandwidth):**
+- JavaScript application bundles (~2 MB compressed)
+- CSS stylesheets with embedded font URLs
+- Web fonts (Roboto, Roboto Mono, Inter)
+- Emoji locale data (emojibase JSON files)
+- All code-split chunks and dynamic imports
+
+**❌ What Doesn't Use CDN (<1% of bandwidth):**
+- Service worker notification icons (~3 KB total)
+- Error page images (~112 KB total)
+- Emoji SVG files (~3 MB total, rarely all accessed)
+
+**Performance Impact:** Minimal. The high-bandwidth assets (JS bundles, CSS, fonts) use CDN. The origin-served assets are:
+- Small in size (except emoji, which are cached)
+- Infrequently accessed (errors, occasional notifications)
+- Not on critical rendering path
+
+### Options to Address (If Desired)
+
+#### Option 1: CDN Pull Configuration (External)
+Configure your CDN (CloudFlare, CloudFront, etc.) to cache these paths from origin:
+```
+Cache rules:
+  /badge.png → Cache TTL: 30 days
+  /emoji/**  → Cache TTL: 90 days
+  /oops.*    → Cache TTL: 30 days
+```
+
+**Pros:** No code changes, works transparently
+**Cons:** First request hits origin, requires CDN configuration access
+
+#### Option 2: Nginx Redirect (Infrastructure)
+Add Nginx rules to redirect these paths to CDN:
+```nginx
+location ~ ^/(badge\.png|oops\.(png|gif)|web-push-icon_.*\.png)$ {
+    return 301 https://cdn.example.com$request_uri;
+}
+```
+
+**Pros:** Simple nginx config change
+**Cons:** 301 redirects add latency, doesn't work for service workers
+
+#### Option 3: Code Refactoring (Complex)
+- Move error/loading images to `app/javascript/images/` (Vite pipeline)
+- Modify service worker to inject `CDN_HOST` at build time
+- Requires service worker testing across all browsers
+
+**Pros:** Consistent approach, full CDN coverage
+**Cons:** 4-8 hours of development, testing complexity
+
+### Recommendation
+
+**Accept the limitation.** The current implementation provides CDN benefits where they matter most (application code, styles, fonts). The edge-case static files serving from origin is acceptable for:
+
+1. **Performance:** 99% of bandwidth uses CDN
+2. **Simplicity:** No complex service worker modifications needed
+3. **Stability:** Static files from origin are reliable
+4. **Priority:** Development time better spent elsewhere
+
+If CDN coverage for these files becomes necessary, use **Option 1 (CDN Pull Configuration)** as it requires no code changes.
 
 ## Future Improvements
 
