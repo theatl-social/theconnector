@@ -96,17 +96,20 @@ GEM
     ast (2.4.3)
     attr_required (1.0.2)
     aws-eventstream (1.4.0)
-    aws-partitions (1.1168.0)
-    aws-sdk-core (3.215.1)
+    aws-partitions (1.1181.0)
+    aws-sdk-core (3.237.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
+      base64
+      bigdecimal
       jmespath (~> 1, >= 1.6.1)
-    aws-sdk-kms (1.96.0)
-      aws-sdk-core (~> 3, >= 3.210.0)
+      logger
+    aws-sdk-kms (1.116.0)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.177.0)
-      aws-sdk-core (~> 3, >= 3.210.0)
+    aws-sdk-s3 (1.203.1)
+      aws-sdk-core (~> 3, >= 3.234.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
@@ -246,7 +249,6 @@ GEM
     fast_blank (1.0.1)
     fastimage (2.4.0)
     ffi (1.17.2)
-    ffi (1.17.2-x86_64-linux-gnu)
     ffi-compiler (1.3.2)
       ffi (>= 1.15.5)
       rake
@@ -278,12 +280,9 @@ GEM
     google-protobuf (4.32.1)
       bigdecimal
       rake (>= 13)
-    google-protobuf (4.32.1-x86_64-linux-gnu)
-      bigdecimal
-      rake (>= 13)
     googleapis-common-protos-types (1.22.0)
       google-protobuf (~> 4.26)
-    haml (6.3.0)
+    haml (6.4.0)
       temple (>= 0.8.2)
       thor
       tilt
@@ -292,7 +291,7 @@ GEM
       activesupport (>= 5.1)
       haml (>= 4.0.6)
       railties (>= 5.1)
-    haml_lint (0.66.0)
+    haml_lint (0.67.0)
       haml (>= 5.0)
       parallel (~> 1.10)
       rainbow
@@ -350,7 +349,7 @@ GEM
       azure-blob (~> 0.5.2)
       hashie (~> 5.0)
     jmespath (1.6.2)
-    json (2.15.1)
+    json (2.15.2)
     json-canonicalization (1.0.0)
     json-jwt (1.17.0)
       activesupport (>= 4.2)
@@ -469,9 +468,7 @@ GEM
     nokogiri (1.18.10)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
-    nokogiri (1.18.10-x86_64-linux-gnu)
-      racc (~> 1.4)
-    oj (3.16.11)
+    oj (3.16.12)
       bigdecimal (>= 3.0)
       ostruct (>= 0.2)
     omniauth (2.1.4)
@@ -518,9 +515,9 @@ GEM
       opentelemetry-common (~> 0.20)
       opentelemetry-sdk (~> 1.10)
       opentelemetry-semantic_conventions
-    opentelemetry-helpers-sql (0.2.0)
+    opentelemetry-helpers-sql (0.3.0)
       opentelemetry-api (~> 1.7)
-    opentelemetry-helpers-sql-obfuscation (0.4.0)
+    opentelemetry-helpers-sql-obfuscation (0.5.0)
       opentelemetry-common (~> 0.21)
     opentelemetry-instrumentation-action_mailer (0.6.1)
       opentelemetry-instrumentation-active_support (~> 0.10)
@@ -554,7 +551,7 @@ GEM
       opentelemetry-instrumentation-base (~> 0.25)
     opentelemetry-instrumentation-net_http (0.26.0)
       opentelemetry-instrumentation-base (~> 0.25)
-    opentelemetry-instrumentation-pg (0.32.0)
+    opentelemetry-instrumentation-pg (0.33.0)
       opentelemetry-helpers-sql
       opentelemetry-helpers-sql-obfuscation
       opentelemetry-instrumentation-base (~> 0.25)
@@ -587,17 +584,16 @@ GEM
     ox (2.14.23)
       bigdecimal (>= 3.0)
     parallel (1.27.0)
-    parser (3.3.9.0)
+    parser (3.3.10.0)
       ast (~> 2.4.1)
       racc
     parslet (2.0.0)
     pastel (0.8.0)
       tty-color (~> 0.5)
     pg (1.6.2)
-    pg (1.6.2-x86_64-linux)
     pghero (3.7.0)
       activerecord (>= 7.1)
-    playwright-ruby-client (1.55.0)
+    playwright-ruby-client (1.56.0)
       concurrent-ruby (>= 1.1.6)
       mime-types (>= 3.0)
     pp (0.6.3)
@@ -611,8 +607,8 @@ GEM
       net-smtp
       premailer (~> 1.7, >= 1.7.9)
     prettyprint (0.2.0)
-    prism (1.5.2)
-    prometheus_exporter (2.3.0)
+    prism (1.6.0)
+    prometheus_exporter (2.3.1)
       webrick
     propshaft (1.3.1)
       actionpack (>= 7.0.0)
@@ -752,7 +748,7 @@ GEM
       rspec-mocks (~> 3.0)
       sidekiq (>= 5, < 9)
     rspec-support (3.13.6)
-    rubocop (1.81.6)
+    rubocop (1.81.7)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -810,8 +806,8 @@ GEM
       activerecord (>= 4.0.0)
       railties (>= 4.0.0)
     securerandom (0.4.1)
-    shoulda-matchers (6.5.0)
-      activesupport (>= 5.2.0)
+    shoulda-matchers (7.0.1)
+      activesupport (>= 7.1)
     sidekiq (8.0.9)
       connection_pool (>= 2.5.0)
       json (>= 2.9.0)
@@ -842,7 +838,7 @@ GEM
     stackprof (0.2.27)
     starry (0.2.0)
       base64
-    stoplight (5.4.0)
+    stoplight (5.6.0)
       zeitwerk
     stringio (3.1.7)
     strong_migrations (2.5.1)
@@ -890,7 +886,7 @@ GEM
     unicode-display_width (3.2.0)
       unicode-emoji (~> 4.1)
     unicode-emoji (4.1.0)
-    uri (1.0.4)
+    uri (1.1.1)
     useragent (0.16.11)
     validate_url (1.0.15)
       activemodel (>= 3.0.0)
@@ -918,7 +914,7 @@ GEM
       activesupport
       faraday (~> 2.0)
       faraday-follow_redirects
-    webmock (3.26.0)
+    webmock (3.26.1)
       addressable (>= 2.8.0)
       crack (>= 0.3.2)
       hashdiff (>= 0.4.0, < 2.0.0)
@@ -935,13 +931,12 @@ GEM
 
 PLATFORMS
   ruby
-  x86_64-linux
 
 DEPENDENCIES
   active_model_serializers (~> 0.10)
   addressable (~> 2.8)
   annotaterb (~> 4.13)
-  aws-sdk-core (< 3.216.0)
+  aws-sdk-core
   aws-sdk-s3 (~> 1.123)
   better_errors (~> 2.9)
   binding_of_caller (~> 1.0)
@@ -1026,7 +1021,7 @@ DEPENDENCIES
   opentelemetry-instrumentation-http (~> 0.27.0)
   opentelemetry-instrumentation-http_client (~> 0.26.0)
   opentelemetry-instrumentation-net_http (~> 0.26.0)
-  opentelemetry-instrumentation-pg (~> 0.32.0)
+  opentelemetry-instrumentation-pg (~> 0.33.0)
   opentelemetry-instrumentation-rack (~> 0.29.0)
   opentelemetry-instrumentation-rails (~> 0.39.0)
   opentelemetry-instrumentation-redis (~> 0.28.0)
@@ -1036,7 +1031,7 @@ DEPENDENCIES
   parslet
   pg (~> 1.5)
   pghero
-  playwright-ruby-client (= 1.55.0)
+  playwright-ruby-client (= 1.56.0)
   premailer-rails
   prometheus_exporter (~> 2.2)
   propshaft
@@ -1096,4 +1091,4 @@ RUBY VERSION
    ruby 3.4.1p0
 
 BUNDLED WITH
-   2.6.9
+   2.7.2
