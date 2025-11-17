@@ -373,6 +373,7 @@ The current CDN implementation covers **Vite-generated assets only** (`public/pa
 ### Public Directory Static Files (Origin-Only)
 
 **Service Worker Icons:**
+
 - `/badge.png` - Web push notification badge
 - `/android-chrome-192x192.png` - Android notification icon
 - `/web-push-icon_expand.png` - "Show more" notification action
@@ -380,10 +381,12 @@ The current CDN implementation covers **Vite-generated assets only** (`public/pa
 - `/web-push-icon_favourite.png` - Favorite notification action
 
 **Error & Loading Images:**
+
 - `/oops.png`, `/oops.gif` - Error page images
 - `/loading.png`, `/loading.gif` - Home feed regeneration indicators
 
 **Emoji SVG Files:**
+
 - `/emoji/*.svg` - 3,972 emoji SVG files
 
 ### Why These Don't Use CDN
@@ -408,6 +411,7 @@ The current CDN implementation covers **Vite-generated assets only** (`public/pa
 ### Impact Assessment
 
 **✅ What Uses CDN (99% of bandwidth):**
+
 - JavaScript application bundles (~2 MB compressed)
 - CSS stylesheets with embedded font URLs
 - Web fonts (Roboto, Roboto Mono, Inter)
@@ -415,11 +419,13 @@ The current CDN implementation covers **Vite-generated assets only** (`public/pa
 - All code-split chunks and dynamic imports
 
 **❌ What Doesn't Use CDN (<1% of bandwidth):**
+
 - Service worker notification icons (~3 KB total)
 - Error page images (~112 KB total)
 - Emoji SVG files (~3 MB total, rarely all accessed)
 
 **Performance Impact:** Minimal. The high-bandwidth assets (JS bundles, CSS, fonts) use CDN. The origin-served assets are:
+
 - Small in size (except emoji, which are cached)
 - Infrequently accessed (errors, occasional notifications)
 - Not on critical rendering path
@@ -427,7 +433,9 @@ The current CDN implementation covers **Vite-generated assets only** (`public/pa
 ### Options to Address (If Desired)
 
 #### Option 1: CDN Pull Configuration (External)
+
 Configure your CDN (CloudFlare, CloudFront, etc.) to cache these paths from origin:
+
 ```
 Cache rules:
   /badge.png → Cache TTL: 30 days
@@ -439,7 +447,9 @@ Cache rules:
 **Cons:** First request hits origin, requires CDN configuration access
 
 #### Option 2: Nginx Redirect (Infrastructure)
+
 Add Nginx rules to redirect these paths to CDN:
+
 ```nginx
 location ~ ^/(badge\.png|oops\.(png|gif)|web-push-icon_.*\.png)$ {
     return 301 https://cdn.example.com$request_uri;
@@ -450,6 +460,7 @@ location ~ ^/(badge\.png|oops\.(png|gif)|web-push-icon_.*\.png)$ {
 **Cons:** 301 redirects add latency, doesn't work for service workers
 
 #### Option 3: Code Refactoring (Complex)
+
 - Move error/loading images to `app/javascript/images/` (Vite pipeline)
 - Modify service worker to inject `CDN_HOST` at build time
 - Requires service worker testing across all browsers
