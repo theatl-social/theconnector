@@ -13,11 +13,11 @@ module Mastodon
     end
 
     def patch
-      0
+      1
     end
 
     def default_prerelease
-      'theatlsocial-20251112'
+      'theatlsocial-20251117'
     end
 
     def prerelease
