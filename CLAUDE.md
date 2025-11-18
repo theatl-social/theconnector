@@ -54,6 +54,30 @@ bundle exec rspec         # Run RSpec tests
 bundle exec rubocop       # Ruby linting
 ```
 
+### Linting with Docker (Recommended - No Local Setup Required)
+
+Use the Makefile targets for Docker-based linting. No local Ruby/Node installation needed:
+
+```bash
+# Run all linters (recommended for pre-commit checks)
+make lint                  # Runs rubocop + eslint + stylelint + prettier check
+
+# Individual linters
+make rubocop              # Ruby linting only
+make lint-js              # JavaScript/TypeScript linting
+make lint-css             # CSS/SCSS linting
+make format-check         # Prettier format check (read-only)
+make format               # Prettier format (writes changes)
+```
+
+**Why use Docker for linting (via Makefile):**
+
+- ✅ No local Ruby/Node installation required
+- ✅ Uses exact versions from Dockerfile (Ruby 3.4.7, Node 24)
+- ✅ Matches CI environment exactly
+- ✅ Portable across macOS/Linux/Windows
+- ✅ Single command for all checks
+
 ### Building
 
 ```bash

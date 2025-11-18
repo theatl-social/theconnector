@@ -31,14 +31,14 @@ test:
   primary:
     <<: *default
     database: <%= ENV['DB_NAME'] || 'mastodon' %>_test<%= ENV['TEST_ENV_NUMBER'] %>
-    username: <%= ENV['DB_USER'] %>
+    username: <%= ENV['DB_USER'] || 'postgres' %>
     password: <%= (ENV['DB_PASS'] || '').to_json %>
     host: <%= ENV['DB_HOST'] %>
     port: <%= ENV['DB_PORT'] %>
   replica:
     <<: *default
     database: <%= ENV['DB_NAME'] || 'mastodon' %>_test<%= ENV['TEST_ENV_NUMBER'] %>
-    username: <%= ENV['DB_USER'] %>
+    username: <%= ENV['DB_USER'] || 'postgres' %>
     password: <%= (ENV['DB_PASS'] || '').to_json %>
     host: <%= ENV['DB_HOST'] %>
     port: <%= ENV['DB_PORT'] %>

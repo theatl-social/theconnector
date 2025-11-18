@@ -18,6 +18,11 @@ on:
         type: string
       file_to_build:
         type: string
+      cdn_host:
+        type: string
+        description: 'CDN host for serving static assets (optional)'
+        required: false
+        default: ''
 
 # This builds multiple images with one runner each, allowing us to build for multiple architectures
 # using Github's runners.
@@ -35,7 +40,7 @@ jobs:
           - linux/arm64
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Prepare
         env:
@@ -84,6 +89,7 @@ jobs:
             MASTODON_VERSION_PRERELEASE=${{ inputs.version_prerelease }}
             MASTODON_VERSION_METADATA=${{ inputs.version_metadata }}
             SOURCE_COMMIT=${{ github.sha }}
+            CDN_HOST=${{ inputs.cdn_host }}
           platforms: ${{ matrix.platform }}
           provenance: false
           push: ${{ inputs.push_to_images != '' }}
@@ -100,7 +106,7 @@ jobs:
 
       - name: Upload digest
         if: ${{ inputs.push_to_images != '' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           # `hashFiles` is used to disambiguate between streaming and non-streaming images
           name: digests-${{ hashFiles(inputs.file_to_build) }}-${{ env.PLATFORM_PAIR }}
@@ -119,10 +125,10 @@ jobs:
       PUSH_TO_IMAGES: ${{ inputs.push_to_images }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: ${{ runner.temp }}/digests
           # `hashFiles` is used to disambiguate between streaming and non-streaming images

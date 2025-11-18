@@ -15,7 +15,6 @@ import {
 } from 'vite';
 import manifestSRI from 'vite-plugin-manifest-sri';
 import { VitePWA } from 'vite-plugin-pwa';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
@@ -40,9 +39,28 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   }
   const outDir = path.resolve('public', outDirName);
 
+  // Support CDN_HOST for production builds
+  // This allows all Vite-generated asset URLs to use a CDN
+  const cdnHost = process.env.CDN_HOST;
+
+  // Debug logging
+  console.log('=== VITE CONFIG DEBUG ===');
+  console.log('mode:', mode);
+  console.log('command:', command);
+  console.log('isProdBuild:', isProdBuild);
+  console.log('process.env.CDN_HOST:', process.env.CDN_HOST);
+  console.log('cdnHost:', cdnHost);
+  console.log('outDirName:', outDirName);
+
+  const base =
+    isProdBuild && cdnHost ? `${cdnHost}/${outDirName}/` : `/${outDirName}/`;
+
+  console.log('base:', base);
+  console.log('=========================');
+
   return {
     root: jsRoot,
-    base: `/${outDirName}/`,
+    base,
     envDir: __dirname,
     resolve: {
       alias: {
@@ -167,21 +185,6 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
       }),
       MastodonThemes(),
       MastodonAssetsManifest(),
-      viteStaticCopy({
-        targets: [
-          {
-            src: path.resolve(
-              __dirname,
-              'node_modules/emojibase-data/**/compact.json',
-            ),
-            dest: 'emoji',
-            rename(_name, ext, dir) {
-              const locale = path.basename(path.dirname(dir));
-              return `${locale}.${ext}`;
-            },
-          },
-        ],
-      }),
       MastodonServiceWorkerLocales(),
       MastodonEmojiCompressed(),
       legacy({
