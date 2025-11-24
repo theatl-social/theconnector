@@ -128,6 +128,23 @@ class Api::V1::AccountsController < Api::BaseController
   end
 
   def check_enabled_registrations
+    if api_registrations_disabled?
+      render json: {
+        error: 'API registrations are disabled',
+        error_description: 'Please sign up via our website instead',
+        signup_url: web_signup_url,
+      }, status: 403
+      return
+    end
+
     forbidden unless allowed_registration?(request.remote_ip, invite)
+  end
+
+  def api_registrations_disabled?
+    ENV['DISABLE_API_REGISTRATIONS'] == 'true'
+  end
+
+  def web_signup_url
+    ENV['WEB_SIGNUP_URL'].presence || new_user_registration_url
   end
 end
