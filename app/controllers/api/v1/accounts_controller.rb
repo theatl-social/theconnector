@@ -132,7 +132,7 @@ class Api::V1::AccountsController < Api::BaseController
       render json: {
         error: 'API registrations are disabled',
         error_description: 'Please sign up via our website instead',
-        signup_url: web_signup_url
+        signup_url: web_signup_url,
       }, status: 403
       return
     end

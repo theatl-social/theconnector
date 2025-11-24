@@ -32,12 +32,12 @@ bundle-platform:
 
 # Linting targets using Docker (no local Ruby/Node installation required)
 
-# Ruby linting with Rubocop
+# Ruby linting with Rubocop (versions pinned to match Gemfile.lock)
 rubocop:
 	@echo "Running Rubocop via Docker (Ruby $(RUBY_VERSION))..."
 	docker run --rm --platform linux/amd64 -v $$(pwd):/app -w /app ruby:$(RUBY_VERSION)-slim-trixie sh -c \
 	  "apt-get update -qq && apt-get install -y -qq build-essential git > /dev/null 2>&1 && \
-	   gem install --silent rubocop rubocop-rails rubocop-rspec rubocop-rspec_rails rubocop-capybara rubocop-performance rubocop-i18n && \
+	   gem install --silent rubocop:1.81.7 rubocop-rails:2.33.4 rubocop-rspec:3.7.0 rubocop-rspec_rails:2.31.0 rubocop-capybara:2.22.1 rubocop-performance:1.26.1 rubocop-i18n:3.2.3 && \
 	   rubocop"
 
 lint-ruby: rubocop
