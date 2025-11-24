@@ -183,6 +183,56 @@ RSpec.describe '/api/v1/accounts' do
           .to start_with('application/json')
       end
     end
+
+    context 'when API registrations are disabled' do
+      let(:agreement) { 'true' }
+
+      before do
+        allow(ENV).to receive(:[]).and_call_original
+        allow(ENV).to receive(:[]).with('DISABLE_API_REGISTRATIONS').and_return('true')
+      end
+
+      it 'returns http forbidden with error message', :aggregate_failures do
+        subject
+
+        expect(response).to have_http_status(403)
+        expect(response.content_type)
+          .to start_with('application/json')
+        expect(response.parsed_body[:error]).to eq('API registrations are disabled')
+        expect(response.parsed_body[:error_description]).to eq('Please sign up via our website instead')
+        expect(response.parsed_body[:signup_url]).to be_present
+      end
+
+      it 'does not create a user' do
+        expect { subject }
+          .to not_change(User, :count)
+          .and not_change(Account, :count)
+      end
+
+      context 'when WEB_SIGNUP_URL is set' do
+        before do
+          allow(ENV).to receive(:[]).with('WEB_SIGNUP_URL').and_return('https://example.com/custom-signup')
+        end
+
+        it 'returns the custom signup URL' do
+          subject
+
+          expect(response.parsed_body[:signup_url]).to eq('https://example.com/custom-signup')
+        end
+      end
+
+      context 'when WEB_SIGNUP_URL is not set' do
+        before do
+          allow(ENV).to receive(:[]).with('WEB_SIGNUP_URL').and_return(nil)
+        end
+
+        it 'returns the default signup URL' do
+          subject
+
+          expect(response.parsed_body[:signup_url]).to match(%r{/auth/sign_up})
+        end
+      end
+    end
   end
 
   describe 'POST /api/v1/accounts/:id/follow' do
