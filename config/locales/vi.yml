@@ -187,6 +187,7 @@ vi:
         create_relay: Tạo relay
         create_unavailable_domain: Bỏ liên hợp
         create_user_role: Tạo vai trò
+        create_username_block: Tạo quy tắc tên người dùng
         demote_user: Hạ vai trò
         destroy_announcement: Xóa thông báo
         destroy_canonical_email_block: Bỏ chặn địa chỉ email biến thể
@@ -200,6 +201,7 @@ vi:
         destroy_status: Xóa tút
         destroy_unavailable_domain: Cho phép liên hợp
         destroy_user_role: Xóa vai trò
+        destroy_username_block: Xóa quy tắc tên người dùng
         disable_2fa_user: Vô hiệu hóa 2FA
         disable_custom_emoji: Vô hiệu hóa emoji
         disable_relay: Tắt relay
@@ -234,6 +236,7 @@ vi:
         update_report: Cập nhật báo cáo
         update_status: Cập nhật tút
         update_user_role: Cập nhật vai trò
+        update_username_block: Cập nhật quy tắc tên người dùng
       actions:
         approve_appeal_html: "%{name} đã chấp nhận khiếu nại từ %{target}"
         approve_user_html: "%{name} đã chấp nhận đăng ký từ %{target}"
@@ -252,6 +255,7 @@ vi:
         create_relay_html: "%{name} đã tạo relay %{target}"
         create_unavailable_domain_html: "%{name} đã bỏ liên hợp với máy chủ %{target}"
         create_user_role_html: "%{name} đã tạo vai trò %{target}"
+        create_username_block_html: "%{name} thêm quy tắc cho tên người dùng chứa %{target}"
         demote_user_html: "%{name} đã hạ vai trò của %{target}"
         destroy_announcement_html: "%{name} đã xóa thông báo %{target}"
         destroy_canonical_email_block_html: "%{name} đã bỏ chặn địa chỉ email biến thể %{target}"
@@ -265,6 +269,7 @@ vi:
         destroy_status_html: "%{name} đã xóa tút của %{target}"
         destroy_unavailable_domain_html: "%{name} tiếp tục liên hợp với máy chủ %{target}"
         destroy_user_role_html: "%{name} đã xóa vai trò %{target}"
+        destroy_username_block_html: "%{name} xóa quy tắc cho tên người dùng chứa %{target}"
         disable_2fa_user_html: "%{name} đã vô hiệu hóa xác thực 2 bước của %{target}"
         disable_custom_emoji_html: "%{name} đã ẩn emoji %{target}"
         disable_relay_html: "%{name} đã tắt relay %{target}"
@@ -299,6 +304,7 @@ vi:
         update_report_html: "%{name} đã cập nhật báo cáo %{target}"
         update_status_html: "%{name} đã cập nhật tút của %{target}"
         update_user_role_html: "%{name} đã cập nhật vai trò %{target}"
+        update_username_block_html: "%{name} đã cập nhật quy tắc cho tên người dùng chứa %{target}"
       deleted_account: tài khoản đã xóa
       empty: Không tìm thấy bản ghi.
       filter_by_action: Theo hành động
@@ -1081,6 +1087,25 @@ vi:
           other: "%{count} người dùng tuần rồi"
       title: Đề xuất & Xu hướng
       trending: Xu hướng
+    username_blocks:
+      add_new: Thêm mới
+      block_registrations: Cấm đăng ký
+      comparison:
+        contains: Có chứa
+        equals: Tương tự
+      contains_html: Có chứa %{string}
+      created_msg: Đã tạo quy tắc tên người dùng thành công
+      delete: Xóa
+      edit:
+        title: Sửa quy tắc tên người dùng
+      matches_exactly_html: Có chứa %{string}
+      new:
+        create: Tạo quy tắc
+        title: Tạo quy tắc tên người dùng mới
+      no_username_block_selected: Chưa chọn quy tắc tên người dùng nào
+      not_permitted: Cấm
+      title: Quy tắc tên người dùng
+      updated_msg: Đã cập nhật quy tắc tên người dùng thành công
     warning_presets:
       add_new: Thêm mới
       delete: Xóa bỏ
@@ -1344,6 +1369,10 @@ vi:
     basic_information: Thông tin cơ bản
     hint_html: Mọi người sẽ muốn theo dõi và tương tác với bạn hơn nếu bạn có ảnh đại diện và hồ sơ hoàn chỉnh.
     other: Khác
+  emoji_styles:
+    auto: Tự động
+    native: Nguyên bản
+    twemoji: Twemoji
   errors:
     '400': Yêu cầu bạn gửi không hợp lệ hoặc sai hình thức.
     '403': Bạn không có quyền xem trang này.
@@ -1604,7 +1633,7 @@ vi:
       disabled_account: Tài khoản này sẽ không thể tiếp tục dùng nữa. Tuy nhiên, bạn có quyền truy cập để xuất dữ liệu cũng như kích hoạt lại.
       followers: Hành động này sẽ chuyển tất cả người theo dõi từ tài khoản hiện tại sang tài khoản mới
       only_redirect_html: Ngoài ra, bạn có thể <a href="%{path}">đặt chuyển hướng trên trang hồ sơ của bạn</a>.
-      other_data: Dữ liệu khác sẽ không được di chuyển tự động
+      other_data: Không có dữ liệu nào khác sẽ được tự động di chuyển (bao gồm tút của bạn và danh sách tài khoản bạn theo dõi)
       redirect: Trang hồ sơ hiện tại của bạn sẽ hiển thị thông báo chuyển hướng và bị loại khỏi kết quả tìm kiếm
   moderation:
     title: Kiểm duyệt
@@ -1638,12 +1667,22 @@ vi:
       body: 'Bạn vừa được nhắc đến bởi %{name} trong:'
       subject: Bạn vừa được nhắc đến bởi %{name}
       title: Lượt nhắc mới
+    moderation_warning:
+      subject: Bạn vừa nhận một cảnh báo kiểm duyệt
     poll:
       subject: Vốt của %{name} đã kết thúc
+    quote:
+      body: 'Tút của bạn được trích dẫn bởi %{name}:'
+      subject: "%{name} vừa trích dẫn tút của bạn"
+      title: Trích dẫn mới
+    quoted_update:
+      subject: "%{name} đã chỉnh sửa tút mà bạn trích dẫn"
     reblog:
       body: Tút của bạn vừa được %{name} đăng lại
       subject: "%{name} vừa đăng lại tút của bạn"
       title: Lượt đăng lại mới
+    severed_relationships:
+      subject: Bạn bị mất các mối quan hệ vì một quyết định kiểm duyệt
     status:
       subject: Bài đăng mới từ %{name}
     update:
@@ -1689,6 +1728,8 @@ vi:
       too_few_options: phải có nhiều hơn một mục
       too_many_options: tối đa %{max} lựa chọn
     vote: Vốt
+  posting_defaults:
+    explanation: Các thiết lập này sẽ được sử dụng làm mặc định khi bạn tạo tút mới. Bạn vẫn có thể chỉnh sửa từng tút khi soạn thảo.
   preferences:
     other: Khác
     posting_defaults: Mặc định cho tút
@@ -1850,6 +1891,8 @@ vi:
     edited_at_html: Sửa %{date}
     errors:
       in_reply_not_found: Bạn đang trả lời một tút không còn tồn tại.
+      quoted_status_not_found: Bạn đang trích dẫn một tút không còn tồn tại.
+      quoted_user_not_mentioned: Không thể trích dẫn người dùng không được nhắc đến trong tút Nhắn riêng.
     over_character_limit: vượt quá giới hạn %{max} ký tự
     pin_errors:
       direct: Không thể ghim những tút nhắn riêng
@@ -1868,12 +1911,11 @@ vi:
     title: '%{name}: "%{quote}"'
     visibilities:
       direct: Nhắn riêng
-      private: Riêng tư
-      private_long: Chỉ người theo dõi mới được xem
+      private: Chỉ người theo dõi
       public: Công khai
-      public_long: Ai cũng có thể thấy
+      public_long: Bất kỳ ai trong và ngoài Mastodon
       unlisted: Hạn chế
-      unlisted_long: Không hiện trên bảng tin máy chủ
+      unlisted_long: Ẩn khỏi kết quả tìm kiếm, xu hướng và dòng thời gian công khai của Mastodon
   statuses_cleanup:
     enabled: Tự động xóa những tút cũ
     enabled_hint: Trừ những ngoại lệ bên dưới
@@ -2099,3 +2141,5 @@ vi:
     not_supported: Trình duyệt của bạn không hỗ trợ khóa bảo mật
     otp_required: Để dùng khóa bảo mật, trước tiên hãy kích hoạt xác thực 2 bước.
     registered_on: Đăng ký vào %{date}
+  wrapstodon:
+    title: Wrapstodon %{year} cho %{name}
