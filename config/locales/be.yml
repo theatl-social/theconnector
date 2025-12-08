@@ -196,6 +196,7 @@ be:
         create_relay: Стварыць рэтранслятар
         create_unavailable_domain: Стварыць недаступны Дамен
         create_user_role: Стварыць ролю
+        create_username_block: Стварыць правіла імя карыстальніка
         demote_user: Панізіць карыстальніка
         destroy_announcement: Выдаліць аб'яву
         destroy_canonical_email_block: Выдаліць блакіроўку электроннай пошты
@@ -209,6 +210,7 @@ be:
         destroy_status: Выдаліць допіс
         destroy_unavailable_domain: Выдаліць недаступны дамен
         destroy_user_role: Выдаліць ролю
+        destroy_username_block: Выдаліць правіла імя карыстальніка
         disable_2fa_user: Адключыць двухэтапнае спраўджанне
         disable_custom_emoji: Адключыць адвольныя эмодзі
         disable_relay: Выключыць рэтранслятар
@@ -243,6 +245,7 @@ be:
         update_report: Абнавіць скаргу
         update_status: Абнавіць допіс
         update_user_role: Абнавіць ролю
+        update_username_block: Абнавіць правіла імя карыстальніка
       actions:
         approve_appeal_html: Карыстальнік %{name} ухваліў запыт на мадэрацыю %{target}
         approve_user_html: "%{name} пацвердзіў рэгістрацыю ад %{target}"
@@ -261,6 +264,7 @@ be:
         create_relay_html: "%{name} стварыў(-ла) рэтранслятар %{target}"
         create_unavailable_domain_html: "%{name} прыпыніў дастаўку да дамена %{target}"
         create_user_role_html: "%{name} зрабіў ролю %{target}"
+        create_username_block_html: Адміністратар %{name} дадаў правіла для імён карыстальнікаў, у якіх %{target}
         demote_user_html: "%{name} прыбраў карыстальніка %{target}"
         destroy_announcement_html: "%{name} выдаліў аб'яву %{target}"
         destroy_canonical_email_block_html: "%{name} разблакіраваў эл. пошту з хэшам %{target}"
@@ -274,6 +278,7 @@ be:
         destroy_status_html: "%{name} выдаліў допіс %{target}"
         destroy_unavailable_domain_html: "%{name} дазволіў працягнуць адпраўку на дамен %{target}"
         destroy_user_role_html: "%{name} выдаліў ролю %{target}"
+        destroy_username_block_html: Адміністратар %{name} прыбраў правіла для імён карыстальнікаў, у якіх %{target}
         disable_2fa_user_html: "%{name} амяніў абавязковую двухфактарную верыфікацыю для карыстальніка %{target}"
         disable_custom_emoji_html: "%{name} заблакіраваў эмодзі %{target}"
         disable_relay_html: "%{name} выключыў(-ла) рэтранслятар %{target}"
@@ -308,6 +313,7 @@ be:
         update_report_html: "%{name} абнавіў скаргу %{target}"
         update_status_html: "%{name} абнавіў допіс %{target}"
         update_user_role_html: "%{name} змяніў ролю %{target}"
+        update_username_block_html: Адміністратар %{name} змяніў правіла для імён карыстальнікаў, у якіх %{target}
       deleted_account: выдалены ўліковы запіс
       empty: Логі не знойдзены.
       filter_by_action: Фільтраваць па дзеянню
@@ -1135,6 +1141,25 @@ be:
           other: Выкарысталі %{count} чалавек за апошні тыдзень
       title: Рэкамендацыі і трэнды
       trending: Трэндавае
+    username_blocks:
+      add_new: Дадаць новае
+      block_registrations: Заблакіраваць рэгістрацыю
+      comparison:
+        contains: Мае
+        equals: Такое ж, як
+      contains_html: Мае %{string}
+      created_msg: Правіла імя карыстальніка паспяхова створанае
+      delete: Выдаліць
+      edit:
+        title: Змяніць правіла імя карыстальніка
+      matches_exactly_html: Такое ж, як %{string}
+      new:
+        create: Стварыць правіла
+        title: Стварыць новае правіла імя карыстальніка
+      no_username_block_selected: Аніводнае з правіл імён карыстальніка не было змененае, бо аніводнае не было абранае
+      not_permitted: Забаронена
+      title: Правілы імені карыстальніка
+      updated_msg: Правіла імя карыстальніка паспяхова абноўленае
     warning_presets:
       add_new: Дадаць новы
       delete: Выдаліць
@@ -1401,6 +1426,10 @@ be:
     basic_information: Асноўная інфармацыя
     hint_html: "<strong>Наладзьце тое, што людзі будуць бачыць у вашым профілі і побач з вашымі паведамленнямі.</strong> Іншыя людзі з большай верагоднасцю будуць сачыць і ўзаемадзейнічаць з вамі, калі ў вас ёсць запоўнены профіль і фота профілю."
     other: Іншае
+  emoji_styles:
+    auto: Аўтаматычны
+    native: Мясцовы
+    twemoji: Twemoji
   errors:
     '400': Запыт, які вы адправілі, памылковы або няправільны.
     '403': У вас няма дазволу на прагляд гэтай старонкі.
@@ -1721,7 +1750,7 @@ be:
       disabled_account: Пасля гэтага ваш бягучы ўліковы запіс не будзе цалкам даступны. Аднак у вас будзе доступ да экспарту даных, а таксама да паўторнай актывацыі.
       followers: Гэтае дзеянне будзе «пераносіць» усіх падпісчыкаў з бягучага ўліковага запісу на новы
       only_redirect_html: Альбо вы можаце <a href="%{path}"> толькі наладзіць перанакіраванне на ваш профіль</a>.
-      other_data: Ніякія іншыя даныя не будуць перамешчаны аўтаматычна
+      other_data: Сістэма не будзе аўтаматычна перамяшчаць астатнія даныя (у тым ліку Вашы допісы і спіс уліковых запісаў, на якія Вы падпісаліся)
       redirect: Профіль вашага бягучага ўліковага запісу будзе абноўлены з паведамленнем аб перанакіраванні і выключаны з пошуку
   moderation:
     title: Мадэрацыя
@@ -1739,7 +1768,7 @@ be:
         subject: "%{name} зарэгістраваўся"
     favourite:
       body: "%{name} упадабаў(-ла) Ваш допіс:"
-      subject: "%{name} упадабаў ваш допіс"
+      subject: "%{name} упадабаў(-ла) Ваш допіс"
       title: Новае ўпадабанае
     follow:
       body: "%{name} цяпер падпісаны на вас!"
@@ -1755,12 +1784,22 @@ be:
       body: 'Вас згадаў %{name} у:'
       subject: Вас згадаў %{name}
       title: Новае згадванне
+    moderation_warning:
+      subject: Вы атрымалі папярэджанне ад мадэратараў
     poll:
       subject: Апытанне ад %{name} скончылася
+    quote:
+      body: 'Ваш допіс працытаваў карыстальнік %{name}:'
+      subject: Карыстальнік %{name} працытаваў Ваш допіс
+      title: Цытаваць
+    quoted_update:
+      subject: "%{name} адрэдагаваў допіс, як Вы цытавалі"
     reblog:
       body: "%{name} пашырыў(-ла) Ваш допіс:"
       subject: "%{name} пашырыў ваш допіс"
       title: Новае пашырэнне
+    severed_relationships:
+      subject: Вы страцілі сувязі праз рашэнне мадэратараў
     status:
       subject: Новы допіс ад %{name}
     update:
@@ -1806,6 +1845,8 @@ be:
       too_few_options: павінна быць болей за адзін варыянт
       too_many_options: колькасць варыянтаў не можа перавышаць %{max}
     vote: Прагаласаваць
+  posting_defaults:
+    explanation: Гэтыя налады будуць ужывацца па змаўчанні, калі Вы будзеце ствараць новыя допісы, але Вы зможаце змяняць іх для кожнага допісу ў акне для напісання.
   preferences:
     other: Іншае
     posting_defaults: Публікаваць па змаўчанні
@@ -1979,6 +2020,8 @@ be:
     edited_at_html: Адрэдагавана %{date}
     errors:
       in_reply_not_found: Здаецца, допіс, на які вы спрабуеце адказаць, не існуе.
+      quoted_status_not_found: Выглядае, што допісу, які Вы спрабуеце цытаваць, не існуе.
+      quoted_user_not_mentioned: Немагчыма цытаваць незгаданага карыстальніка ў допісе прыватнага згадвання.
     over_character_limit: перавышаная колькасць сімвалаў у %{max}
     pin_errors:
       direct: Допісы, бачныя толькі згаданым карыстальнікам, нельга замацаваць
@@ -1997,12 +2040,11 @@ be:
     title: '%{name}: "%{quote}"'
     visibilities:
       direct: Прыватнае згадванне
-      private: Для падпісчыкаў
-      private_long: Паказваць толькі падпісчыкам
+      private: Толькі для падпісчыкаў
       public: Публічны
-      public_long: Усе могуць бачыць
-      unlisted: Не ў спісе
-      unlisted_long: Усе могуць пабачыць гэты допіс, але ён не паказваецца ў публічных стужках
+      public_long: Усе ў Mastodon і па-за ім
+      unlisted: Ціхі публічны
+      unlisted_long: Схавана ў выніках пошуку Mastodon, трэндах і публічных стужках
   statuses_cleanup:
     enabled: Аўтаматычна выдаляць старыя допісы
     enabled_hint: Аўтаматычна выдаляць вашыя допісы, калі яны дасягаюць вызначанага тэрміну, акрамя наступных выпадкаў
@@ -2231,3 +2273,5 @@ be:
     not_supported: Гэты браўзер не падтрымлівае ключы бяспекі
     otp_required: Каб выкарыстоўваць ключы бяспекі, спачатку ўключыце двухфактарную аўтэнтыфікацыю.
     registered_on: Зарэгістраваны %{date}
+  wrapstodon:
+    title: Вынікадон %{year} для %{name}

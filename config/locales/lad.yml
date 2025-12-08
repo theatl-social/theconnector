@@ -473,6 +473,7 @@ lad:
           created_at: Kriyado en
           delete: Efasa
           ip: Adreso IP
+          request_body: Kuerpo de la solisitud
       providers:
         active: Aktivo
         delete: Efasa

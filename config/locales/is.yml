@@ -190,6 +190,7 @@ is:
         create_relay: Búa til endurvarpa
         create_unavailable_domain: Útbúa lén sem ekki er tiltækt
         create_user_role: Útbúa hlutverk
+        create_username_block: Búa til notandanafnsreglu
         demote_user: Lækka notanda í tign
         destroy_announcement: Eyða tilkynningu
         destroy_canonical_email_block: Eyða útilokunarblokk tölvupósts
@@ -203,6 +204,7 @@ is:
         destroy_status: Eyða færslu
         destroy_unavailable_domain: Eyða léni sem ekki er tiltækt
         destroy_user_role: Eyða hlutverki
+        destroy_username_block: Eyða notandanafnsreglu
         disable_2fa_user: Gera tveggja-þátta auðkenningu óvirka
         disable_custom_emoji: Gera sérsniðið lyndistákn óvirkt
         disable_relay: Gera endurvarpa óvirkan
@@ -237,6 +239,7 @@ is:
         update_report: Uppfæra kæru
         update_status: Uppfæra færslu
         update_user_role: Uppfæra hlutverk
+        update_username_block: Uppfæra notandanafnsreglu
       actions:
         approve_appeal_html: "%{name} samþykkti áfrýjun á ákvörðun umsjónarmanns frá %{target}"
         approve_user_html: "%{name} samþykkti nýskráningu frá %{target}"
@@ -255,6 +258,7 @@ is:
         create_relay_html: "%{name} bjó til endurvarpa %{target}"
         create_unavailable_domain_html: "%{name} stöðvaði afhendingu til lénsins %{target}"
         create_user_role_html: "%{name} útbjó %{target} hlutverk"
+        create_username_block_html: "%{name} bætti við reglu varðandi notendanöfn sem innihalda %{target}"
         demote_user_html: "%{name} lækkaði notandann %{target} í tign"
         destroy_announcement_html: "%{name} eyddi tilkynninguni %{target}"
         destroy_canonical_email_block_html: "%{name} tók af útilokun á tölvupósti með tætigildið %{target}"
@@ -268,6 +272,7 @@ is:
         destroy_status_html: "%{name} fjarlægði færslu frá %{target}"
         destroy_unavailable_domain_html: "%{name} hóf aftur afhendingu til lénsins %{target}"
         destroy_user_role_html: "%{name} eyddi hlutverki %{target}"
+        destroy_username_block_html: "%{name} fjarlægði reglu varðandi notendanöfn sem innihalda %{target}"
         disable_2fa_user_html: "%{name} gerði kröfu um tveggja-þátta innskráningu óvirka fyrir notandann %{target}"
         disable_custom_emoji_html: "%{name} gerði lyndistáknið %{target} óvirkt"
         disable_relay_html: "%{name} gerði endurvarpann %{target} óvirkan"
@@ -302,6 +307,7 @@ is:
         update_report_html: "%{name} uppfærði kæru %{target}"
         update_status_html: "%{name} uppfærði færslu frá %{target}"
         update_user_role_html: "%{name} breytti hlutverki %{target}"
+        update_username_block_html: "%{name} uppfærði reglu varðandi notendanöfn sem innihalda %{target}"
       deleted_account: eyddur notandaaðgangur
       empty: Engar atvikaskrár fundust.
       filter_by_action: Sía eftir aðgerð
@@ -1101,6 +1107,25 @@ is:
           other: Notað af %{count} aðilum síðustu vikuna
       title: Meðmæli og vinsælt
       trending: Vinsælt
+    username_blocks:
+      add_new: Bæta við nýju
+      block_registrations: Loka á nýskráningar
+      comparison:
+        contains: Inniheldur
+        equals: Er jafnt og
+      contains_html: Inniheldur %{string}
+      created_msg: Tókst að útbúa notandanafnsreglu
+      delete: Eyða
+      edit:
+        title: Breyta notandanafnsreglu
+      matches_exactly_html: Er jafnt og %{string}
+      new:
+        create: Búa til reglu
+        title: Búa til nýja notandanafnsreglu
+      no_username_block_selected: Engum notandanafnsreglum var breytt þar sem engar voru valdar
+      not_permitted: Ekki leyft
+      title: Notendanafnareglur
+      updated_msg: Tókst að uppfæra notandanafnsreglu
     warning_presets:
       add_new: Bæta við nýju
       delete: Eyða
@@ -1367,6 +1392,10 @@ is:
     basic_information: Grunnupplýsingar
     hint_html: "<strong>Sérsníddu hvað fólk sér á opinbera notandasniðinu þínu og næst færslunum þínum.</strong> Annað fólk er líklegra til að fylgjast með þér og eiga í samskiptum við þig ef þú fyllir út notandasniðið og setur auðkennismynd."
     other: Annað
+  emoji_styles:
+    auto: Sjálfvirkt
+    native: Innbyggt
+    twemoji: Twemoji
   errors:
     '400': Beiðnin sem þú sendir er ógild eða rangt uppsett.
     '403': Þú hefur ekki heimildir til að skoða þessari síðu.
@@ -1647,7 +1676,7 @@ is:
       disabled_account: Núverandi aðgangur þinn verður ekki nothæfur að fullu eftir þetta. Hinsvegar muntu geta flutt út gögn af honum og einnig endurvirkjað hann.
       followers: Þessi aðgerð mun flytja alla fylgjendur af núverandi aðgangi yfir á nýja aðganginn
       only_redirect_html: Einnig geturðu <a href="%{path}">einungis sett upp endurbeiningu á notandasniðið þitt</a>.
-      other_data: Engin önnur gögn munu flytjast sjálfvirkt
+      other_data: Engin önnur gögn verða flutt sjálfkrafa (m.a. færslurnar þínar og listar yfir þá sem þú fylgist með)
       redirect: Notandasnið aðgangsins verður uppfært með athugasemd um endurbeininguna og verður undanþegið frá leitum
   moderation:
     title: Umsjón
@@ -1681,12 +1710,22 @@ is:
       body: "%{name} minntist á þig í:"
       subject: "%{name} minntist á þig"
       title: Ný tilvísun
+    moderation_warning:
+      subject: Þú hefur fengið aðvörun frá umsjónarmanni
     poll:
       subject: Könnun frá %{name} er lokið
+    quote:
+      body: "%{name} vitnaði í færsluna þína:"
+      subject: "%{name} vitnaði í færsluna þína"
+      title: Ný tilvitnun
+    quoted_update:
+      subject: "%{name} breytti færslu sem þú hefur vitnað í"
     reblog:
       body: "%{name} endurbirti færsluna þína:"
       subject: "%{name} endurbirti færsluna þína"
       title: Ný endurbirting
+    severed_relationships:
+      subject: Þú hefur tapað tengingum vegna ákvörðunar umsjónarmanna
     status:
       subject: "%{name} sendi inn rétt í þessu"
     update:
@@ -1732,6 +1771,8 @@ is:
       too_few_options: verður að vera með fleiri en eitt atriði
       too_many_options: getur ekki innihaldið meira en %{max} atriði
     vote: Greiða atkvæði
+  posting_defaults:
+    explanation: Þessar stillingar verða notaðar sjálfgefið þegar útbúnar eru nýjar færslur, en hægt er að breyta þeim í ritlinum fyrir hverja og eina færslu.
   preferences:
     other: Annað
     posting_defaults: Sjálfgefin gildi við gerð færslna
@@ -1897,6 +1938,8 @@ is:
     edited_at_html: Breytt %{date}
     errors:
       in_reply_not_found: Færslan sem þú ert að reyna að svara að er líklega ekki til.
+      quoted_status_not_found: Færslan sem þú ert að reyna að vitna í virðist ekki vera til.
+      quoted_user_not_mentioned: Ekki er hægt að vitna í aðila sem ekki er minnst á í einkaspjalli.
     over_character_limit: hámarksfjölda stafa (%{max}) náð
     pin_errors:
       direct: Ekki er hægt að festa færslur sem einungis eru sýnilegar þeim notendum sem minnst er á
@@ -1916,11 +1959,10 @@ is:
     visibilities:
       direct: Einkaspjall
       private: Einungis fylgjendur
-      private_long: Aðeins birt fylgjendum
       public: Opinber
-      public_long: Allir geta séð
-      unlisted: Óskráð
-      unlisted_long: Allir geta skoðað, en er ekki talið upp á opinberum tímalínum
+      public_long: Hver sem er, á og utan Mastodon
+      unlisted: Hljóðlátt opinbert
+      unlisted_long: Falið frá leitarniðurstöðum Mastodon, vinsældalistum og opinberum tímalínum
   statuses_cleanup:
     enabled: Sjálfkrafa eyða eldri færslum
     enabled_hint: Eyðir sjálfkrafa færslum þínum um leið og þær ná tilteknum aldursmörkum, nema ef þær samsvara einni af undantekningunum hér fyrir neðan
@@ -2147,3 +2189,5 @@ is:
     not_supported: Þessi vafri styður ekki öryggislykla
     otp_required: Til að nota öryggislykla skaltu fyrst virkja tveggja-þátta auðkenningu.
     registered_on: Skráði sig %{date}
+  wrapstodon:
+    title: Wrapstodon %{year} fyrir %{name}

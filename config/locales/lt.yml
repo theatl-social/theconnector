@@ -1,7 +1,7 @@
 ---
 lt:
   about:
-    about_mastodon_html: 'Ateities socialinis tinklas: jokių reklamų ir įmonių sekimo, etiškas dizainas bei decentralizacija! Turėkite savo duomenis su „Mastodon“.'
+    about_mastodon_html: 'Ateities socialinis tinklas: jokių reklamų ir įmonių sekimo, etiškas dizainas bei decentralizacija! Turėkite savo duomenis su „Mastodon“!'
     contact_missing: Nenustatyta
     contact_unavailable: Nėra
     hosted_on: "„Mastodon“ talpinamas domene %{domain}"
@@ -25,6 +25,7 @@ lt:
       one: Įrašas
       other: Įrašų
     posts_tab_heading: Įrašai
+    self_follow_error: Neleidžiama sekti savo pačių paskyros
   admin:
     account_actions:
       action: Atlikti veiksmą
@@ -36,8 +37,9 @@ lt:
       created_msg: Prižiūrėjimo pastaba sėkmingai sukurta!
       destroyed_msg: Prižiūrėjimo pastaba sėkmingai sunaikinta!
     accounts:
+      add_email_domain_block: Blokuoti el. pašto domeną
       approve: Patvirtinti
-      approved_msg: Sėkmingai patvirtinta %{username} registracijos paraiška.
+      approved_msg: Sėkmingai patvirtinta %{username} registracijos paraiška
       are_you_sure: Ar esi įsitikinęs (-usi)?
       avatar: Avataras
       by_domain: Domenas
@@ -47,13 +49,13 @@ lt:
         label: Keisti el. paštą
         new_email: Naujas el. paštas
         submit: Keisti el. paštą
-        title: Keisti el. paštą %{username}
+        title: Keisti el. paštą vartotjui %{username}
       change_role:
         changed_msg: Vaidmuo sėkmingai pakeistas.
         edit_roles: Tvarkyti naudotojų vaidmenis
         label: Keisti vaidmenį
         no_role: Jokios vaidmenį
-        title: Keisti vaidmenį %{username}
+        title: Keisti teises vartotojui %{username}
       confirm: Patvirtinti
       confirmed: Patvirtinta
       confirming: Patvirtinama
@@ -61,7 +63,7 @@ lt:
       delete: Ištrinti duomenis
       deleted: Ištrinta
       demote: Pažeminti
-      destroyed_msg: "%{username} duomenys dabar laukia eilėje, kad būtų netrukus ištrinti."
+      destroyed_msg: "%{username} duomenys dabar laukia eilėje, kad būtų netrukus ištrinti"
       disable: Sustabdyti
       disable_two_factor_authentication: Išjungti 2FA
       disabled: Pristabdyta
@@ -72,7 +74,7 @@ lt:
       email_status: El. pašto būsena
       enable: Panaikinti sustabdymą
       enabled: Įjungta
-      enabled_msg: Sėkmingai panaikintas %{username} paskyros sustabdymas.
+      enabled_msg: Sėkmingai %{username} paskyros sustabdymas panaikintas
       followers: Sekėjai
       follows: Seka
       header: Antraštė
@@ -90,7 +92,7 @@ lt:
       media_attachments: Medijos priedai
       memorialize: Paversti į memorialinį
       memorialized: Memorializuota
-      memorialized_msg: Sėkmingai paversta %{username} į memorialinę paskyrą.
+      memorialized_msg: Sėkmingai %{username} paskyra paversta į memorialinę
       moderation:
         active: Aktyvus
         all: Visi
@@ -119,15 +121,15 @@ lt:
       public: Viešas
       push_subscription_expires: PuSH prenumerata baigiasi
       redownload: Atnaujinti profilį
-      redownloaded_msg: Sėkmingai atnaujintas %{username} profilis iš kilmės šaltinio.
+      redownloaded_msg: Sėkmingai atnaujintas %{username} profilis iš pradinio šaltinio
       reject: Atmesti
-      rejected_msg: Sėkmingai atmesta %{username} registracijos paraiška.
+      rejected_msg: Sėkmingai atmesta %{username} registracijos paraiška
       remote_suspension_irreversible: Šios paskyros duomenys negrįžtamai ištrinti.
       remote_suspension_reversible_hint_html: Paskyra jų serveryje buvo pristabdyta, o duomenys bus visiškai pašalinti %{date}. Iki to laiko nuotolinis serveris gali atkurti šią paskyrą be jokių neigiamų pasekmių. Jei nori iš karto pašalinti visus paskyros duomenis, gali tai padaryti toliau.
       remove_avatar: Pašalinti avatarą
       remove_header: Pašalinti antraštę
-      removed_avatar_msg: Sėkmingai pašalintas %{username} avataro vaizdas.
-      removed_header_msg: Sėkmingai pašalintas %{username} antraštės vaizdas.
+      removed_avatar_msg: Sėkmingai pašalintas %{username} avataro vaizdas
+      removed_header_msg: Sėkmingai pašalintas %{username} antraštės paveikslėlis
       resend_confirmation:
         already_confirmed: Šis naudotojas jau patvirtintas.
         send: Iš naujo siųsti patvirtinimo nuorodą
@@ -188,6 +190,7 @@ lt:
         create_relay: Kurti perdavimą
         create_unavailable_domain: Kurti nepasiekiamą domeną
         create_user_role: Kurti vaidmenį
+        create_username_block: Kurti naudotojo vardo taisyklę
         demote_user: Pažeminti naudotoją
         destroy_announcement: Ištrinti skelbimą
         destroy_custom_emoji: Ištrinti pasirinktinį jaustuką
@@ -199,6 +202,7 @@ lt:
         destroy_status: Ištrinti įrašą
         destroy_unavailable_domain: Ištrinti nepasiekiamą domeną
         destroy_user_role: Sunaikinti vaidmenį
+        destroy_username_block: Ištrinti naudotojo vardo taisyklę
         disable_2fa_user: Išjungti 2FA
         disable_custom_emoji: Išjungti pasirinktinį jaustuką
         disable_relay: Išjungti perdavimą
@@ -231,6 +235,7 @@ lt:
         update_report: Atnaujinti ataskaitą
         update_status: Atnaujinti įrašą
         update_user_role: Atnaujinti vaidmenį
+        update_username_block: Atnaujinti naudotojo vardo taisyklę
       actions:
         approve_appeal_html: "%{name} patvirtino prižiūjimo veiksmo apeliaciją iš %{target}"
         approve_user_html: "%{name} patvirtino registraciją iš %{target}"
@@ -245,6 +250,7 @@ lt:
         create_relay_html: "%{name} sukūrė perdavimą %{target}"
         create_unavailable_domain_html: "%{name} sustabdė tiekimą į domeną %{target}"
         create_user_role_html: "%{name} sukūrė %{target} vaidmenį"
+        create_username_block_html: "%{name} pridėjo taisyklę naudotojo vardams, turintiems %{target}"
         demote_user_html: "%{name} pažemino naudotoją %{target}"
         destroy_announcement_html: "%{name} ištrynė skelbimą %{target}"
         destroy_custom_emoji_html: "%{name} ištrynė jaustuką %{target}"
@@ -256,6 +262,7 @@ lt:
         destroy_status_html: "%{name} pašalino įrašą %{target}"
         destroy_unavailable_domain_html: "%{name} pratęsė tiekimą į domeną %{target}"
         destroy_user_role_html: "%{name} ištrynė %{target} vaidmenį"
+        destroy_username_block_html: "%{name} pašalino taisyklę naudotojo vardams, turintiems %{target}"
         disable_2fa_user_html: "%{name} išjungė dviejų veiksnių reikalavimą naudotojui %{target}"
         disable_custom_emoji_html: "%{name} išjungė jaustuką %{target}"
         disable_relay_html: "%{name} išjungė perdavimą %{target}"
@@ -287,6 +294,7 @@ lt:
         update_report_html: "%{name} atnaujino ataskaitą %{target}"
         update_status_html: "%{name} atnaujino įrašą %{target}"
         update_user_role_html: "%{name} pakeitė %{target} vaidmenį"
+        update_username_block_html: "%{name} atnaujino taisyklę naudotojo vardams, turintiems %{target}"
       deleted_account: ištrinta paskyra
       empty: Žurnalų nerasta.
       filter_by_action: Filtruoti pagal veiksmą
@@ -611,11 +619,13 @@ lt:
       no_status_selected: Jokie įrašai nebuvo pakeisti, nes nė vienas buvo pasirinktas
       open: Atidaryti įrašą
       original_status: Originalus įrašas
+      quotes: Paminėjimai
       replied_to_html: Atsakyta į %{acct_link}
       status_title: Paskelbė @%{name}
       title: Paskyros įrašai – @%{name}
       trending: Tendencinga
       view_publicly: Peržiūrėti viešai
+      view_quoted_post: Peržiūrėti paminėtą įrašą
       with_media: Su medija
     system_checks:
       database_schema_check:
@@ -746,6 +756,22 @@ lt:
         trending_rank: 'Tendencinga #%{rank}'
       title: Rekomendacijos ir tendencijos
       trending: Tendencinga
+    username_blocks:
+      add_new: Pridėti naują
+      block_registrations: Blokuoti registracijas
+      comparison:
+        contains: Yra
+        equals: Lygus
+      contains_html: Yra %{string}
+      created_msg: Sėkmingai sukurta naudotojo vardo taisyklė.
+      delete: Ištrinti
+      edit:
+        title: Redaguoti naudotojo vardo taisyklę
+      matches_exactly_html: Lygus %{string}
+      new:
+        create: Kurti taisyklę
+        title: Kurti naują naudotojo vardo taisyklę
+      no_username_block_selected: Jokios naudotojo vardo taisyklės nebuvo pakeistos, nes nė viena buvo pasirinkta.
     warning_presets:
       add_new: Pridėti naują
       delete: Ištrinti
@@ -854,6 +880,7 @@ lt:
     security: Apsauga
     set_new_password: Nustatyti naują slaptažodį
     setup:
+      email_below_hint_html: Patikrinkite savo šlamšto aplanką arba paprašykite naujo el. laiško. Jei el. pašto adresas neteisingas, galite jį pataisyti.
       email_settings_hint_html: Spustelėkite nuorodą, kurią atsiuntėme adresu %{email}, kad pradėtumėte naudoti „Mastodon“. Lauksime čia.
       link_not_received: Negavai nuorodos?
       title: Patikrinti pašto dėžutę
@@ -908,7 +935,13 @@ lt:
       your_appeal_pending: Pateikei apeliaciją
       your_appeal_rejected: Tavo apeliacija buvo atmesta
   edit_profile:
+    basic_information: Pagrindinė informacija
     hint_html: "<strong>Tinkink tai, ką žmonės mato tavo viešame profilyje ir šalia įrašų.</strong> Kiti žmonės labiau linkę sekti atgal ir bendrauti su tavimi, jei tavo profilis yra užpildytas ir turi profilio nuotrauką."
+    other: Kita
+  emoji_styles:
+    auto: Automatinis
+    native: Vietiniai
+    twemoji: Tvejaustukai
   errors:
     '403': Jūs neturie prieigos matyti šiam puslapiui.
     '404': Puslapis nerastas.
@@ -975,20 +1008,6 @@ lt:
       merge_long: Išsaugoti esančius įrašus ir pridėti naujus
       overwrite: Perrašyti
       overwrite_long: Pakeisti senus įrašus naujais
-    overwrite_preambles:
-      blocking_html: Ketinate <strong>pakeisti savo blokavimo sąrašą</strong> iki <strong>%{total_items} paskyrų</strong> iš <strong>%{filename}</strong>.
-      bookmarks_html: Ketinate <strong>pakeisti savo žymes</strong> iki <strong>%{total_items} įrašų</strong> iš <strong>%{filename}</strong>.
-      domain_blocking_html: Ketinate <strong>pakeisti savo domeno blokavimo sąrašą</strong> iki <strong>%{total_items} domenų</strong> iš <strong>%{filename}</strong>.
-      following_html: Ketinate <strong>sekti</strong> iki <strong>%{total_items} paskyrų</strong> iš <strong>%{filename}</strong> ir <strong>nustoti sekti kitus</strong>.
-      lists_html: Ketinate <strong>pakeisti savo sąrašus</strong> su turiniu iš <strong>%{filename}</strong>. Į naujus sąrašus bus įtraukta iki <strong>%{total_items} paskyrų</strong>.
-      muting_html: Ketinate <strong>pakeisti savo nutildytų paskyrų sąrašą</strong> iki <strong>%{total_items} paskyrų</strong> iš <strong>%{filename}</strong>.
-    preambles:
-      blocking_html: Ketinate <strong>blokuoti</strong> iki <strong>%{total_items} paskyrų</strong> iš <strong>%{filename}</strong>.
-      bookmarks_html: Ketinate pridėti iki <strong>%{total_items} įrašų</strong> iš <strong>%{filename}</strong> prie savo <strong>žymių</strong>.
-      domain_blocking_html: Ketinate <strong>blokuoti</strong> iki <strong>%{total_items} domenų</strong> iš <strong>%{filename}</strong>.
-      following_html: Ketinate <strong>sekti</strong> iki <strong>%{total_items} paskyrų</strong> iš <strong>%{filename}</strong>.
-      lists_html: Ketinate įtraukti iki <strong>%{total_items} paskyrų</strong> iš <strong>%{filename}</strong> į savo <strong>sąrašus</strong>. Nauji sąrašai bus sukurti, jei nėra sąrašo, į kurį būtų galima įtraukti.
-      muting_html: Ketinate <strong>nutildyti</strong> iki <strong>%{total_items} paskyrų</strong> iš <strong>%{filename}</strong>.
     preface: Gali importuoti duomenis, kuriuos eksportavai iš kito serverio, pavyzdžiui, sekamų arba blokuojamų žmonių sąrašą.
     success: Jūsų informacija sėkmingai įkelta ir bus apdorota kaip įmanoma greičiau
     types:
@@ -1062,6 +1081,10 @@ lt:
       action: Atsakyti
       body: 'Tave %{name} paminėjo:'
       subject: Tave paminėjo %{name}
+      title: Naujas paminėjimas
+    quote:
+      body: 'Tavo įrašą paminėjo %{name}:'
+      subject: "%{name} paminėjo jūsų įrašą"
       title: Naujas paminėjimas
     reblog:
       body: 'Tavo įrašą pakėlė %{name}:'
@@ -1194,18 +1217,26 @@ lt:
         other: "%{count} vaizdų"
     boosted_from_html: Pakelta iš %{acct_link}
     content_warning: 'Turinio įspėjimas: %{warning}'
+    errors:
+      quoted_status_not_found: Įrašas, kurį bandote cituoti, atrodo, neegzistuoja.
+      quoted_user_not_mentioned: Privačiame paminėjime negalima cituoti citatoje nepaminėto vartotojo.
     over_character_limit: pasiektas %{max} simbolių limitas
     pin_errors:
       limit: Jūs jau prisegėte maksimalų toot'ų skaičų
       ownership: Kitų vartotojų toot'ai negali būti prisegti
       reblog: Pakeltos žinutės negali būti prisegtos
+    quote_error:
+      not_available: Įrašas nepasiekiamas
+      pending_approval: Įrašas peržiūrimas
+      revoked: Autorius pašalino įrašą
+    quote_policies:
+      followers: Tik sekėjai
+      nobody: Tik aš
+      public: Visi
+    quote_post_author: Paminėjo %{acct} įrašą
+    title: '%{name}: "%{quote}"'
     visibilities:
-      private: Tik sekėjams
-      private_long: rodyti tik sekėjams
       public: Vieša
-      public_long: visi gali matyti
-      unlisted: Neįtrauktas į sąrašą
-      unlisted_long: matyti gali visi, bet nėra įtraukti į viešąsias laiko skales
   statuses_cleanup:
     enabled_hint: Automatiškai ištrina įrašus, kai jie pasiekia nustatytą amžiaus ribą, nebent jie atitinka vieną iš toliau nurodytų išimčių
     interaction_exceptions_explanation: Atkreipk dėmesį, kad negarantuojama, jog įrašai nebus ištrinti, jei jų mėgstamumo ar pasidalinimo riba bus žemesnė, nors vieną kartą ji jau buvo viršyta.
