@@ -54,6 +54,7 @@ const legacyTests: TestProjectInlineConfiguration = {
   },
 };
 
+// @ts-expect-error - vite/vitest config type mismatch
 export default defineConfig(async (context) => {
   const baseConfig = await viteConfig(context);
 
