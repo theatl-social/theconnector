@@ -6,8 +6,9 @@ export async function importCustomEmoji(emojis: ApiCustomEmojiJSON[]) {
   }
 
   // First, check if we already have them all.
-  const { searchCustomEmojisByShortcodes, clearEtag } =
-    await import('@/mastodon/features/emoji/database');
+  const { searchCustomEmojisByShortcodes, clearEtag } = await import(
+    '@/mastodon/features/emoji/database'
+  );
 
   const existingEmojis = await searchCustomEmojisByShortcodes(
     emojis.map((emoji) => emoji.shortcode),

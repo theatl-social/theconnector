@@ -5,10 +5,8 @@ import classNames from 'classnames';
 
 import { LoadingIndicator } from 'mastodon/components/loading_indicator';
 
-interface BaseProps extends Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  'children'
-> {
+interface BaseProps
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'children'> {
   block?: boolean;
   secondary?: boolean;
   plain?: boolean;

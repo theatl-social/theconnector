@@ -102,7 +102,8 @@ export interface ApiAccountWarningJSON {
   appeal: unknown;
 }
 
-interface ModerationWarningNotificationGroupJSON extends BaseNotificationGroupJSON {
+interface ModerationWarningNotificationGroupJSON
+  extends BaseNotificationGroupJSON {
   type: 'moderation_warning';
   moderation_warning: ApiAccountWarningJSON;
 }
@@ -122,12 +123,14 @@ export interface ApiAccountRelationshipSeveranceEventJSON {
   created_at: string;
 }
 
-interface AccountRelationshipSeveranceNotificationGroupJSON extends BaseNotificationGroupJSON {
+interface AccountRelationshipSeveranceNotificationGroupJSON
+  extends BaseNotificationGroupJSON {
   type: 'severed_relationships';
   event: ApiAccountRelationshipSeveranceEventJSON;
 }
 
-interface AccountRelationshipSeveranceNotificationJSON extends BaseNotificationJSON {
+interface AccountRelationshipSeveranceNotificationJSON
+  extends BaseNotificationJSON {
   type: 'severed_relationships';
   event: ApiAccountRelationshipSeveranceEventJSON;
 }
