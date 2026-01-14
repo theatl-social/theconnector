@@ -42,9 +42,10 @@ const AccountRoleFactory = ImmutableRecord<AccountRoleShape>({
 });
 
 // Account
-export interface AccountShape extends Required<
-  Omit<ApiAccountJSON, 'emojis' | 'fields' | 'roles' | 'moved' | 'url'>
-> {
+export interface AccountShape
+  extends Required<
+    Omit<ApiAccountJSON, 'emojis' | 'fields' | 'roles' | 'moved' | 'url'>
+  > {
   emojis: ImmutableList<CustomEmoji>;
   fields: ImmutableList<AccountField>;
   roles: ImmutableList<AccountRole>;
