@@ -298,6 +298,12 @@ class MediaGallery extends PureComponent {
 
   render () {
     const { media, lang, sensitive, defaultWidth, autoplay, matchedFilters } = this.props;
+
+    // Defensive check: bail out if media is undefined or empty
+    if (!media || media.size === 0) {
+      return null;
+    }
+
     const { visible } = this.state;
     const width = this.state.width || defaultWidth;
 
