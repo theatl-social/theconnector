@@ -48,7 +48,9 @@ type LocaleTables = Record<Locale, LocaleTable>;
 
 type Database = IDBPDatabase<EmojiDB>;
 
-const SCHEMA_VERSION = 2;
+// Bumped to 3 to handle users who visited during the merge-v4.5.4-clean deployment
+// which had version 3. IndexedDB requires version to be >= existing version.
+const SCHEMA_VERSION = 3;
 
 const loadedLocales = new Set<Locale>();
 
