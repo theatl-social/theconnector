@@ -1,5 +1,9 @@
-import { setupLinkListeners } from './utils/links';
+import Rails from '@rails/ujs';
 
 export function start() {
-  setupLinkListeners();
+  try {
+    Rails.start();
+  } catch {
+    // If called twice
+  }
 }

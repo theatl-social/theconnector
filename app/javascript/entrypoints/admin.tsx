@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client';
 
+import Rails from '@rails/ujs';
 import { decode, ValidationError } from 'blurhash';
-import { on } from 'delegated-events';
 
 import ready from '../mastodon/ready';
 
@@ -24,9 +24,10 @@ const setAnnouncementEndsAttributes = (target: HTMLInputElement) => {
   }
 };
 
-on(
-  'change',
+Rails.delegate(
+  document,
   'input[type="datetime-local"]#announcement_starts_at',
+  'change',
   ({ target }) => {
     if (target instanceof HTMLInputElement)
       setAnnouncementEndsAttributes(target);
@@ -62,7 +63,7 @@ const hideSelectAll = () => {
   if (hiddenField) hiddenField.value = '0';
 };
 
-on('change', '#batch_checkbox_all', ({ target }) => {
+Rails.delegate(document, '#batch_checkbox_all', 'change', ({ target }) => {
   if (!(target instanceof HTMLInputElement)) return;
 
   const selectAllMatchingElement = document.querySelector(
@@ -84,7 +85,7 @@ on('change', '#batch_checkbox_all', ({ target }) => {
   }
 });
 
-on('click', '.batch-table__select-all button', () => {
+Rails.delegate(document, '.batch-table__select-all button', 'click', () => {
   const hiddenField = document.querySelector<HTMLInputElement>(
     '#select_all_matching',
   );
@@ -112,7 +113,7 @@ on('click', '.batch-table__select-all button', () => {
   }
 });
 
-on('change', batchCheckboxClassName, () => {
+Rails.delegate(document, batchCheckboxClassName, 'change', () => {
   const checkAllElement = document.querySelector<HTMLInputElement>(
     'input#batch_checkbox_all',
   );
@@ -139,9 +140,14 @@ on('change', batchCheckboxClassName, () => {
   }
 });
 
-on('change', '.filter-subset--with-select select', ({ target }) => {
-  if (target instanceof HTMLSelectElement) target.form?.submit();
-});
+Rails.delegate(
+  document,
+  '.filter-subset--with-select select',
+  'change',
+  ({ target }) => {
+    if (target instanceof HTMLSelectElement) target.form?.submit();
+  },
+);
 
 const onDomainBlockSeverityChange = (target: HTMLSelectElement) => {
   const rejectMediaDiv = document.querySelector(
@@ -162,11 +168,11 @@ const onDomainBlockSeverityChange = (target: HTMLSelectElement) => {
   }
 };
 
-on('change', '#domain_block_severity', ({ target }) => {
+Rails.delegate(document, '#domain_block_severity', 'change', ({ target }) => {
   if (target instanceof HTMLSelectElement) onDomainBlockSeverityChange(target);
 });
 
-function onEnableBootstrapTimelineAccountsChange(target: HTMLInputElement) {
+const onEnableBootstrapTimelineAccountsChange = (target: HTMLInputElement) => {
   const bootstrapTimelineAccountsField =
     document.querySelector<HTMLInputElement>(
       '#form_admin_settings_bootstrap_timeline_accounts',
@@ -188,11 +194,12 @@ function onEnableBootstrapTimelineAccountsChange(target: HTMLInputElement) {
       );
     }
   }
-}
+};
 
-on(
-  'change',
+Rails.delegate(
+  document,
   '#form_admin_settings_enable_bootstrap_timeline_accounts',
+  'change',
   ({ target }) => {
     if (target instanceof HTMLInputElement)
       onEnableBootstrapTimelineAccountsChange(target);
@@ -232,11 +239,11 @@ const onChangeRegistrationMode = (target: HTMLSelectElement) => {
     });
 };
 
-function convertUTCDateTimeToLocal(value: string) {
+const convertUTCDateTimeToLocal = (value: string) => {
   const date = new Date(value + 'Z');
   const twoChars = (x: number) => x.toString().padStart(2, '0');
   return `${date.getFullYear()}-${twoChars(date.getMonth() + 1)}-${twoChars(date.getDate())}T${twoChars(date.getHours())}:${twoChars(date.getMinutes())}`;
-}
+};
 
 function convertLocalDatetimeToUTC(value: string) {
   const date = new Date(value);
@@ -244,9 +251,14 @@ function convertLocalDatetimeToUTC(value: string) {
   return fullISO8601.slice(0, fullISO8601.indexOf('T') + 6);
 }
 
-on('change', '#form_admin_settings_registrations_mode', ({ target }) => {
-  if (target instanceof HTMLSelectElement) onChangeRegistrationMode(target);
-});
+Rails.delegate(
+  document,
+  '#form_admin_settings_registrations_mode',
+  'change',
+  ({ target }) => {
+    if (target instanceof HTMLSelectElement) onChangeRegistrationMode(target);
+  },
+);
 
 async function mountReactComponent(element: Element) {
   const componentName = element.getAttribute('data-admin-component');
@@ -293,7 +305,7 @@ ready(() => {
   if (registrationMode) onChangeRegistrationMode(registrationMode);
 
   const checkAllElement = document.querySelector<HTMLInputElement>(
-    '#batch_checkbox_all',
+    'input#batch_checkbox_all',
   );
   if (checkAllElement) {
     const allCheckboxes = Array.from(
@@ -306,7 +318,7 @@ ready(() => {
   }
 
   document
-    .querySelector<HTMLAnchorElement>('a#add-instance-button')
+    .querySelector('a#add-instance-button')
     ?.addEventListener('click', (e) => {
       const domain = document.querySelector<HTMLInputElement>(
         'input[type="text"]#by_domain',
@@ -330,7 +342,7 @@ ready(() => {
       }
     });
 
-  on('submit', 'form', ({ target }) => {
+  Rails.delegate(document, 'form', 'submit', ({ target }) => {
     if (target instanceof HTMLFormElement)
       target
         .querySelectorAll<HTMLInputElement>('input[type="datetime-local"]')

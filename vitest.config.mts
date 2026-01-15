@@ -53,6 +53,7 @@ const legacyTests: TestProjectInlineConfiguration = {
   },
 };
 
+// @ts-expect-error vitest/config's defineConfig overloads don't properly handle async functions
 export default defineConfig(async (context) => {
   const baseConfig = await viteConfig(context);
 
