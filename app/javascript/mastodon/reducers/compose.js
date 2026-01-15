@@ -363,9 +363,7 @@ export const composeReducer = (state = initialState, action) => {
 
   switch(action.type) {
   case STORE_HYDRATE:
-    if (action.state.get('compose'))
-      return hydrate(state, action.state.get('compose'));
-    return state;
+    return hydrate(state, action.state.get('compose'));
   case COMPOSE_MOUNT:
     return state
       .set('mounted', state.get('mounted') + 1)
