@@ -11,11 +11,6 @@ import type { Preview } from '@storybook/react-vite';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { action } from 'storybook/actions';
 
-import {
-  importCustomEmojiData,
-  importLegacyShortcodes,
-  importEmojiData,
-} from '@/mastodon/features/emoji/loader';
 import type { LocaleData } from '@/mastodon/locales';
 import { reducerWithInitialState } from '@/mastodon/reducers';
 import { defaultMiddleware } from '@/mastodon/store/store';
@@ -55,31 +50,12 @@ const preview: Preview = {
     locale: 'en',
   },
   decorators: [
-    (Story, { parameters, globals, args, argTypes }) => {
+    (Story, { parameters, globals, args }) => {
       // Get the locale from the global toolbar
       // and merge it with any parameters or args state.
       const { locale } = globals as { locale: string };
       const { state = {} } = parameters;
-
-      const argsState: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(args)) {
-        const argType = argTypes[key];
-        if (argType?.reduxPath) {
-          const reduxPath = Array.isArray(argType.reduxPath)
-            ? argType.reduxPath.map((p) => p.toString())
-            : argType.reduxPath.split('.');
-
-          reduxPath.reduce((acc, key, i) => {
-            if (acc[key] === undefined) {
-              acc[key] = {};
-            }
-            if (i === reduxPath.length - 1) {
-              acc[key] = value;
-            }
-            return acc[key] as Record<string, unknown>;
-          }, argsState);
-        }
-      }
+      const { state: argsState = {} } = args;
 
       const reducer = reducerWithInitialState(
         {
@@ -88,7 +64,7 @@ const preview: Preview = {
           },
         },
         state as Record<string, unknown>,
-        argsState,
+        argsState as Record<string, unknown>,
       );
 
       const store = configureStore({
@@ -151,12 +127,7 @@ const preview: Preview = {
       </MemoryRouter>
     ),
   ],
-  loaders: [
-    mswLoader,
-    importCustomEmojiData,
-    importLegacyShortcodes,
-    ({ globals: { locale } }) => importEmojiData(locale as string),
-  ],
+  loaders: [mswLoader],
   parameters: {
     layout: 'centered',
 
