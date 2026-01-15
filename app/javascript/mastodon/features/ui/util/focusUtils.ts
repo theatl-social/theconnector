@@ -1,30 +1,16 @@
-/**
- * Out of a list of elements, return the first one whose top edge
- * is inside of the viewport, and return the element and its BoundingClientRect.
- */
-function findFirstVisibleWithRect(
-  items: HTMLElement[],
-): { item: HTMLElement; rect: DOMRect } | null {
-  const viewportHeight =
-    window.innerHeight || document.documentElement.clientHeight;
-
-  for (const item of items) {
-    const rect = item.getBoundingClientRect();
-    const isVisible = rect.top >= 0 && rect.top < viewportHeight;
-
-    if (isVisible) {
-      return { item, rect };
-    }
-  }
-
-  return null;
+interface FocusColumnOptions {
+  index?: number;
+  focusItem?: 'first' | 'first-visible';
 }
 
 /**
  * Move focus to the column of the passed index (1-based).
- * Focus is placed on the topmost visible item
+ * Can either focus the topmost item or the first one in the viewport
  */
-export function focusColumn(index = 1) {
+export function focusColumn({
+  index = 1,
+  focusItem = 'first',
+}: FocusColumnOptions = {}) {
   // Skip the leftmost drawer in multi-column mode
   const isMultiColumnLayout = !!document.querySelector(
     'body.layout-multiple-columns',
@@ -41,28 +27,33 @@ export function focusColumn(index = 1) {
 
   if (!container) return;
 
-  const focusableItems = Array.from(
-    container.querySelectorAll<HTMLElement>(
-      '.focusable:not(.status__quote .focusable)',
-    ),
-  );
+  let itemToFocus: HTMLElement | null = null;
 
-  // Find first item visible in the viewport
-  const itemToFocus = findFirstVisibleWithRect(focusableItems);
+  if (focusItem === 'first-visible') {
+    const focusableItems = Array.from(
+      container.querySelectorAll<HTMLElement>(
+        '.focusable:not(.status__quote .focusable)',
+      ),
+    );
+
+    const viewportHeight =
+      window.innerHeight || document.documentElement.clientHeight;
+
+    // Find first item visible in the viewport
+    itemToFocus =
+      focusableItems.find((item) => {
+        const { top } = item.getBoundingClientRect();
+        return top >= 0 && top < viewportHeight;
+      }) ?? null;
+  } else {
+    itemToFocus = container.querySelector('.focusable');
+  }
 
   if (itemToFocus) {
-    const viewportWidth =
-      window.innerWidth || document.documentElement.clientWidth;
-    const { item, rect } = itemToFocus;
-
-    if (
-      container.scrollTop > item.offsetTop ||
-      rect.right > viewportWidth ||
-      rect.left < 0
-    ) {
-      itemToFocus.item.scrollIntoView(true);
+    if (container.scrollTop > itemToFocus.offsetTop) {
+      itemToFocus.scrollIntoView(true);
     }
-    itemToFocus.item.focus();
+    itemToFocus.focus();
   }
 }
 
@@ -78,26 +69,6 @@ export function getFocusedItemIndex() {
 
   const items = Array.from(parentElement.children);
   return items.indexOf(focusedItem);
-}
-
-/**
- * Focus the topmost item of the column that currently has focus,
- * or the first column if none
- */
-export function focusFirstItem() {
-  const focusedElement = document.activeElement;
-  const container =
-    focusedElement?.closest('.scrollable') ??
-    document.querySelector('.scrollable');
-
-  if (!container) return;
-
-  const itemToFocus = container.querySelector<HTMLElement>('.focusable');
-
-  if (itemToFocus) {
-    container.scrollTo(0, 0);
-    itemToFocus.focus();
-  }
 }
 
 /**

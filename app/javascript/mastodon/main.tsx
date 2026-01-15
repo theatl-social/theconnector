@@ -30,7 +30,7 @@ function main() {
     }
 
     const { initializeEmoji } = await import('./features/emoji/index');
-    await initializeEmoji();
+    initializeEmoji();
 
     const root = createRoot(mountNode);
     root.render(<Mastodon {...props} />);
