@@ -11,6 +11,7 @@ on:
     branches:
       - main
       - forked-main
+      - forked-main-2
     paths:
       - 'vite.config.mts'
       - 'Dockerfile'

@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'forked-main-2'
       - 'stable-*'
     paths:
       - 'package.json'

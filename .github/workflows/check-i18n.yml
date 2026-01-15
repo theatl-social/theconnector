@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - 'main'
+      - 'forked-main-2'
       - 'stable-*'
   pull_request:
     branches:
       - 'main'
+      - 'forked-main-2'
       - 'stable-*'
 
 env:

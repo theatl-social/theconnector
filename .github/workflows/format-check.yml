@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'forked-main-2'
       - 'stable-*'
   pull_request:
 
