@@ -227,7 +227,7 @@ export function LinkTimeline () {
 }
 
 export function AnnualReportModal () {
-  return import('../../annual_report/modal');
+  return import('../components/annual_report_modal');
 }
 
 export function ListEdit () {
