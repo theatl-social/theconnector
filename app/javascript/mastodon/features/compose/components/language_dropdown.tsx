@@ -384,10 +384,9 @@ export const LanguageDropdown: React.FC = () => {
   }, [text, setGuess]);
 
   return (
-    <>
+    <div ref={targetRef}>
       <button
         type='button'
-        ref={targetRef}
         title={intl.formatMessage(messages.changeLanguage)}
         aria-expanded={open}
         onClick={handleToggle}
@@ -424,6 +423,6 @@ export const LanguageDropdown: React.FC = () => {
           </div>
         )}
       </Overlay>
-    </>
+    </div>
   );
 };

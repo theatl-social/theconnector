@@ -2,27 +2,24 @@ import type { ComponentProps } from 'react';
 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { customEmojiFactory } from '@/testing/factories';
+import { importCustomEmojiData } from '@/mastodon/features/emoji/loader';
 
-import { CustomEmojiProvider } from './context';
 import { Emoji } from './index';
 
-type EmojiProps = ComponentProps<typeof Emoji> & {
-  style: 'auto' | 'native' | 'twemoji';
-};
+type EmojiProps = ComponentProps<typeof Emoji> & { state: string };
 
 const meta = {
   title: 'Components/Emoji',
   component: Emoji,
   args: {
     code: '🖤',
-    style: 'auto',
+    state: 'auto',
   },
   argTypes: {
     code: {
       name: 'Emoji',
     },
-    style: {
+    state: {
       control: {
         type: 'select',
         labels: {
@@ -33,15 +30,16 @@ const meta = {
       },
       options: ['auto', 'native', 'twemoji'],
       name: 'Emoji Style',
-      reduxPath: 'meta.emoji_style',
+      mapping: {
+        auto: { meta: { emoji_style: 'auto' } },
+        native: { meta: { emoji_style: 'native' } },
+        twemoji: { meta: { emoji_style: 'twemoji' } },
+      },
     },
   },
   render(args) {
-    return (
-      <CustomEmojiProvider emojis={[customEmojiFactory()]}>
-        <Emoji {...args} />
-      </CustomEmojiProvider>
-    );
+    void importCustomEmojiData();
+    return <Emoji {...args} />;
   },
 } satisfies Meta<EmojiProps>;
 

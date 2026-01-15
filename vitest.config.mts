@@ -1,7 +1,6 @@
 import { resolve } from 'node:path';
 
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-import { playwright } from '@vitest/browser-playwright';
 import {
   configDefaults,
   defineConfig,
@@ -24,7 +23,7 @@ const storybookTests: TestProjectInlineConfiguration = {
     browser: {
       enabled: true,
       headless: true,
-      provider: playwright(),
+      provider: 'playwright',
       instances: [{ browser: 'chromium' }],
     },
     setupFiles: [resolve(__dirname, '.storybook/vitest.setup.ts')],
@@ -54,6 +53,7 @@ const legacyTests: TestProjectInlineConfiguration = {
   },
 };
 
+// @ts-expect-error vitest config type mismatch with vite async config
 export default defineConfig(async (context) => {
   const baseConfig = await viteConfig(context);
 

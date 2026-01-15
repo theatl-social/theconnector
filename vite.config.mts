@@ -39,28 +39,9 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
   }
   const outDir = path.resolve('public', outDirName);
 
-  // Support CDN_HOST for production builds
-  // This allows all Vite-generated asset URLs to use a CDN
-  const cdnHost = process.env.CDN_HOST;
-
-  // Debug logging
-  console.log('=== VITE CONFIG DEBUG ===');
-  console.log('mode:', mode);
-  console.log('command:', command);
-  console.log('isProdBuild:', isProdBuild);
-  console.log('process.env.CDN_HOST:', process.env.CDN_HOST);
-  console.log('cdnHost:', cdnHost);
-  console.log('outDirName:', outDirName);
-
-  const base =
-    isProdBuild && cdnHost ? `${cdnHost}/${outDirName}/` : `/${outDirName}/`;
-
-  console.log('base:', base);
-  console.log('=========================');
-
   return {
     root: jsRoot,
-    base,
+    base: `/${outDirName}/`,
     envDir: __dirname,
     resolve: {
       alias: {
@@ -139,8 +120,6 @@ export const config: UserConfigFnPromise = async ({ mode, command }) => {
       manifest: true,
       outDir,
       assetsDir: 'assets',
-      assetsInlineLimit: (filePath, _) =>
-        /\.woff2?$/.exec(filePath) ? false : undefined,
       rollupOptions: {
         input: await findEntrypoints(),
         output: {

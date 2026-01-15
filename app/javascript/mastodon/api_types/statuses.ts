@@ -51,7 +51,7 @@ export interface ApiPreviewCardJSON {
   html: string;
   width: number;
   height: number;
-  image: string | null;
+  image: string;
   image_description: string;
   embed_url: string;
   blurhash: string;

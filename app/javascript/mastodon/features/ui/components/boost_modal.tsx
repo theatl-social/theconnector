@@ -52,10 +52,7 @@ export const BoostModal: React.FC<{
   }, [onClose]);
 
   const findContainer = useCallback(
-    () =>
-      document.getElementsByClassName(
-        'modal-root__container',
-      )[0] as HTMLDivElement,
+    () => document.getElementsByClassName('modal-root__container')[0],
     [],
   );
 
