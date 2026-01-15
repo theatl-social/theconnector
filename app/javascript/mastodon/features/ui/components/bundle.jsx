@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
 
 const emptyComponent = () => null;
+const noop = () => { };
 
 class Bundle extends PureComponent {
 
@@ -11,12 +12,18 @@ class Bundle extends PureComponent {
     error: PropTypes.func,
     children: PropTypes.func.isRequired,
     renderDelay: PropTypes.number,
+    onFetch: PropTypes.func,
+    onFetchSuccess: PropTypes.func,
+    onFetchFail: PropTypes.func,
   };
 
   static defaultProps = {
     loading: emptyComponent,
     error: emptyComponent,
     renderDelay: 0,
+    onFetch: noop,
+    onFetchSuccess: noop,
+    onFetchFail: noop,
   };
 
   static cache = new Map;
@@ -26,13 +33,13 @@ class Bundle extends PureComponent {
     forceRender: false,
   };
 
-  componentDidMount() {
+  UNSAFE_componentWillMount() {
     this.load(this.props);
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.fetchComponent !== this.props.fetchComponent) {
-      this.load(this.props);
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.fetchComponent !== this.props.fetchComponent) {
+      this.load(nextProps);
     }
   }
 
@@ -43,7 +50,7 @@ class Bundle extends PureComponent {
   }
 
   load = (props) => {
-    const { fetchComponent, renderDelay } = props || this.props;
+    const { fetchComponent, onFetch, onFetchSuccess, onFetchFail, renderDelay } = props || this.props;
     const cachedMod = Bundle.cache.get(fetchComponent);
 
     if (fetchComponent === undefined) {
@@ -51,8 +58,11 @@ class Bundle extends PureComponent {
       return Promise.resolve();
     }
 
+    onFetch();
+
     if (cachedMod) {
       this.setState({ mod: cachedMod.default });
+      onFetchSuccess();
       return Promise.resolve();
     }
 
@@ -67,9 +77,11 @@ class Bundle extends PureComponent {
       .then((mod) => {
         Bundle.cache.set(fetchComponent, mod);
         this.setState({ mod: mod.default });
+        onFetchSuccess();
       })
       .catch((error) => {
         this.setState({ mod: null });
+        onFetchFail(error);
       });
   };
 

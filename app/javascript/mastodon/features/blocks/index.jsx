@@ -38,7 +38,7 @@ class Blocks extends ImmutablePureComponent {
     multiColumn: PropTypes.bool,
   };
 
-  componentDidMount () {
+  UNSAFE_componentWillMount () {
     this.props.dispatch(fetchBlocks());
   }
 

@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 
 import { debounce } from 'lodash';
 
-import { scrollTopTimeline, loadPending } from '@/mastodon/actions/timelines';
-import { isNonStatusId } from '@/mastodon/actions/timelines_typed';
-import StatusList from '@/mastodon/components/status_list';
-import { me } from '@/mastodon/initial_state';
+import { scrollTopTimeline, loadPending } from '../../../actions/timelines';
+import StatusList from '../../../components/status_list';
+import { me } from '../../../initial_state';
 
 const makeGetStatusIds = (pending = false) => createSelector([
   (state, { type }) => state.getIn(['settings', type], ImmutableMap()),
@@ -15,7 +14,7 @@ const makeGetStatusIds = (pending = false) => createSelector([
   (state)           => state.get('statuses'),
 ], (columnSettings, statusIds, statuses) => {
   return statusIds.filter(id => {
-    if (isNonStatusId(id)) return true;
+    if (id === null || id === 'inline-follow-suggestions') return true;
 
     const statusForId = statuses.get(id);
 
@@ -41,10 +40,10 @@ const makeMapStateToProps = () => {
   const getStatusIds = makeGetStatusIds();
   const getPendingStatusIds = makeGetStatusIds(true);
 
-  const mapStateToProps = (state, { timelineId, initialLoadingState = true }) => ({
+  const mapStateToProps = (state, { timelineId }) => ({
     statusIds: getStatusIds(state, { type: timelineId }),
     lastId:    state.getIn(['timelines', timelineId, 'items'])?.last(),
-    isLoading: state.getIn(['timelines', timelineId, 'isLoading'], initialLoadingState),
+    isLoading: state.getIn(['timelines', timelineId, 'isLoading'], true),
     isPartial: state.getIn(['timelines', timelineId, 'isPartial'], false),
     hasMore:   state.getIn(['timelines', timelineId, 'hasMore']),
     numPending: getPendingStatusIds(state, { type: timelineId }).size,

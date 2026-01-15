@@ -41,7 +41,7 @@ class Favourites extends ImmutablePureComponent {
     intl: PropTypes.object.isRequired,
   };
 
-  componentDidMount () {
+  UNSAFE_componentWillMount () {
     if (!this.props.accountIds) {
       this.props.dispatch(fetchFavourites(this.props.params.statusId));
     }

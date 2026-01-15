@@ -45,7 +45,7 @@ class FollowRequests extends ImmutablePureComponent {
     multiColumn: PropTypes.bool,
   };
 
-  componentDidMount () {
+  UNSAFE_componentWillMount () {
     this.props.dispatch(fetchFollowRequests());
   }
 

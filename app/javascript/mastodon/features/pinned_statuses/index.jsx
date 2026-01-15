@@ -34,7 +34,7 @@ class PinnedStatuses extends ImmutablePureComponent {
     multiColumn: PropTypes.bool,
   };
 
-  componentDidMount () {
+  UNSAFE_componentWillMount () {
     this.props.dispatch(fetchPinnedStatuses());
   }
 

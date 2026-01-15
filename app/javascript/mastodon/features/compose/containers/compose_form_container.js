@@ -19,23 +19,6 @@ import ComposeForm from '../components/compose_form';
 
 const urlLikeRegex = /^https?:\/\/[^\s]+\/[^\s]+$/i;
 
-const processPasteOrDrop = (transfer, e, dispatch) => {
-  if (transfer && transfer.files.length === 1) {
-    dispatch(uploadCompose(transfer.files));
-    e.preventDefault();
-  } else if (transfer && transfer.files.length === 0) {
-    const data = transfer.getData('text/plain');
-    if (!data.match(urlLikeRegex)) return;
-
-    try {
-      const url = new URL(data);
-      dispatch(pasteLinkCompose({ url }));
-    } catch {
-      return;
-    }
-  }
-};
-
 const mapStateToProps = state => ({
   text: state.getIn(['compose', 'text']),
   suggestions: state.getIn(['compose', 'suggestions']),
@@ -104,11 +87,20 @@ const mapDispatchToProps = (dispatch, props) => ({
   },
 
   onPaste (e) {
-    processPasteOrDrop(e.clipboardData, e, dispatch);
-  },
+    if (e.clipboardData && e.clipboardData.files.length === 1) {
+      dispatch(uploadCompose(e.clipboardData.files));
+      e.preventDefault();
+    } else if (e.clipboardData && e.clipboardData.files.length === 0) {
+      const data = e.clipboardData.getData('text/plain');
+      if (!data.match(urlLikeRegex)) return;
 
-  onDrop (e) {
-    processPasteOrDrop(e.dataTransfer, e, dispatch);
+      try {
+        const url = new URL(data);
+        dispatch(pasteLinkCompose({ url }));
+      } catch {
+        return;
+      }
+    }
   },
 
   onPickEmoji (position, data, needsSpace) {
