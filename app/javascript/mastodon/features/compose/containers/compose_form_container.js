@@ -41,6 +41,7 @@ const mapStateToProps = state => ({
     && !state.getIn(['settings', 'dismissed_banners', PRIVATE_QUOTE_MODAL_ID]),
   isInReply: state.getIn(['compose', 'in_reply_to']) !== null,
   lang: state.getIn(['compose', 'language']),
+  // eslint-disable-next-line no-undef
   maxChars: state.getIn(['server', 'server', 'configuration', 'statuses', 'max_characters'], process.env.STATUS_LENGTH_CHARS_LIMIT || 500),
 });
 
