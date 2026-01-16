@@ -264,7 +264,11 @@ export const Profile: React.FC<{
                   id='note'
                   value={note}
                   onChange={handleNoteChange}
-                  maxLength={process.env.NOTE_LENGTH_LIMIT ? parseInt(process.env.NOTE_LENGTH_LIMIT, 10) : 500}
+                  maxLength={
+                    process.env.NOTE_LENGTH_LIMIT
+                      ? parseInt(process.env.NOTE_LENGTH_LIMIT, 10)
+                      : 500
+                  }
                 />
               </div>
             </div>

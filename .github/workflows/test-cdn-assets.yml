@@ -159,11 +159,25 @@ jobs:
           fi
 
           echo "📄 Found CSS files:"
-          echo "$css_files" | head -3
+          echo "$css_files" | head -5
           echo ""
 
-          # Check the first CSS file for CDN URLs
-          css_file=$(echo "$css_files" | head -1)
+          # Find a CSS file that actually contains url() references (like fonts/images)
+          # Not all CSS files have asset references - CSS modules often just have rules
+          css_file=""
+          for f in $css_files; do
+            if grep -q 'url(' "$f" 2>/dev/null; then
+              css_file="$f"
+              break
+            fi
+          done
+
+          if [ -z "$css_file" ]; then
+            echo "ℹ️  No CSS files with url() references found"
+            echo "   This can happen if styles don't reference fonts/images"
+            echo "   Skipping CSS CDN URL verification"
+            exit 0
+          fi
 
           echo "📊 Checking for absolute CDN URLs in: $css_file"
           echo ""

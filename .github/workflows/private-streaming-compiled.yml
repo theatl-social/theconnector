@@ -6,9 +6,9 @@ on:
     # create inputs
     inputs:
       docker_image_version:
-        description: "Docker image version"
+        description: 'Docker image version'
         required: true
-        default: "latest"
+        default: 'latest'
   push:
     branches:
       - main
@@ -59,5 +59,5 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: ${{ secrets.DOCKER_HUB_USER_NAME }}/mastodon-streaming-compiled:${{ steps.version.outputs.tag }}
-          context: "{{defaultContext}}"
+          context: '{{defaultContext}}'
           file: streaming/Dockerfile
