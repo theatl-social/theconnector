@@ -13,7 +13,7 @@ ARG BASE_REGISTRY="docker.io"
 
 # Ruby image to use for base image, change with [--build-arg RUBY_VERSION="3.4.x"]
 # renovate: datasource=docker depName=docker.io/ruby
-ARG RUBY_VERSION="3.4.7"
+ARG RUBY_VERSION="3.4.8"
 # # Node.js version to use in base image, change with [--build-arg NODE_MAJOR_VERSION="22"]
 # renovate: datasource=node-version depName=node
 ARG NODE_MAJOR_VERSION="24"
@@ -36,6 +36,10 @@ ARG SOURCE_COMMIT=""
 # Allow Ruby on Rails to serve static files
 # See: https://docs.joinmastodon.org/admin/config/#rails_serve_static_files
 ARG RAILS_SERVE_STATIC_FILES="true"
+# CDN host for serving static assets (optional)
+# When set, all Vite-generated asset URLs will use this CDN host
+# Example: [--build-arg CDN_HOST=https://cdn.example.com]
+ARG CDN_HOST=""
 # Allow to use YJIT compiler
 # See: https://github.com/ruby/ruby/blob/v3_2_4/doc/yjit/yjit.md
 ARG RUBY_YJIT_ENABLE="1"
@@ -80,7 +84,11 @@ SHELL ["/bin/bash", "-o", "pipefail", "-o", "errexit", "-c"]
 
 ARG TARGETPLATFORM
 
+ARG BUILDPLATFORM
+
 RUN echo "Target platform is $TARGETPLATFORM"
+
+RUN echo "Build platform is $BUILDPLATFORM"
 
 RUN \
   # Remove automatic apt cache Docker cleanup scripts
@@ -254,17 +262,25 @@ ARG TARGETPLATFORM
 # Copy Gemfile config into working directory
 COPY Gemfile* /opt/mastodon/
 
+# This is the corrected section
 RUN \
   # Mount Ruby Gem caches
   --mount=type=cache,id=gem-cache-${TARGETPLATFORM},target=/usr/local/bundle/cache/,sharing=locked \
-  # Configure bundle to prevent changes to Gemfile and Gemfile.lock
-  bundle config set --global frozen "true"; \
-  # Configure bundle to not cache downloaded Gems
+  # Configure bundler
   bundle config set --global cache_all "false"; \
-  # Configure bundle to only process production Gems
   bundle config set --local without "development test"; \
-  # Configure bundle to not warn about root user
   bundle config set silence_root_warning "true"; \
+  # IMPORTANT: Linux platform must be added to Gemfile.lock BEFORE building the Docker image
+  # This should be done in development and committed to the repository.
+  # To add Linux platform support, run this command locally:
+  #   docker run --rm -v $(pwd):/app -w /app ruby:3.4.4-slim-bookworm sh -c \
+  #     "apt-get update && apt-get install -y git && bundle lock --add-platform x86_64-linux"
+  # Then commit the updated Gemfile.lock to your repository.
+  # 
+  # The following line is commented out as it only affects intermediate build stages:
+  # bundle lock --add-platform x86_64-linux; \
+  # Configure bundle to prevent changes to the lockfile during install
+  bundle config set --global frozen "true"; \
   # Download and install required Gems
   bundle install -j"$(nproc)";
 
@@ -272,6 +288,7 @@ RUN \
 FROM build AS precompiler
 
 ARG TARGETPLATFORM
+ARG CDN_HOST
 
 # Copy Mastodon sources into layer
 COPY . /opt/mastodon/
@@ -301,9 +318,26 @@ COPY --from=bundler /opt/mastodon /opt/mastodon/
 COPY --from=bundler /usr/local/bundle/ /usr/local/bundle/
 
 RUN \
+  --mount=type=secret,id=ARG_SECRET_KEY_BASE \
+  --mount=type=secret,id=ARG_OTP_SECRET \
+  --mount=type=secret,id=ARG_VAPID_PRIVATE_KEY \
+  --mount=type=secret,id=ARG_VAPID_PUBLIC_KEY \
+  --mount=type=secret,id=ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY \
+  --mount=type=secret,id=ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT \
+  --mount=type=secret,id=ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY \
   ldconfig; \
+  # Export secrets as environment variables for asset precompilation
+  export SECRET_KEY_BASE=$(cat /run/secrets/ARG_SECRET_KEY_BASE 2>/dev/null || echo ""); \
+  export OTP_SECRET=$(cat /run/secrets/ARG_OTP_SECRET 2>/dev/null || echo ""); \
+  export VAPID_PRIVATE_KEY=$(cat /run/secrets/ARG_VAPID_PRIVATE_KEY 2>/dev/null || echo ""); \
+  export VAPID_PUBLIC_KEY=$(cat /run/secrets/ARG_VAPID_PUBLIC_KEY 2>/dev/null || echo ""); \
+  export ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY=$(cat /run/secrets/ARG_ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY 2>/dev/null || echo ""); \
+  export ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT=$(cat /run/secrets/ARG_ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT 2>/dev/null || echo ""); \
+  export ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY=$(cat /run/secrets/ARG_ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY 2>/dev/null || echo ""); \
+  # Use dummy key if no secrets provided (for local builds without secrets)
+  if [ -z "$SECRET_KEY_BASE" ]; then export SECRET_KEY_BASE_DUMMY=1; fi; \
   # Use Ruby on Rails to create Mastodon assets
-  SECRET_KEY_BASE_DUMMY=1 \
+  CDN_HOST="${CDN_HOST}" \
   bundle exec rails assets:precompile; \
   # Cleanup temporary files
   rm -fr /opt/mastodon/tmp;
@@ -375,15 +409,16 @@ COPY --from=libvips /usr/local/libvips/lib /usr/local/lib
 COPY --from=ffmpeg /usr/local/ffmpeg/bin /usr/local/bin
 COPY --from=ffmpeg /usr/local/ffmpeg/lib /usr/local/lib
 
+
+
+# Secrets are provided at runtime via environment variables, not baked into the image
+
 RUN \
   ldconfig; \
   # Smoketest media processors
   vips -v; \
   ffmpeg -version; \
-  ffprobe -version;
-
-RUN \
-  # Precompile bootsnap code for faster Rails startup
+  ffprobe -version; \
   bundle exec bootsnap precompile --gemfile app/ lib/;
 
 RUN \

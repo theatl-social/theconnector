@@ -1,0 +1,63 @@
+name: Build Streaming Compiled Mastodon Container
+run-name: ${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    # create inputs
+    inputs:
+      docker_image_version:
+        description: "Docker image version"
+        required: true
+        default: "latest"
+  push:
+    branches:
+      - main
+      - forked-main
+      - dev/**
+      - prod/**
+jobs:
+  Mastodon-Mastoapp-1-Build-Streaming-Container:
+    runs-on: ubuntu-22.04
+    environment: containerbuild
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+    steps:
+      - name: Check secrets availability
+        run: |
+          if [ -z "${{ secrets.DOCKER_HUB_USER_NAME }}" ]; then echo "DOCKER_HUB_USER_NAME is missing"; exit 1; fi
+          if [ -z "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" ]; then echo "DOCKER_HUB_ACCESS_TOKEN is missing"; exit 1; fi
+
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Generate version tag
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.docker_image_version }}" ]; then
+            echo "tag=${{ github.event.inputs.docker_image_version }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=$(date +%Y%m%d)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USER_NAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          logout: true
+
+      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
+      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/amd64
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USER_NAME }}/mastodon-streaming-compiled:${{ steps.version.outputs.tag }}
+          context: "{{defaultContext}}"
+          file: streaming/Dockerfile
