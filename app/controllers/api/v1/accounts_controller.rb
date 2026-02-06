@@ -33,7 +33,7 @@ class Api::V1::AccountsController < Api::BaseController
   end
 
   def create
-    token    = AppSignUpService.new.call(doorkeeper_token.application, request.remote_ip, account_params)
+    token    = AppSignUpService.new.call(doorkeeper_token.application, request.remote_ip, account_params, trusted: trusted_registration_app?)
     response = Doorkeeper::OAuth::TokenResponse.new(token)
 
     headers.merge!(response.headers)
