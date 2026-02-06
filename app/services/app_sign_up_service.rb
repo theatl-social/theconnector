@@ -3,12 +3,12 @@
 class AppSignUpService < BaseService
   include RegistrationHelper
 
-  def call(app, remote_ip, params)
+  def call(app, remote_ip, params, trusted: false)
     @app       = app
     @remote_ip = remote_ip
     @params    = params
 
-    raise Mastodon::NotPermittedError unless allowed_registration?(remote_ip, invite)
+    raise Mastodon::NotPermittedError unless trusted || allowed_registration?(remote_ip, invite)
 
     ApplicationRecord.transaction do
       create_user!

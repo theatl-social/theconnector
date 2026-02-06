@@ -13,11 +13,11 @@ module Mastodon
     end
 
     def patch
-      '4.0.5-theatlsocial'
+      6
     end
 
     def default_prerelease
-      ''
+      'theatlsocial'
     end
 
     def prerelease

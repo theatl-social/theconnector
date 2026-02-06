@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Runs rubocop inside the dev container for consistent Ruby tooling.
+# Used by lint-staged to avoid local Ruby/bundler version mismatches.
+#
+# Usage: bin/docker-rubocop [rubocop args...]
+# Example: bin/docker-rubocop --force-exclusion -a app/controllers/foo.rb
+
+set -euo pipefail
+
+IMAGE_NAME="theconnector-dev"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Build the dev image if it doesn't exist
+if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
+  echo "Building dev container ($IMAGE_NAME)..." >&2
+  docker build -f "$SCRIPT_DIR/Dockerfile.dev" -t "$IMAGE_NAME" "$SCRIPT_DIR" >&2
+fi
+
+exec docker run --rm \
+  -v "$SCRIPT_DIR:/app" \
+  -w /app \
+  "$IMAGE_NAME" \
+  rubocop --config /app/.rubocop.yml "$@"

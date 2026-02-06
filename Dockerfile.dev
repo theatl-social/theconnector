@@ -1,0 +1,42 @@
+# Lightweight dev/lint container for Ruby tooling (rubocop, haml-lint, etc.)
+# This ensures consistent Ruby + bundler versions across all developer machines.
+#
+# Build:  docker build -f Dockerfile.dev -t theconnector-dev .
+# Usage:  docker run --rm -v "$PWD:/app" -w /app theconnector-dev bin/rubocop -a <files>
+
+ARG RUBY_VERSION="3.4.8"
+
+FROM ruby:${RUBY_VERSION}-slim-bookworm
+
+# Install native extension build dependencies needed by development gems
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      build-essential \
+      git \
+      libicu-dev \
+      libidn-dev \
+      libpq-dev \
+      libssl-dev \
+      libyaml-dev \
+      libgdbm-dev \
+      libgmp-dev \
+      zlib1g-dev \
+      pkg-config \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install the exact bundler version the project uses
+RUN gem install bundler -v '~> 2.7'
+
+WORKDIR /app
+
+# Copy dependency files first (Docker layer caching)
+COPY Gemfile Gemfile.lock .ruby-version ./
+
+# Install only default + development gems (rubocop, haml-lint, etc.)
+# Skip test group to avoid pulling in capybara/playwright native deps
+RUN bundle config set --local without 'test' && \
+    bundle install --jobs "$(nproc)"
+
+# Default entrypoint: run any command in the project context
+ENTRYPOINT ["bundle", "exec"]
+CMD ["rubocop", "--version"]
