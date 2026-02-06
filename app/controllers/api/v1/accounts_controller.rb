@@ -128,6 +128,8 @@ class Api::V1::AccountsController < Api::BaseController
   end
 
   def check_enabled_registrations
+    return if trusted_registration_app?
+
     if api_registrations_disabled?
       render json: {
         error: 'API registrations are disabled',
@@ -146,5 +148,12 @@ class Api::V1::AccountsController < Api::BaseController
 
   def web_signup_url
     ENV['WEB_SIGNUP_URL'].presence || new_user_registration_url
+  end
+
+  def trusted_registration_app?
+    trusted_ids = ENV['TRUSTED_REGISTRATION_CLIENT_IDS']&.split(',')&.map(&:strip)
+    return false if trusted_ids.blank?
+
+    doorkeeper_token&.application&.uid.in?(trusted_ids)
   end
 end

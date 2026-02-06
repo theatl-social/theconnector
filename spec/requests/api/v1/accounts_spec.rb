@@ -183,6 +183,69 @@ RSpec.describe '/api/v1/accounts' do
           .to start_with('application/json')
       end
     end
+
+    context 'when API registrations are disabled' do
+      before do
+        allow(ENV).to receive(:[]).and_call_original
+        allow(ENV).to receive(:[]).with('DISABLE_API_REGISTRATIONS').and_return('true')
+        allow(ENV).to receive(:[]).with('TRUSTED_REGISTRATION_CLIENT_IDS').and_return(nil)
+        allow(ENV).to receive(:[]).with('WEB_SIGNUP_URL').and_return(nil)
+      end
+
+      let(:agreement) { 'true' }
+
+      it 'returns 403 for untrusted app' do
+        subject
+
+        expect(response).to have_http_status(403)
+        expect(response.parsed_body).to include(error: 'API registrations are disabled')
+      end
+
+      context 'when app is in trusted list' do
+        before do
+          allow(ENV).to receive(:[]).with('TRUSTED_REGISTRATION_CLIENT_IDS').and_return(client_app.uid)
+        end
+
+        it 'creates a user successfully' do
+          subject
+
+          expect(response).to have_http_status(200)
+          expect(response.parsed_body[:access_token]).to_not be_blank
+        end
+      end
+
+      context 'when app is in comma-separated trusted list' do
+        before do
+          allow(ENV).to receive(:[]).with('TRUSTED_REGISTRATION_CLIENT_IDS').and_return("other-id, #{client_app.uid}, another-id")
+        end
+
+        it 'creates a user successfully' do
+          subject
+
+          expect(response).to have_http_status(200)
+          expect(response.parsed_body[:access_token]).to_not be_blank
+        end
+      end
+    end
+
+    context 'when registrations are closed but app is trusted' do
+      before do
+        Setting.registrations_mode = 'none'
+        allow(ENV).to receive(:[]).and_call_original
+        allow(ENV).to receive(:[]).with('DISABLE_API_REGISTRATIONS').and_return('true')
+        allow(ENV).to receive(:[]).with('TRUSTED_REGISTRATION_CLIENT_IDS').and_return(client_app.uid)
+        allow(ENV).to receive(:[]).with('WEB_SIGNUP_URL').and_return(nil)
+      end
+
+      let(:agreement) { 'true' }
+
+      it 'creates a user even with registrations_mode none' do
+        subject
+
+        expect(response).to have_http_status(200)
+        expect(response.parsed_body[:access_token]).to_not be_blank
+      end
+    end
   end
 
   describe 'POST /api/v1/accounts/:id/follow' do
