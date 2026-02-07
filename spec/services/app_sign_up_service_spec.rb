@@ -116,5 +116,36 @@ RSpec.describe AppSignUpService do
         expect(user.invite_request&.text).to eq 'Foo bar'
       end
     end
+
+    context 'when trusted: true' do
+      it 'exposes the created user via #user' do
+        subject.call(app, remote_ip, good_params, trusted: true)
+        expect(subject.user).to be_a(User)
+        expect(subject.user.email).to eq 'good@email.com'
+      end
+
+      it 'creates an unconfirmed user with a confirmation token' do
+        subject.call(app, remote_ip, good_params, trusted: true)
+        expect(subject.user.confirmed?).to be false
+        expect(subject.user.confirmation_token).to be_present
+      end
+
+      it 'suppresses the confirmation email' do
+        expect { subject.call(app, remote_ip, good_params, trusted: true) }
+          .to_not have_enqueued_job(ActionMailer::MailDeliveryJob)
+          .with('UserMailer', 'confirmation_instructions', anything, anything)
+      end
+    end
+
+    context 'when trusted: false' do
+      it 'does not expose user via #user before call' do
+        expect(subject.user).to be_nil
+      end
+
+      it 'sends the confirmation email' do
+        expect { subject.call(app, remote_ip, good_params, trusted: false) }
+          .to have_enqueued_job(ActionMailer::MailDeliveryJob)
+      end
+    end
   end
 end
