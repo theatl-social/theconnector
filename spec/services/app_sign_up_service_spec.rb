@@ -131,6 +131,8 @@ RSpec.describe AppSignUpService do
       end
 
       it 'suppresses the confirmation email' do
+        ActiveJob::Base.queue_adapter = :test
+
         expect { subject.call(app, remote_ip, good_params, trusted: true) }
           .to_not have_enqueued_job(ActionMailer::MailDeliveryJob)
           .with('UserMailer', 'confirmation_instructions', anything, anything)
@@ -143,6 +145,8 @@ RSpec.describe AppSignUpService do
       end
 
       it 'sends the confirmation email' do
+        ActiveJob::Base.queue_adapter = :test
+
         expect { subject.call(app, remote_ip, good_params, trusted: false) }
           .to have_enqueued_job(ActionMailer::MailDeliveryJob)
       end
