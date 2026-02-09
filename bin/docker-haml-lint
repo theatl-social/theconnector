@@ -15,8 +15,16 @@ if ! docker image inspect "$IMAGE_NAME" >/dev/null 2>&1; then
   docker build -f "$SCRIPT_DIR/Dockerfile.dev" -t "$IMAGE_NAME" "$SCRIPT_DIR" >&2
 fi
 
+# Convert absolute host paths to container-relative paths.
+# lint-staged passes absolute paths (e.g. /Users/.../app/views/foo.haml)
+# but inside the container the project is mounted at /app.
+args=()
+for arg in "$@"; do
+  args+=("${arg#"$SCRIPT_DIR/"}")
+done
+
 exec docker run --rm \
   -v "$SCRIPT_DIR:/app" \
   -w /app \
   "$IMAGE_NAME" \
-  haml-lint "$@"
+  haml-lint "${args[@]}"

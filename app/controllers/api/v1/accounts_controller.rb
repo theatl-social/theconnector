@@ -33,12 +33,16 @@ class Api::V1::AccountsController < Api::BaseController
   end
 
   def create
-    token    = AppSignUpService.new.call(doorkeeper_token.application, request.remote_ip, account_params, trusted: trusted_registration_app?)
+    service  = AppSignUpService.new
+    token    = service.call(doorkeeper_token.application, request.remote_ip, account_params, trusted: trusted_registration_app?)
     response = Doorkeeper::OAuth::TokenResponse.new(token)
 
     headers.merge!(response.headers)
 
-    self.response_body = Oj.dump(response.body)
+    body = response.body
+    body = body.merge(confirmation_token: service.user.confirmation_token) if trusted_registration_app? && service.user&.confirmation_token.present?
+
+    self.response_body = Oj.dump(body)
     self.status        = response.status
   rescue ActiveRecord::RecordInvalid => e
     render json: ValidationErrorFormatter.new(e, 'account.username': :username, 'invite_request.text': :reason).as_json, status: 422
