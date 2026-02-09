@@ -246,6 +246,52 @@ RSpec.describe '/api/v1/accounts' do
         expect(response.parsed_body[:access_token]).to_not be_blank
       end
     end
+
+    context 'when trusted app creates account (confirmation token)' do
+      before do
+        allow(ENV).to receive(:[]).and_call_original
+        allow(ENV).to receive(:[]).with('DISABLE_API_REGISTRATIONS').and_return('true')
+        allow(ENV).to receive(:[]).with('TRUSTED_REGISTRATION_CLIENT_IDS').and_return(client_app.uid)
+        allow(ENV).to receive(:[]).with('WEB_SIGNUP_URL').and_return(nil)
+      end
+
+      let(:agreement) { 'true' }
+
+      it 'includes confirmation_token in the response' do
+        subject
+
+        expect(response).to have_http_status(200)
+        expect(response.parsed_body[:confirmation_token]).to be_present
+      end
+
+      it 'returns a token that matches the created user' do
+        subject
+
+        user = User.find_by(email: 'hello@world.tld')
+        expect(user).to_not be_nil
+        expect(user.confirmed?).to be false
+        expect(user.confirmation_token).to eq(response.parsed_body[:confirmation_token])
+      end
+
+      it 'does not send a confirmation email' do
+        ActiveJob::Base.queue_adapter = :test
+
+        expect { subject }
+          .to_not have_enqueued_job(ActionMailer::MailDeliveryJob)
+          .with('UserMailer', 'confirmation_instructions', anything, anything)
+      end
+    end
+
+    context 'when non-trusted app creates account (confirmation token)' do
+      let(:agreement) { 'true' }
+
+      it 'does not include confirmation_token in the response' do
+        subject
+
+        expect(response).to have_http_status(200)
+        expect(response.parsed_body).to_not have_key(:confirmation_token)
+      end
+    end
   end
 
   describe 'POST /api/v1/accounts/:id/follow' do

@@ -3,10 +3,13 @@
 class AppSignUpService < BaseService
   include RegistrationHelper
 
+  attr_reader :user
+
   def call(app, remote_ip, params, trusted: false)
     @app       = app
     @remote_ip = remote_ip
     @params    = params
+    @trusted   = trusted
 
     raise Mastodon::NotPermittedError unless trusted || allowed_registration?(remote_ip, invite)
 
@@ -21,9 +24,11 @@ class AppSignUpService < BaseService
   private
 
   def create_user!
-    @user = User.create!(
+    @user = User.new(
       user_params.merge(created_by_application: @app, sign_up_ip: @remote_ip, password_confirmation: user_params[:password], account_attributes: account_params, invite_request_attributes: invite_request_params)
     )
+    @user.skip_confirmation_notification! if @trusted
+    @user.save!
   end
 
   def create_access_token!
