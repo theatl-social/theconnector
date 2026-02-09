@@ -17,7 +17,7 @@ module Mastodon
     end
 
     def default_prerelease
-      'theatlsocial'
+      'theatlsocial-20260209'
     end
 
     def prerelease

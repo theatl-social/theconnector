@@ -7,6 +7,12 @@
 
     %p= t('doorkeeper.authorizations.new.prompt_html', client_name: content_tag(:strong, @pre_auth.client.name))
 
+    - %w(why_html how_to_decide_html what_permissions_html when_to_deny_html).each do |key|
+      - text = t("doorkeeper.authorizations.new.#{key}", default: '')
+      - next if text.blank?
+
+      %p= text
+
     %h3= t('doorkeeper.authorizations.new.review_permissions')
 
     %ul.permissions-list

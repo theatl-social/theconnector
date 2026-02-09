@@ -48,6 +48,37 @@ RSpec.describe 'Using OAuth from an external app' do
       expect(page).to redirect_to_callback_url
     end
 
+    context 'with theATL.social custom guidance text' do
+      it 'displays all four guidance paragraphs when translations exist' do
+        subject
+
+        expect(page).to have_content('Why am I seeing this?')
+        expect(page).to have_content('How should I decide?')
+        expect(page).to have_content('What do these permissions mean?')
+        expect(page).to have_content('When should I click Deny?')
+      end
+
+      it 'falls back gracefully when custom translation keys are missing' do
+        allow(I18n).to receive(:translate).and_call_original
+        %w(why_html how_to_decide_html what_permissions_html when_to_deny_html).each do |key|
+          allow(I18n).to receive(:translate)
+            .with("doorkeeper.authorizations.new.#{key}", anything)
+            .and_return('')
+        end
+
+        subject
+
+        # The page should still render without errors
+        expect(page).to have_content(I18n.t('doorkeeper.authorizations.new.title'))
+        expect(page).to have_content(oauth_authorize_text)
+        expect(page).to have_content(oauth_deny_text)
+
+        # Custom guidance should not appear
+        expect(page).to have_no_content('Why am I seeing this?')
+        expect(page).to have_no_content('How should I decide?')
+      end
+    end
+
     # The tests in this context ensures that requests without PKCE parameters
     # still work; In the future we likely want to force usage of PKCE for
     # security reasons, as per:

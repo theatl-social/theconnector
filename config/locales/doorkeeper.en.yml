@@ -60,7 +60,11 @@ en:
       error:
         title: An error has occurred
       new:
-        prompt_html: "%{client_name} would like permission to access your account. <strong>Only approve this request if you recognize and trust this source.</strong>"
+        prompt_html: "%{client_name} would like permission to access your account."
+        why_html: "<strong>Why am I seeing this?</strong> You were redirected here by an app or service that wants to connect to your theATL.social account. This is normal when signing in to a Mastodon-compatible app, a community tool, or the theATL.social member site."
+        how_to_decide_html: "<strong>How should I decide?</strong> Only click <em>Authorize</em> if you recognize the app named above and you intended to sign in or connect. If you arrived here unexpectedly or don't recognize the name, click <em>Deny</em>."
+        what_permissions_html: "<strong>What do these permissions mean?</strong> The items below describe what the app will be able to do with your account. \"Read and write access\" means the app can view and post on your behalf. \"Read-only\" means it can only view."
+        when_to_deny_html: "<strong>When should I click Deny?</strong> Deny if you don't recognize the app, didn't intend to connect it, or aren't comfortable with the permissions listed below. Denying is always safe — nothing will change on your account."
         review_permissions: Review permissions
         title: Authorization required
       show:
