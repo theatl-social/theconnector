@@ -27,4 +27,4 @@ exec docker run --rm \
   -v "$SCRIPT_DIR:/app" \
   -w /app \
   "$IMAGE_NAME" \
-  haml-lint "${args[@]}"
+  haml-lint ${args[@]+"${args[@]}"}
