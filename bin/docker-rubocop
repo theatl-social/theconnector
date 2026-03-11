@@ -28,4 +28,4 @@ exec docker run --rm \
   -v "$SCRIPT_DIR:/app" \
   -w /app \
   "$IMAGE_NAME" \
-  rubocop --config /app/.rubocop.yml "${args[@]}"
+  rubocop --config /app/.rubocop.yml ${args[@]+"${args[@]}"}
