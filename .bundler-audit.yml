@@ -1,0 +1,9 @@
+---
+ignore:
+  # aws-sdk-s3 S3 Encryption Client key commitment issue (CVE-2025-14762)
+  # Cannot update: aws-sdk-s3 >= 1.208.0 requires aws-sdk-core >= 3.234.0,
+  # but upstream Mastodon pins aws-sdk-core < 3.216.0 due to a changed checksum
+  # default issue. See: https://github.com/mastodon/mastodon/pull/34173
+  # This S3 encryption vulnerability only affects client-side encryption (CSE),
+  # which Mastodon does not use - it uses server-side encryption (SSE).
+  - GHSA-2xgq-q749-89fq
