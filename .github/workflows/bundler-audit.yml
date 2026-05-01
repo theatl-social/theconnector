@@ -37,4 +37,4 @@ jobs:
           bundler-cache: true
 
       - name: Run bundler-audit
-        run: bin/bundler-audit check --update --config .bundler-audit.yml
+        run: bin/bundler-audit check --update
