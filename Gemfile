@@ -132,6 +132,11 @@ group :test do
   # Extra RSpec extension methods and helpers for sidekiq
   gem 'rspec-sidekiq', '~> 5.0'
 
+  # Retry intermittently-flaky system specs (browser/async email races under
+  # parallel execution) so transient failures don't fail CI. Genuine failures
+  # still surface (they fail every attempt). See spec/support/rspec_retry.rb.
+  gem 'rspec-retry', '~> 0.6'
+
   # Browser integration testing
   gem 'capybara', '~> 3.39'
   gem 'capybara-playwright-driver'
