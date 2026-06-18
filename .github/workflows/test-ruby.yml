@@ -62,6 +62,20 @@ jobs:
         run: |-
           bin/rails assets:precompile
 
+      # Since v4.6.0 the service worker is built as a regular Vite entry into the
+      # mode-specific output dir (packs-test in test mode), but `public/sw.js` is a
+      # committed symlink to `packs/sw.js`. In the test artifact `packs/sw.js` is
+      # absent, so the symlink dangles and the browser gets a 404 registering
+      # `/sw.js` during E2E (its chunk imports are already absolute, so serving the
+      # test build at /sw.js is correct). Mirror it so the symlink resolves.
+      - name: Ensure /sw.js symlink resolves in test assets
+        if: matrix.mode == 'test'
+        run: |
+          if [ ! -f public/packs/sw.js ] && [ -f public/packs-test/sw.js ]; then
+            mkdir -p public/packs
+            cp public/packs-test/sw.js public/packs/sw.js
+          fi
+
       - name: Archive asset artifacts
         run: |
           tar --exclude={"*.br","*.gz"} -zcf artifacts.tar.gz public/assets public/packs* tmp/cache/vite/last-build*.json
