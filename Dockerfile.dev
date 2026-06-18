@@ -4,9 +4,9 @@
 # Build:  docker build -f Dockerfile.dev -t theconnector-dev .
 # Usage:  docker run --rm -v "$PWD:/app" -w /app theconnector-dev bin/rubocop -a <files>
 
-ARG RUBY_VERSION="3.4.8"
+ARG RUBY_VERSION="4.0.5"
 
-FROM ruby:${RUBY_VERSION}-slim-bookworm
+FROM ruby:${RUBY_VERSION}-slim-trixie
 
 # Install native extension build dependencies needed by development gems
 RUN apt-get update && \
@@ -25,7 +25,7 @@ RUN apt-get update && \
     && rm -rf /var/lib/apt/lists/*
 
 # Install the exact bundler version the project uses
-RUN gem install bundler -v '~> 2.7'
+RUN gem install bundler -v '~> 4.0'
 
 WORKDIR /app
 

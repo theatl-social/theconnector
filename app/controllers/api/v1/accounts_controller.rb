@@ -42,7 +42,7 @@ class Api::V1::AccountsController < Api::BaseController
     body = response.body
     body = body.merge(confirmation_token: service.user.confirmation_token) if trusted_registration_app? && service.user&.confirmation_token.present?
 
-    self.response_body = Oj.dump(body)
+    self.response_body = body.to_json
     self.status        = response.status
   rescue ActiveRecord::RecordInvalid => e
     render json: ValidationErrorFormatter.new(e, 'account.username': :username, 'invite_request.text': :reason).as_json, status: 422

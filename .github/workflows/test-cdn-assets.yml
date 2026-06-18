@@ -88,10 +88,12 @@ jobs:
           echo "🔍 Analyzing how Vite handles chunk imports..."
 
           # Find a main application bundle (not a chunk or locale file)
-          js_file=$(find public/packs/assets -name "application-*.js" -type f ! -name "*.map" 2>/dev/null | head -1)
+          # Vite 8 / rolldown (v4.6.0) emits JS entry bundles in public/packs/ root
+          # (public/packs/assets/ now holds CSS, fonts, images and emoji data only).
+          js_file=$(find public/packs -maxdepth 1 -name "application-*.js" -type f ! -name "*.map" 2>/dev/null | head -1)
 
           if [ -z "$js_file" ]; then
-            echo "❌ No application bundle found in public/packs/assets/"
+            echo "❌ No application bundle found in public/packs/"
             exit 1
           fi
 
