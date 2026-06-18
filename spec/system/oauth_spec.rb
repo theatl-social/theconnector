@@ -52,10 +52,10 @@ RSpec.describe 'Using OAuth from an external app' do
       it 'displays all four guidance paragraphs when translations exist' do
         subject
 
-        expect(page).to have_content('Why am I seeing this?')
-        expect(page).to have_content('How should I decide?')
-        expect(page).to have_content('What do these permissions mean?')
-        expect(page).to have_content('When should I click Deny?')
+        expect(page).to have_text('Why am I seeing this?')
+        expect(page).to have_text('How should I decide?')
+        expect(page).to have_text('What do these permissions mean?')
+        expect(page).to have_text('When should I click Deny?')
       end
 
       it 'falls back gracefully when custom translation keys are missing' do
@@ -69,13 +69,13 @@ RSpec.describe 'Using OAuth from an external app' do
         subject
 
         # The page should still render without errors
-        expect(page).to have_content(I18n.t('doorkeeper.authorizations.new.title'))
-        expect(page).to have_content(oauth_authorize_text)
-        expect(page).to have_content(oauth_deny_text)
+        expect(page).to have_text(I18n.t('doorkeeper.authorizations.new.title'))
+        expect(page).to have_text(oauth_authorize_text)
+        expect(page).to have_text(oauth_deny_text)
 
         # Custom guidance should not appear
-        expect(page).to have_no_content('Why am I seeing this?')
-        expect(page).to have_no_content('How should I decide?')
+        expect(page).to have_no_text('Why am I seeing this?')
+        expect(page).to have_no_text('How should I decide?')
       end
     end
 
