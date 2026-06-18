@@ -485,9 +485,6 @@ nan-TW:
       reset: 重頭設
       resolved_dns_records_hint_html: 域名解析做下kha ê MX域名，tsiah ê域名上後負責收電子phue。封鎖MX域名ē封任何有siâng款MX域名ê電子郵件ê註冊，就算通看見ê域名無kâng，mā án-ne。<strong>Tio̍h細膩，m̄通封鎖主要ê電子phue提供者。</strong>
       resolved_through_html: 通過 %{domain} 解析
-<<<<<<<< HEAD:config/locales/nan.yml
-      title: 封鎖ê電子phue域名
-========
       search: Tshiau-tshuē
       title: 封鎖ê電子phue域名
     email_subscriptions:
@@ -565,7 +562,6 @@ nan-TW:
             2_feature_explanation: 訪客佇口座ê個人資料頁註冊，koh確認beh訂了後，佇chit ê口座貼新ê公開PO文ê時陣，in ē開始收著電子phue ê更新。
             3_privacy_policy_warning: 服侍器ê管理員ē通接近使用收著ê通辨別ê個人資料（電子phue地址）。因此，tsit臺服侍器ê隱私權政策kap服務規定佇用tsit ê功能進前，愛更新。
             4_cost_warning: 照服侍器設定ê方式，送電子phue可能ē加費用。請佇啟用進前，kap lí ê服務提供者討論，因為tsit ê功能可能ē予lí ê服侍器送ê電子phue數量增長siunn大。
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
     export_domain_allows:
       new:
         title: 輸入允准ê域名
@@ -954,16 +950,9 @@ nan-TW:
           disabled: 愛特別ê用者角色
           public: Ta̍k lâng
       landing_page:
-<<<<<<<< HEAD:config/locales/nan.yml
-        values:
-          about: 關係本站
-          local_feed: 本地ê動態
-          trends: 趨勢
-========
         hints:
           about_html: 關係tsit臺服侍器ê敘述、聯絡資訊、規則kap其他資訊ê頁。
           local_feed_html: 展示tsit臺服侍器用者ê上新PO文ê即時內容。
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
       registrations:
         moderation_recommandation: 佇開放hōo ta̍k ê lâng註冊進前，請確認lí有夠額koh主動反應ê管理團隊！
         preamble: 控制ē當佇lí ê服侍器註冊ê人。
@@ -1337,11 +1326,7 @@ nan-TW:
       welcome_title: 歡迎 %{name}！
       wrong_email_hint: Nā是電子phue ê地址無正確，lí ē當tī口座設定kā改。
     delete_account: Thâi掉口座
-<<<<<<<< HEAD:config/locales/nan.yml
-    delete_account_html: Nā lí behthâi掉lí ê口座，lí ē當<a href="%{path}">ji̍h tsia繼續</a>。Lí著確認動作。
-========
     delete_account_html: Nā lí beh thâi掉lí ê口座，lí ē當<a href="%{path}">ji̍h tsia繼續</a>。Lí著確認動作。
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
     description:
       prefix_invited_by_user: "@%{name} 邀請lí加入tsit ê Mastodon 服侍器！"
       prefix_sign_up: Tsit-má註冊Mastodon ê口座！
@@ -1361,12 +1346,8 @@ nan-TW:
     progress:
       confirm: 確認電子phue
       details: Lí ê詳細
-<<<<<<<< HEAD:config/locales/nan.yml
-      review: Lán ê審查
-========
       list: 註冊流程
       review: Gún ê審查
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
       rules: 接受規則
     providers:
       cas: CAS
@@ -1381,10 +1362,7 @@ nan-TW:
       invited_by: Lí通用有tuì hia收著ê邀請加入 %{domain}：
       preamble: Tsiah-ê hōo %{domain} ê管理員設定kap實施。
       preamble_invited: 佇lí繼續進前，請思考 %{domain} ê管理員設立ê基本規則。
-<<<<<<<< HEAD:config/locales/nan.yml
-========
       read_more: 讀詳細
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
       title: Tsi̍t-kuá基本規定。
       title_invited: Lí受邀請ah。
     security: 安全
@@ -1406,11 +1384,7 @@ nan-TW:
       account_status: 口座ê狀態
       confirming: Teh等電子phue確認完成。
       functional: Lí ê口座完全ē當用。
-<<<<<<<< HEAD:config/locales/nan.yml
-      pending: Lán ê人員teh處理lí ê申請。Tse可能愛一段時間。若是申請允准，lí ē收著e-mail。
-========
       pending: Gún ê人員teh處理lí ê申請。Tse可能愛一段時間。若是申請允准，lí ē收著e-mail。
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
       redirecting_to: Lí ê口座無活動，因為tann轉kàu %{acct}。
       self_destruct: 因為 %{domain} teh-beh關掉，lí kan-ta ē當有限接近使用lí ê口座。
       view_strikes: 看早前tuì lí ê口座ê警告
@@ -1431,8 +1405,6 @@ nan-TW:
     hint_html: "<strong>提醒：</strong>Guán佇一點鐘內底，bē koh問密碼。"
     invalid_password: 無效ê密碼
     prompt: 確認密碼來繼續
-<<<<<<<< HEAD:config/locales/nan.yml
-========
   color_scheme:
     auto: 自動
     dark: 暗ê
@@ -1440,7 +1412,6 @@ nan-TW:
   contrast:
     auto: 自動
     high: 高ê
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
   crypto:
     errors:
       invalid_key: m̄是有效ê Ed25519 á是 Curve25519 鎖
@@ -1510,11 +1481,6 @@ nan-TW:
       your_appeal_pending: Lí有送投訴
       your_appeal_rejected: Lí ê投訴已經受拒絕
   edit_profile:
-<<<<<<<< HEAD:config/locales/nan.yml
-    basic_information: 基本ê資訊
-    hint_html: "<strong>自訂lâng佇lí ê個人資料kap lí ê Po文邊仔所通看ê。</strong>Nā是lí有添好個人資料kap標á，別lâng較有可能kā lí跟tuè轉去，kap lí互動。"
-    other: 其他
-========
     other: 其他
     redesign_body: 編輯個人檔案tsit-má ē當直接對個人資料頁接近使用。
     redesign_button: Kàu hia
@@ -1550,7 +1516,6 @@ nan-TW:
     inactive: 停止使用ah
     status: 狀態
     subscribers: 訂ê lâng
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
   emoji_styles:
     auto: 自動
     native: 原底ê
@@ -1589,15 +1554,8 @@ nan-TW:
     mutes: Lí消音ê
     storage: 媒體儲存
   featured_tags:
-<<<<<<<< HEAD:config/locales/nan.yml
-    add_new: 加新ê
     errors:
       limit: Lí已經kā hashtag推薦kàu盡磅ah。
-    hint_html: "<strong>佇個人資料推薦lí上重要ê hashtag。</strong>Tse是誠好ê家私，通the̍h來追蹤lí ê創意作品kap長期計畫。推薦ê hashtag ē佇lí ê個人資料顯目展示，koh允准緊緊接近使用lí家tī ê PO文。"
-========
-    errors:
-      limit: Lí已經kā hashtag推薦kàu盡磅ah。
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
   filters:
     contexts:
       account: 個人資料
@@ -1675,8 +1633,6 @@ nan-TW:
     overwrite_preambles:
       blocking_html:
         other: Lí teh-beh用 <strong>%{filename}</strong> ê <strong>%{count} ê口座</strong>，<strong>替換lí ê封鎖列單</strong>。
-<<<<<<<< HEAD:config/locales/nan.yml
-========
       bookmarks_html:
         other: Lí teh-beh用 <strong>%{filename}</strong> ê <strong>%{count} ê PO文</strong>，<strong>替換lí ê冊籤</strong>。
       domain_blocking_html:
@@ -1959,7 +1915,6 @@ nan-TW:
     descriptions:
       account: 對 @%{acct} 來ê公開ê PO文
       tag: '有 #%{hashtag} 標簽ê公開PO文'
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
   scheduled_statuses:
     over_daily_limit: Lí已經超過今á日預排ê PO文khòo-tah（%{limit}）
     over_total_limit: Lí已經超過預排ê PO文khòo-tah（%{limit}）
@@ -2063,10 +2018,6 @@ nan-TW:
       hide: Am-khàm PO文
       show: 顯示其他ê內容
     default_language: Kap界面ê語言sio kâng
-<<<<<<<< HEAD:config/locales/nan.yml
-  terms_of_service:
-    title: 服務規定
-========
     disallowed_hashtags:
       other: 包含bē用得ê標籤： %{tags}
     edited_at_html: 佇 %{date} 編輯
@@ -2158,7 +2109,6 @@ nan-TW:
     errors:
       quota_exceeded: 服侍器ê翻譯服務使用ê khòo-tah 超過ah。
       too_many_requests: Tsit tsām-á翻譯服務ê請求傷tsē。
->>>>>>>> v4.6.0:config/locales/nan-TW.yml
   two_factor_authentication:
     add: 加
     disable: 停止用雙因素認證
