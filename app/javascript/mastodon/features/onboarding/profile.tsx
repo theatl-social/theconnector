@@ -241,10 +241,8 @@ export const Profile: React.FC<{
           <div className='fields-group'>
             <TextAreaField
               maxLength={
-                // eslint-disable-next-line no-undef
                 process.env.NOTE_LENGTH_LIMIT
-                  ? // eslint-disable-next-line no-undef
-                    parseInt(process.env.NOTE_LENGTH_LIMIT, 10)
+                  ? parseInt(process.env.NOTE_LENGTH_LIMIT, 10)
                   : 500
               }
               label={
